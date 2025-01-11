@@ -1,14 +1,13 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
-  selector: 'app-button',
-  imports: [],
-  templateUrl: './button.component.html',
-  styleUrl: './button.component.css'
+    selector: 'app-button',
+    imports: [],
+    templateUrl: './button.component.html',
+    styleUrl: './button.component.css'
 })
 export class ButtonComponent {
-  btnClick() {
-    
-    alert("Sent!")
-  }
+    btnClick() {
+        alert('Sent!')
+    }
 }
