@@ -6,7 +6,7 @@ namespace EcoChallenger.Controllers
     [Route("[controller]")]
     public class TestController : ControllerBase
     {
-        [HttpGet(Name = "testme")]
+        [HttpGet("testme", Name = "testme")]
         public JsonResult TestMe()
         {
             return new JsonResult(new { success = true });
