@@ -1,0 +1,12 @@
+{
+    "name": "eco-challenger",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": ["ms-vscode.cpptools", "ms-dotnettools.csharp"],
+    "forwardPorts": [5000, 4200],
+    "postCreateCommand": "echo 'Container ready!'"
+}
