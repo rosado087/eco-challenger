@@ -1,0 +1,13 @@
+.angular
+.vscode
+node_modules
+public
+.editorconfig
+ClientApp.esproj
+ClientApp.esproj.user
+package.json
+pnpm-lock.yaml
+proxy.conf.json
+tsconfig.app.json
+tsconfig.json
+tsconfig.spec.json
