@@ -9,7 +9,7 @@ import { Component, input, output } from '@angular/core'
 export class ButtonComponent {
     customClass = input<string>()
     text = input.required<string>()
-    onClick = output({alias: 'onClick'})
+    btnClick = output()
 
     getBtnClasses() {      
       return this.customClass() || 'btn btn-primary'

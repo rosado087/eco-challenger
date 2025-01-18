@@ -6,7 +6,6 @@ import { ButtonComponent } from '../../components/button/button.component';
 import { heroKey } from '@ng-icons/heroicons/outline';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import {Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-reset-password',

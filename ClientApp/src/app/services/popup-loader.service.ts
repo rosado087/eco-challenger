@@ -1,4 +1,4 @@
-import { ApplicationRef, ComponentRef, Directive, EmbeddedViewRef, Injectable, ViewContainerRef } from '@angular/core';
+import { ComponentRef, EmbeddedViewRef, Injectable, ViewContainerRef } from '@angular/core';
 import { PopupButton } from '../models/popup-button.type';
 import { PopupComponent } from '../components/popup/popup.component';
 
@@ -6,6 +6,7 @@ import { PopupComponent } from '../components/popup/popup.component';
   providedIn: 'root'
 })
 export class PopupLoaderService {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   private componentRef: ComponentRef<any> | undefined;
 
   constructor(
@@ -21,7 +22,7 @@ export class PopupLoaderService {
     this.componentRef.instance.title = () => title;
     this.componentRef.instance.buttons = () => buttons
 
-    const domElem = (this.componentRef.hostView as EmbeddedViewRef<any>)
+    const domElem = (this.componentRef.hostView as EmbeddedViewRef<unknown>)
       .rootNodes[0] as HTMLElement;
 
     // Add the popup to the top of the DOM inside the designated

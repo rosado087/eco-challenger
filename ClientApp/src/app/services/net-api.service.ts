@@ -13,6 +13,7 @@ export class NetApiService {
     return this.http.get<T>(this.#buildUrl(controller, action))
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   post<T>(controller: string, action: string, data: any): Observable<T> {
     return this.http.post<T>(this.#buildUrl(controller, action), data, {
       headers: new HttpHeaders({
