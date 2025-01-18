@@ -10,4 +10,8 @@ export class ButtonComponent {
     customClass = input<string>()
     text = input.required<string>()
     onClick = output({alias: 'onClick'})
+
+    getBtnClasses() {      
+      return this.customClass() || 'btn btn-primary'
+    }
 }

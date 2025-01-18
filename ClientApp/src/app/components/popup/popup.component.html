@@ -1,14 +1,67 @@
-<div class="card bg-base-100 w-96 shadow-xl">
-    <div class="card-body gap-6">
-        <h2 class="card-title">Esqueceu a Palavra-Passe?</h2>
+<!--
+    <div class="modal">
+      <div class="modal-box">
+        
+    
+        <div class="card bg-base-100 w-96 shadow-xl">
+            <div class="card-body gap-6">
+                <h2 class="card-title">Esqueceu a Palavra-Passe?</h2>
+                            
+                <div class="card-actions justify-end">
                     
-        <div class="card-actions justify-end">
-            @for (btn of buttons(); track $index) {
-                <button class="btn btn-primary"
-                    [class.btn-outline]="btn.type == 'no' || btn.type == 'cancel'">
-                    {{btn.text}}
-                </button>
-            }
+                    @for (btn of getButtons(); track btn.text) {
+                        <button class="btn btn-primary"
+                            [class.btn-outline]="btn.type == 'no' || btn.type == 'cancel'">
+                            {{btn.text}}
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </div>
+-->
+
+<dialog id="popup-modal-ref" class="modal">
+    <div class="modal-box">
+        <form method="dialog">
+            <app-button customClass="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" text="x" />
+        </form>
+
+        <div class="card bg-base-100 w-96 shadow-xl">
+            <div class="card-body gap-6">
+                <h2 class="card-title">Esqueceu a Palavra-Passe?</h2>
+                            
+                <div class="card-actions justify-end">
+                    
+                    @for (btn of getButtons(); track btn.text) {
+                        <button class="btn btn-primary"
+                            [class.btn-outline]="btn.type == 'no' || btn.type == 'cancel'">
+                            {{btn.text}}
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="text-lg font-bold">{{message()}} dawdawd</h3>
+        <div class="modal-action">
+            <form method="dialog">
+                @for (btn of getButtons(); track btn.text) {
+                    <app-button 
+                        [customClass]="'btn btn-primary ' + 
+                            (btn.type === 'no' || btn.type === 'cancel' ? 'btn-outline' : '')"
+                        [text]="btn.text" />
+                }
+                <button class="btn">Close</button>
+            </form>
         </div>
     </div>
-</div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+  
