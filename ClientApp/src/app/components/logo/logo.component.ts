@@ -1,10 +1,10 @@
-import { Component, input } from '@angular/core';
+import { Component, input } from '@angular/core'
 
 @Component({
-  selector: 'app-logo',
-  imports: [],
-  templateUrl: './logo.component.html',
-  styleUrl: './logo.component.css'
+    selector: 'app-logo',
+    imports: [],
+    templateUrl: './logo.component.html',
+    styleUrl: './logo.component.css'
 })
 export class LogoComponent {
     width = input('auto')

@@ -1,9 +1,9 @@
 <label class="input input-bordered flex items-center gap-2">
     <!-- This is to add icons to the input -->
     <ng-content></ng-content>
-    <input 
+    <input
         [formControl]="getFormControl()"
-        type="{{type()}}" 
-        class="grow" 
-        placeholder="{{placeholder()}}" />
+        type="{{ type() }}"
+        class="grow"
+        placeholder="{{ placeholder() }}" />
 </label>

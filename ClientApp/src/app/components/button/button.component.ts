@@ -11,7 +11,7 @@ export class ButtonComponent {
     text = input.required<string>()
     btnClick = output()
 
-    getBtnClasses() {      
-      return this.customClass() || 'btn btn-primary'
+    getBtnClasses() {
+        return this.customClass() || 'btn btn-primary'
     }
 }

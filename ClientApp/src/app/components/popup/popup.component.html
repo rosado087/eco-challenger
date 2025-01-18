@@ -28,17 +28,23 @@
 <dialog id="popup-modal-ref" class="modal">
     <div class="modal-box">
         <form method="dialog">
-            <app-button customClass="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" text="x" />
+            <app-button
+                customClass="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                text="x" />
         </form>
-        
-        <h3 class="text-lg font-bold">{{title()}}</h3>
-        <p class="py-4">{{message()}}</p>
+
+        <h3 class="text-lg font-bold">{{ title() }}</h3>
+        <p class="py-4">{{ message() }}</p>
         <div class="modal-action">
             <form method="dialog">
                 @for (btn of getButtons(); track btn.text) {
-                    <app-button 
-                        [customClass]="'btn btn-primary ' + 
-                            (btn.type === 'no' || btn.type === 'cancel' ? 'btn-outline' : '')"
+                    <app-button
+                        [customClass]="
+                            'btn btn-primary ' +
+                            (btn.type === 'no' || btn.type === 'cancel'
+                                ? 'btn-outline'
+                                : '')
+                        "
                         [text]="btn.text" />
                 }
             </form>
@@ -48,4 +54,3 @@
         <button>close</button>
     </form>
 </dialog>
-  

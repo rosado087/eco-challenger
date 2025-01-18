@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing'
 
-import { NetApiService } from './net-api.service';
+import { NetApiService } from './net-api.service'
 
 describe('NetApiService', () => {
-  let service: NetApiService;
+    let service: NetApiService
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(NetApiService);
-  })
+    beforeEach(() => {
+        TestBed.configureTestingModule({})
+        service = TestBed.inject(NetApiService)
+    })
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  })
+    it('should be created', () => {
+        expect(service).toBeTruthy()
+    })
 })
