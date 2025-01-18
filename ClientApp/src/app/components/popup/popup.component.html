@@ -31,8 +31,8 @@
             <app-button customClass="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" text="x" />
         </form>
         
-        <h3 class="text-lg font-bold">{{title}}</h3>
-        <p class="py-4">{{message}}</p>
+        <h3 class="text-lg font-bold">{{title()}}</h3>
+        <p class="py-4">{{message()}}</p>
         <div class="modal-action">
             <form method="dialog">
                 @for (btn of getButtons(); track btn.text) {

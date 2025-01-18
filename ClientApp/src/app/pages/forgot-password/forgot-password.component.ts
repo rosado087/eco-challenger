@@ -17,6 +17,6 @@ export class ForgotPasswordComponent {
     popupLoader = inject(PopupLoaderService)
 
     sendEmail() {
-        this.popupLoader.showPopup('Recuperação de Password', 'Foi feito o envio de um email com instruções de recuperação de password!')
+        this.popupLoader.showPopup('Recuperação de Palavra-Passe', 'Foi feito o envio de um email com instruções de recuperação de password!')
     }
 }

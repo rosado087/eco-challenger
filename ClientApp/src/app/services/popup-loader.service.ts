@@ -18,9 +18,9 @@ export class PopupLoaderService {
 
     // We need to inject the props into the component
     // and this way of doing it works, although its a bit nasty
-    this.componentRef.instance.message = message;
-    this.componentRef.instance.title = title;
-    this.componentRef.instance.buttons = buttons
+    this.componentRef.instance.message = () => message;
+    this.componentRef.instance.title = () => title;
+    this.componentRef.instance.buttons = () => buttons
 
     const domElem = (this.componentRef.hostView as EmbeddedViewRef<any>)
       .rootNodes[0] as HTMLElement;
