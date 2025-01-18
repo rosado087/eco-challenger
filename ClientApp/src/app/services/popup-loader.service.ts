@@ -13,12 +13,13 @@ export class PopupLoaderService {
     private appRef: ApplicationRef
   ) {}
 
-  public showPopup(message: string, buttons?: PopupButton[]): void {
+  public showPopup(title: string, message: string, buttons?: PopupButton[]): void {
     this.componentRef = this.viewContainerRef.createComponent(PopupComponent)
 
     // We need to inject the props into the component
     // and this way of doing it works, although its a bit nasty
     this.componentRef.instance.message = message;
+    this.componentRef.instance.title = title;
     this.componentRef.instance.buttons = buttons
 
     const domElem = (this.componentRef.hostView as EmbeddedViewRef<any>)

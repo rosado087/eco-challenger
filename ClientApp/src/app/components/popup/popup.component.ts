@@ -9,6 +9,7 @@ import { ButtonComponent } from '../button/button.component';
   styleUrl: './popup.component.css'
 })
 export class PopupComponent implements OnInit {
+  title = input.required<string>()
   message = input.required<string>()
   buttons = input<PopupButton[]>()
 
