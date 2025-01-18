@@ -9,8 +9,7 @@ export class PopupLoaderService {
   private componentRef: ComponentRef<any> | undefined;
 
   constructor(
-    private viewContainerRef: ViewContainerRef,
-    private appRef: ApplicationRef
+    private viewContainerRef: ViewContainerRef
   ) {}
 
   public showPopup(title: string, message: string, buttons?: PopupButton[]): void {
