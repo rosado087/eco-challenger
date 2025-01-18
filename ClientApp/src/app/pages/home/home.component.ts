@@ -7,4 +7,6 @@ import { ButtonComponent } from '../../components/button/button.component';
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
-export class HomeComponent {}
+export class HomeComponent {
+    title = 'ClientApp'
+}
