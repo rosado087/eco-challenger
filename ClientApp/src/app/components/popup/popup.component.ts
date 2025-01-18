@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, input, OnInit } from '@angular/core';
 import { PopupButton } from '../../models/popup-button.type';
 import { ButtonComponent } from '../button/button.component';
 
@@ -9,11 +9,10 @@ import { ButtonComponent } from '../button/button.component';
   styleUrl: './popup.component.css'
 })
 export class PopupComponent implements OnInit {
+  _elementRef = inject(ElementRef)
   title = input.required<string>()
   message = input.required<string>()
   buttons = input<PopupButton[]>()
-
-  constructor(private _elementRef: ElementRef) {}
 
   getButtons() {
     if(this.buttons && this.buttons())
