@@ -1,1 +1,5 @@
-<button (click)="btnClick()" class="btn btn-primary">Test</button>
+<button 
+    (click)="onClick.emit()" 
+    class="btn btn-primary {{customClass()}}">
+    {{text()}}
+</button>

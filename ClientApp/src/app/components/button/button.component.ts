@@ -1,6 +1,4 @@
-import { Component, inject } from '@angular/core'
-import { NetApiService } from '../../services/net-api.service'
-import { Test } from '../../models/test.type'
+import { Component, input, output } from '@angular/core'
 
 @Component({
     selector: 'app-button',
@@ -9,15 +7,7 @@ import { Test } from '../../models/test.type'
     styleUrl: './button.component.css'
 })
 export class ButtonComponent {
-    netApi = inject(NetApiService)
-
-    btnClick() {
-        this.netApi.get<Test>('test', 'testme').subscribe({
-          next: (data) => {
-            if (data.success) alert('Sent and success!')
-            else alert('there was no success')
-          },
-          error: () => alert('An error ocurred')
-        })
-    }
+    customClass = input<string>()
+    text = input.required<string>()
+    onClick = output({alias: 'onClick'})
 }

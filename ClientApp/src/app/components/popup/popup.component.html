@@ -1,0 +1,14 @@
+<div class="card bg-base-100 w-96 shadow-xl">
+    <div class="card-body gap-6">
+        <h2 class="card-title">Esqueceu a Palavra-Passe?</h2>
+                    
+        <div class="card-actions justify-end">
+            @for (btn of buttons(); track $index) {
+                <button class="btn btn-primary"
+                    [class.btn-outline]="btn.type == 'no' || btn.type == 'cancel'">
+                    {{btn.text}}
+                </button>
+            }
+        </div>
+    </div>
+</div>
