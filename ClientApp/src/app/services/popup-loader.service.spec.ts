@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing'
 
-import { NetApiService } from './net-api.service'
+import { PopupLoaderService } from './popup-loader.service'
 
-describe('NetApiService', () => {
-    let service: NetApiService
+describe('PopupLoaderService', () => {
+    let service: PopupLoaderService
 
     beforeEach(() => {
         TestBed.configureTestingModule({})
-        service = TestBed.inject(NetApiService)
+        service = TestBed.inject(PopupLoaderService)
     })
 
     it('should be created', () => {
