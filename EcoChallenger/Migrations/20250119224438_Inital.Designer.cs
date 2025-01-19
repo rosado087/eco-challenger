@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250119223205_Inital")]
+    [Migration("20250119224438_Inital")]
     partial class Inital
     {
         /// <inheritdoc />
@@ -45,7 +45,7 @@ namespace EcoChallenger.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UserToken", b =>
@@ -70,7 +70,7 @@ namespace EcoChallenger.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserToken");
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("UserToken", b =>

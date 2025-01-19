@@ -11,7 +11,7 @@ namespace EcoChallenger.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -22,11 +22,11 @@ namespace EcoChallenger.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserToken",
+                name: "UserTokens",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -37,18 +37,18 @@ namespace EcoChallenger.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserToken", x => x.Id);
+                    table.PrimaryKey("PK_UserTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserToken_User_UserId",
+                        name: "FK_UserTokens_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserToken_UserId",
-                table: "UserToken",
+                name: "IX_UserTokens_UserId",
+                table: "UserTokens",
                 column: "UserId");
         }
 
@@ -56,10 +56,10 @@ namespace EcoChallenger.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserToken");
+                name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Users");
         }
     }
 }

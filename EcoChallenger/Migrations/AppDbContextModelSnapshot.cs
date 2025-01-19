@@ -42,7 +42,7 @@ namespace EcoChallenger.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UserToken", b =>
@@ -67,7 +67,7 @@ namespace EcoChallenger.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserToken");
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("UserToken", b =>

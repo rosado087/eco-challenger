@@ -6,6 +6,6 @@ public class AppDbContext : DbContext
 
     }
 
-    public DbSet<User> User { get; set; }
-    public DbSet<UserToken> UserToken { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<UserToken> UserTokens { get; set; }
 }
