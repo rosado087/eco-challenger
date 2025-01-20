@@ -23,7 +23,7 @@ This is example is for Linux:
 
 3. Run the database migrations
 
-`dotnet ef databae update`
+`dotnet ef database update`
 
 In case you want to rebuild the migrations script (this shouldn't be needed), you can do it with the following commands:
 `dotnet ef migrations remove`

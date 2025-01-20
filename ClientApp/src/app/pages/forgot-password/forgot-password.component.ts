@@ -8,6 +8,8 @@ import {
 import { TextInputComponent } from '../../components/text-input/text-input.component'
 import { ButtonComponent } from '../../components/button/button.component'
 import { PopupLoaderService } from '../../services/popup-loader.service'
+import { NetApiService } from '../../services/net-api.service'
+import { SuccessModel } from '../../models/success-model'
 
 @Component({
     selector: 'app-forgot-password',
@@ -20,12 +22,25 @@ import { PopupLoaderService } from '../../services/popup-loader.service'
     styleUrl: './forgot-password.component.css'
 })
 export class ForgotPasswordComponent {
+    netApi = inject(NetApiService)
     popupLoader = inject(PopupLoaderService)
 
     sendEmail() {
-        this.popupLoader.showPopup(
-            'Recuperação de Palavra-Passe',
-            'Foi feito o envio de um email com instruções de recuperação de password!'
-        )
+        this.netApi.get<SuccessModel>('RecoverPassword', 'SendRecoveryEmail').subscribe({
+            next: () => {
+                // Always send this, even if the account doesn't exist
+                this.popupLoader.showPopup(
+                    'Recuperação de Palavra-Passe',
+                    'Foi feito o envio de um email com instruções de recuperação de password!'
+                )
+            },
+            error: () => this.popupLoader.showPopup(
+                'Whops :(',
+                'Ocorreu um erro desconhecido ao enviar o email.'
+            )
+        })
+
+
+        
     }
 }

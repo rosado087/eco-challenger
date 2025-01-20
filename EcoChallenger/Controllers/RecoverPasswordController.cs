@@ -1,3 +1,4 @@
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,14 @@ namespace EcoChallenger.Controllers
     {
         private readonly AppDbContext _ctx;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<RecoverPasswordController> _logger;
 
-        public RecoverPasswordController(AppDbContext context, IEmailService emailService) {
+        public RecoverPasswordController(AppDbContext context, IEmailService emailService, IConfiguration configuration, ILogger<RecoverPasswordController> logger) {
             _ctx = context;
             _emailService = emailService;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpPost("SendRecoveryEmail")]
@@ -34,31 +39,53 @@ namespace EcoChallenger.Controllers
                 .ToList();
             _ctx.UserTokens.RemoveRange(userTokens);
             
-            var userToken = CreateUserToken(users.First());
+            var userToken = TokenManager.CreateUserToken(users.First());
             _ctx.UserTokens.Add(userToken);
 
             await _ctx.SaveChangesAsync();
 
             // Now we only need to send the email
-            // To build the message we need to point the user to the correct
-            // URL so we fetch it from the request headers and replace some parts
-            string recoveryLink = Request.Headers["Referer"].ToString() + "/reset-password/" + userToken.Token;
+            // To build the message we need to point the user to the correct URL
+            string? baseUrl = _configuration.GetValue<string>("ApplicationSettings:FrontEndUrl");
+
+            if(baseUrl == null){
+                _logger.LogError("No application URL was configured in appsettings.json. Recovery emails are not being sent!");
+                return new JsonResult(new {success = false});
+            }
+
+            // Make sure the baseURL value doesn't have a / at the end
+            if(baseUrl.Substring(baseUrl.Length - 1) == "/")
+                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
+
+            string recoveryLink = baseUrl + "/reset-password/" + userToken.Token;
             await _emailService.SendEmailAsync(data.Email, "Echo-Challenger: Recuperação de Palavra-Passe", 
                 "Para report a sua palavra passe, por favor aceda a este link: " + recoveryLink);
 
             return new JsonResult(new { success = true });
         }
 
-        private UserToken CreateUserToken(User user) {
-            string newToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+        [HttpGet("CheckToken/{token}")]
+        public JsonResult CheckToken(string token) {
+            var userTkn = TokenManager.GetValidTokenRecord(_ctx, token);
 
-            return new UserToken {
-                User = user,
-                Token = newToken,
-                Type = UserToken.TokenType.RECOVERY,
-                CreationDate = DateTime.Now,
-                Duration = TimeSpan.FromHours(4) // Token lasts 4 hours
-            };
+            if(userTkn == null) return new JsonResult(new { valid = false });
+
+            return new JsonResult(new { valid = true });
         }
+
+        [HttpPost("SetNewPassword")]
+        public async Task<JsonResult> SetNewPassword([FromBody] SetNewPasswordModel data) {
+            var userTkn = TokenManager.GetValidTokenRecord(_ctx, data.Token);
+            if(userTkn == null) return new JsonResult(new { success = false, message = "A token de recuperação de palavra-passe é inválida." });
+            
+            userTkn.User.Password = PasswordGenerator.GeneratePasswordHash(data.Password);
+
+            // Lets update the password and then remove the token record
+            _ctx.Users.Update(userTkn.User);
+            _ctx.UserTokens.Remove(userTkn);
+            await _ctx.SaveChangesAsync();
+
+            return new JsonResult(new { success = true });
+        }        
     }
 }
