@@ -4,7 +4,15 @@ import { NgIcon, provideIcons } from '@ng-icons/core'
 import { ButtonComponent } from '../../components/button/button.component'
 import { heroKey } from '@ng-icons/heroicons/outline'
 import { ActivatedRoute, Router } from '@angular/router'
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
+import {
+    AbstractControl,
+    FormControl,
+    FormGroup,
+    ReactiveFormsModule,
+    ValidationErrors,
+    ValidatorFn,
+    Validators
+} from '@angular/forms'
 import { NetApiService } from '../../services/net-api.service'
 import { SuccessModel } from '../../models/success-model'
 import { PopupButton } from '../../models/popup-button'
@@ -24,15 +32,21 @@ export class ResetPasswordComponent implements OnInit {
     resetToken: string | null = null
 
     passwordForm = new FormGroup({
-        newPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
+        newPassword: new FormControl('', [
+            Validators.required,
+            Validators.minLength(8)
+        ]),
         confirmPassword: new FormControl('', [
-            Validators.required, Validators.minLength(8), this.matchPasswordsValidator()])
+            Validators.required,
+            Validators.minLength(8),
+            this.matchPasswordsValidator()
+        ])
     })
 
     // This is a custom validator to make sure the passwords match
-    matchPasswordsValidator(): ValidatorFn {        
-        return (control: AbstractControl): ValidationErrors | null => {    
-            const match = (this.getNewPassword()?.value === control.value)
+    matchPasswordsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const match = this.getNewPassword()?.value === control.value
 
             return !match ? { matchPasswords: true } : null
         }
@@ -48,44 +62,44 @@ export class ResetPasswordComponent implements OnInit {
 
     resetPassword() {
         this.passwordForm.markAllAsTouched()
-        if(!this.passwordForm.valid) return
+        if (!this.passwordForm.valid) return
 
-        const params = { 
-            Password: this.getNewPassword()?.value, 
+        const params = {
+            Password: this.getNewPassword()?.value,
             Token: this.resetToken
         }
 
-        this.netApi.post<SuccessModel>('RecoverPassword', 'SetNewPassword', params).subscribe({
-            next: (data) => {
-                const popupButtons: PopupButton[] = [
-                    {
-                        type: 'ok',
-                        text: 'Okay',
-                        callback: () => this.router.navigate(['/'])
-                    }
-                ]
+        this.netApi
+            .post<SuccessModel>('RecoverPassword', 'SetNewPassword', params)
+            .subscribe({
+                next: (data) => {
+                    const popupButtons: PopupButton[] = [
+                        {
+                            type: 'ok',
+                            text: 'Okay',
+                            callback: () => this.router.navigate(['/'])
+                        }
+                    ]
 
-                if(data.success)
+                    if (data.success)
+                        this.popupLoader.showPopup(
+                            'Alteração de Palavra-Passe',
+                            'A palavra passe foi alterada com sucesso!',
+                            popupButtons
+                        )
+                    else
+                        this.popupLoader.showPopup(
+                            'Alteração de Palavra-Passe',
+                            'Não foi possível efetuar a alteração da palavra-passe!',
+                            popupButtons
+                        )
+                },
+                error: () =>
                     this.popupLoader.showPopup(
-                        'Alteração de Palavra-Passe',
-                        'A palavra passe foi alterada com sucesso!',
-                        popupButtons
+                        'Whops :(',
+                        'Ocorreu um erro desconhecido ao recuperar a palavra-passe.'
                     )
-                else
-                    this.popupLoader.showPopup(
-                        'Alteração de Palavra-Passe',
-                        'Não foi possível efetuar a alteração da palavra-passe!',
-                        popupButtons
-                    )
-
-                
-            },
-            error: () => this.popupLoader.showPopup(
-                'Whops :(',
-                'Ocorreu um erro desconhecido ao recuperar a palavra-passe.'
-            )
-        })
-        
+            })
     }
 
     ngOnInit(): void {
@@ -98,12 +112,14 @@ export class ResetPasswordComponent implements OnInit {
             this.router.navigate(['/'])
             return
         }
-        
-        this.netApi.get<SuccessModel>('RecoverPassword', 'CheckToken', this.resetToken).subscribe({
-            next: (data) => {
-                if(!data.success) this.router.navigate(['/'])
-            },
-            error: () => this.router.navigate(['/'])
-        })
+
+        this.netApi
+            .get<SuccessModel>('RecoverPassword', 'CheckToken', this.resetToken)
+            .subscribe({
+                next: (data) => {
+                    if (!data.success) this.router.navigate(['/'])
+                },
+                error: () => this.router.navigate(['/'])
+            })
     }
 }
