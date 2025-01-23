@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, input, OnInit } from '@angular/core'
-import { PopupButton } from '../../models/popup-button.type'
+import { PopupButton } from '../../models/popup-button'
 import { ButtonComponent } from '../button/button.component'
 
 @Component({
