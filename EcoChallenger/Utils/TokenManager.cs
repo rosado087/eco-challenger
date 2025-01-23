@@ -1,6 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 
 public static class TokenManager {
+
+    /// <summary>
+    /// Gets a UserToken record from the DB that matches a given token string
+    /// </summary>
+    /// <param name="ctx">Database context</param>
+    /// <param name="token">Token string to search filter the records</param>
+    /// <returns>Corresponding UserToken record, or null if nothing was found</returns>
     public static UserToken? GetValidTokenRecord(AppDbContext ctx, string token) {
         var userTokens = ctx.UserTokens
             .Where(ut => ut.Type == UserToken.TokenType.RECOVERY && ut.Token == token)
@@ -23,6 +30,12 @@ public static class TokenManager {
         return userTkn;
     }
 
+    /// <summary>
+    /// Creates a UserToken string, which consists of a GUID and
+    /// stores it in the DB
+    /// </summary>
+    /// <param name="user">User record to assign the token to</param>
+    /// <returns>The created UserToken record</returns>
     public static UserToken CreateUserToken(User user) {
         string newToken = Guid.NewGuid().ToString();
 

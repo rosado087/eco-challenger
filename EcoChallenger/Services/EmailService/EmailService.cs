@@ -12,6 +12,13 @@ public class EmailService : IEmailService
         _emailSettings = emailSettings.Value;
     }
     
+    /// <summary>
+    /// Send an email to a given address
+    /// </summary>
+    /// <param name="to">The destination email address</param>
+    /// <param name="subject">The title of the email</param>
+    /// <param name="body">The body text of the email</param>
+    /// <returns></returns>
     public async Task SendEmailAsync(string to, string subject, string body)
     {
         if(_emailSettings == null) throw new InvalidConfigurationException("No email settings were configured.");

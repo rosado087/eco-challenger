@@ -21,6 +21,13 @@ namespace EcoChallenger.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Handles the action that sends a recovery email to set a new password.
+        /// It first invalidates all the other recovery tokens the user had, and then
+        /// creates the new one, assigns it to the user, and sends it to the email.
+        /// </summary>
+        /// <param name="data">Contains the user's email address</param>
+        /// <returns>JSON result indicating success or failure</returns>
         [HttpPost("SendRecoveryEmail")]
         public async Task<JsonResult> SendRecoveryEmail([FromBody] SendRecoveryEmailModel data)
         {
@@ -59,11 +66,16 @@ namespace EcoChallenger.Controllers
 
             string recoveryLink = baseUrl + "/reset-password/" + userToken.Token;
             await _emailService.SendEmailAsync(data.Email, "Echo-Challenger: Recuperação de Palavra-Passe", 
-                "Para report a sua palavra passe, por favor aceda a este link: " + recoveryLink);
+                "Para repore a sua palavra-passe, por favor aceda a este link: " + recoveryLink);
 
             return new JsonResult(new { success = true });
         }
 
+        /// <summary>
+        /// Handles the action that checks if a recovery token is valid or not
+        /// </summary>
+        /// <param name="token">The token to be checked, this comes as a route param</param>
+        /// <returns>JSON result indicating success or failure</returns>
         [HttpGet("CheckToken/{token}")]
         public JsonResult CheckToken(string token) {
             var userTkn = TokenManager.GetValidTokenRecord(_ctx, token);
@@ -73,6 +85,13 @@ namespace EcoChallenger.Controllers
             return new JsonResult(new { success = true });
         }
 
+        /// <summary>
+        /// Handles the action that sets the new recovery password.
+        /// This updates the User record with a new password in the hashed
+        /// format and then removes the old UserToken record, making it invalid.
+        /// </summary>
+        /// <param name="data">Contains the user's email address</param>
+        /// <returns>JSON result indicating success or failure</returns>
         [HttpPost("SetNewPassword")]
         public async Task<JsonResult> SetNewPassword([FromBody] SetNewPasswordModel data) {
             var userTkn = TokenManager.GetValidTokenRecord(_ctx, data.Token);
