@@ -45,7 +45,8 @@
                                 ? 'btn-outline'
                                 : '')
                         "
-                        [text]="btn.text" />
+                        [text]="btn.text"
+                        (btnClick)="btn.callback?.()" />
                 }
             </form>
         </div>

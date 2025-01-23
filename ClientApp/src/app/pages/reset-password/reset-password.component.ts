@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
 import { NetApiService } from '../../services/net-api.service'
 import { SuccessModel } from '../../models/success-model'
+import { PopupButton } from '../../models/popup-button'
 
 @Component({
     selector: 'app-reset-password',
@@ -56,16 +57,28 @@ export class ResetPasswordComponent implements OnInit {
 
         this.netApi.post<SuccessModel>('RecoverPassword', 'SetNewPassword', params).subscribe({
             next: (data) => {
+                const popupButtons: PopupButton[] = [
+                    {
+                        type: 'ok',
+                        text: 'Okay',
+                        callback: () => this.router.navigate(['/'])
+                    }
+                ]
+
                 if(data.success)
                     this.popupLoader.showPopup(
                         'Alteração de Palavra-Passe',
-                        'A palavra passe foi alterada com sucesso!'
+                        'A palavra passe foi alterada com sucesso!',
+                        popupButtons
                     )
                 else
                     this.popupLoader.showPopup(
                         'Alteração de Palavra-Passe',
-                        'Não foi possível efetuar a alteração da palavra-passe!'
+                        'Não foi possível efetuar a alteração da palavra-passe!',
+                        popupButtons
                     )
+
+                
             },
             error: () => this.popupLoader.showPopup(
                 'Whops :(',

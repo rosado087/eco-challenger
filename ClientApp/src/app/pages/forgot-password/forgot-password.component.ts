@@ -24,6 +24,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class ForgotPasswordComponent {
     netApi = inject(NetApiService)
     popupLoader = inject(PopupLoaderService)
+    disableSubmit = false
 
     emailForm = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email])
@@ -37,6 +38,7 @@ export class ForgotPasswordComponent {
         this.emailForm.markAllAsTouched()
         if(!this.emailForm.valid) return
 
+        this.disableSubmit = true
         this.netApi.post<SuccessModel>('RecoverPassword', 'SendRecoveryEmail', { Email: this.emailForm.get('email')?.value }).subscribe({
             next: () => {
                 // Always send this, even if the account doesn't exist
@@ -44,11 +46,13 @@ export class ForgotPasswordComponent {
                     'Recuperação de Palavra-Passe',
                     'Foi feito o envio de um email com instruções de recuperação de password!'
                 )
+
+                this.disableSubmit = false
             },
             error: () => this.popupLoader.showPopup(
                 'Whops :(',
                 'Ocorreu um erro desconhecido ao enviar o email.'
-            )
+            )            
         })
     }
 }
