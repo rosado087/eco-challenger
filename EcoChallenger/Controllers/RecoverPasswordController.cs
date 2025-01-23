@@ -68,9 +68,9 @@ namespace EcoChallenger.Controllers
         public JsonResult CheckToken(string token) {
             var userTkn = TokenManager.GetValidTokenRecord(_ctx, token);
 
-            if(userTkn == null) return new JsonResult(new { valid = false });
+            if(userTkn == null) return new JsonResult(new { success = false });
 
-            return new JsonResult(new { valid = true });
+            return new JsonResult(new { success = true });
         }
 
         [HttpPost("SetNewPassword")]

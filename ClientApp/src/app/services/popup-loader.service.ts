@@ -4,7 +4,7 @@ import {
     Injectable,
     ViewContainerRef
 } from '@angular/core'
-import { PopupButton } from '../models/popup-button.type'
+import { PopupButton } from '../models/popup-button'
 import { PopupComponent } from '../components/popup/popup.component'
 
 @Injectable({

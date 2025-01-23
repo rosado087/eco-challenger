@@ -5,15 +5,15 @@ import {
     heroUserCircle,
     heroKey
 } from '@ng-icons/heroicons/outline'
-import { TextInputComponent } from '../../components/text-input/text-input.component'
 import { ButtonComponent } from '../../components/button/button.component'
 import { PopupLoaderService } from '../../services/popup-loader.service'
 import { NetApiService } from '../../services/net-api.service'
 import { SuccessModel } from '../../models/success-model'
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 
 @Component({
     selector: 'app-forgot-password',
-    imports: [TextInputComponent, NgIcon, ButtonComponent],
+    imports: [NgIcon, ButtonComponent, ReactiveFormsModule],
     providers: [
         provideIcons({ heroAtSymbol, heroUserCircle, heroKey }),
         PopupLoaderService
@@ -25,8 +25,19 @@ export class ForgotPasswordComponent {
     netApi = inject(NetApiService)
     popupLoader = inject(PopupLoaderService)
 
+    emailForm = new FormGroup({
+        email: new FormControl('', [Validators.required, Validators.email])
+    })
+
+    getEmail() {
+        return this.emailForm.get('email')
+    }
+
     sendEmail() {
-        this.netApi.get<SuccessModel>('RecoverPassword', 'SendRecoveryEmail').subscribe({
+        this.emailForm.markAllAsTouched()
+        if(!this.emailForm.valid) return
+
+        this.netApi.post<SuccessModel>('RecoverPassword', 'SendRecoveryEmail', { Email: this.emailForm.get('email')?.value }).subscribe({
             next: () => {
                 // Always send this, even if the account doesn't exist
                 this.popupLoader.showPopup(
@@ -39,8 +50,5 @@ export class ForgotPasswordComponent {
                 'Ocorreu um erro desconhecido ao enviar o email.'
             )
         })
-
-
-        
     }
 }
