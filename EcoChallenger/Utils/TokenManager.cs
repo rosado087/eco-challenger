@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+
 public static class TokenManager {
     public static UserToken? GetValidTokenRecord(AppDbContext ctx, string token) {
         var userTokens = ctx.UserTokens
             .Where(ut => ut.Type == UserToken.TokenType.RECOVERY && ut.Token == token)
+            .Include(ut => ut.User) //Make sure it loads the user record
             .ToList();
 
         if(userTokens == null || userTokens.Count() == 0) return null;
