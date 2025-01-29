@@ -1,5 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+
 public static class TokenManager {
 
     /// <summary>
@@ -47,4 +54,30 @@ public static class TokenManager {
             Duration = TimeSpan.FromHours(4) // Token lasts 4 hours
         };
     }
+
+    public static string GenerateToken(User user, IConfiguration configuration)
+{
+    // Validate the Jwt:Key configuration
+    if (string.IsNullOrEmpty(configuration["Jwt:Key"]))
+    {
+        throw new ArgumentNullException(nameof(configuration), "Jwt:Key configuration is missing.");
+    }
+
+    var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+        Subject = new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email)
+        }),
+        Expires = DateTime.UtcNow.AddHours(1),
+        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+    };
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var token = tokenHandler.CreateToken(tokenDescriptor);
+    return tokenHandler.WriteToken(token);
+}
+
 }
