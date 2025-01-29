@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250120205735_Inital")]
-    partial class Inital
+    [Migration("20250129151209_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,8 +36,10 @@ namespace EcoChallenger.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GoogleToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")

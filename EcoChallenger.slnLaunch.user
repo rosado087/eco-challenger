@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Novo Perfil",
+    "Projects": [
+      {
+        "Path": "EcoChallenger\\EcoChallenger.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "ClientApp\\ClientApp.esproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

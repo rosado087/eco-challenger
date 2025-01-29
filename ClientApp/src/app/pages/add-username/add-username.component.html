@@ -1,0 +1,34 @@
+<div class="card-body gap-8">
+  <div class="flex flex-row justify-center">
+    <h2 class="card-title">Adicionar Nome de Utilizador</h2>
+  </div>
+
+  <form class="flex flex-col gap-2" [formGroup]="usernameForm">
+    <label class="input input-bordered flex items-center gap-2">
+
+      <input formControlName="username"
+             type="text"
+             class="grow"
+             placeholder="Nome de Utilizador" />
+    </label>
+    @if (
+    getUsername()?.invalid &&
+    (getUsername()?.dirty || getUsername()?.touched)
+    ) {
+    @if (getUsername()?.hasError('required')) {
+    <div class="validator-hint text-red-500">
+      Este campo é obrigatório!
+    </div>
+    } @else if (getUsername()?.hasError('usernameExists')) {
+    <div class="validator-hint text-red-500">
+      Este nome já existe!
+    </div>
+    }
+    }
+
+  </form>
+
+  <div class="card-actions justify-center">
+    <app-button text="Submeter" (btnClick)="addUser()" />
+  </div>
+</div>
