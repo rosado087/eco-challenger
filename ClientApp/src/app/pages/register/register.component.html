@@ -1,0 +1,92 @@
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="card bg-base-100 w-96 shadow-xl">
+        <div class="card-body gap-6">
+            <div class="flex flex-row justify-center">
+                <h2 class="card-title text-green-600">Registar</h2>
+            </div>
+
+            <form [formGroup]="registerForm" id="registerForm">
+                <label class="block text-gray-700 font-medium mb-1">Username</label>
+                <label
+                    class="input input-bordered flex items-center gap-2 validator">
+                    <ng-icon name="heroUser" />
+                    <input
+                        type="text"
+                        class="grow"
+                        placeholder="Username"
+                        formControlName="userName" />
+                </label>
+                @if (
+                    getUserName()?.invalid &&
+                    (getUserName()?.dirty || getUserName()?.touched)
+                ) {
+                    @if (getUserName()?.hasError('required')) {
+                        <div class="validator-hint text-red-500">
+                            Este campo é obrigatório!
+                        </div>
+                    }
+                }
+                <label class="block text-gray-700 font-medium mb-1 mt-3">Email</label>
+                <label
+                    class="input input-bordered flex items-center gap-2 validator">
+                    <ng-icon name="heroAtSymbol" />
+                    <input
+                        type="text"
+                        class="grow"
+                        placeholder="Email"
+                        formControlName="email" />
+                </label>
+                @if (
+                    getEmail()?.invalid &&
+                    (getEmail()?.dirty || getEmail()?.touched)
+                ) {
+                    @if (getEmail()?.hasError('required')) {
+                        <div class="validator-hint text-red-500">
+                            Este campo é obrigatório!
+                        </div>
+                    } @else if (getEmail()?.hasError('email')) {
+                        <div class="validator-hint text-red-500">
+                            Introduza um email válido.
+                        </div>
+                    }
+                }
+                <label class="block text-gray-700 font-medium mb-1 mt-3">Password</label>
+                <label
+                    class="input input-bordered flex items-center gap-2 validator">
+                    <ng-icon name="heroKey" />
+                    <input
+                        type="password"
+                        class="grow"
+                        placeholder="Password"
+                        formControlName="password" />
+                </label>
+                @if (
+                    getPassword()?.invalid &&
+                    (getPassword()?.dirty || getPassword()?.touched)
+                ) {
+                    @if (getPassword()?.hasError('required')) {
+                        <div class="validator-hint text-red-500">
+                            Este campo é obrigatório!
+                        </div>
+                    } @else if (getPassword()?.hasError('minlength')) {
+                        <div class="validator-hint text-red-500">
+                            A palavra-passe deve ter pelo menos 8 caracteres.
+                        </div>
+                    }
+                }
+                
+            </form>
+
+            <div class="card-actions justify-center">
+                <app-button
+                    text="Login"
+                    (btnClick)="registerAccount()"
+                    [disabled]="disableSubmit" />
+                    <app-button class="ml-6"
+                    text="Registar"
+                    (btnClick)="registerAccount()"
+                    [disabled]="disableSubmit" />
+            </div>
+        </div>
+    </div>
+</div>
