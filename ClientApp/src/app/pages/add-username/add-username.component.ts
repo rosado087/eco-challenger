@@ -55,7 +55,7 @@ export class AddUsernameComponent {
       next: (data) => {
 
         if (data.success) this.router.navigate(['main-page']);
-        else alert('there was no success')
+        
 
       },
       error: () => alert('An error ocurred')

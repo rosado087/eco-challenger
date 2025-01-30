@@ -28,7 +28,7 @@ namespace EcoChallenger.Controllers
         public async Task<JsonResult> AuthenticateGoogle(string token, string email)
         {
             //Se o token por google é no UserToken
-            var user = await _context.UserTokens.FirstAsync(t => t.Token == token);
+            var user = await _context.Users.FirstAsync(t => t.GoogleToken == token);
 
             
             if (user == null)
@@ -56,7 +56,7 @@ namespace EcoChallenger.Controllers
         public async Task<JsonResult> signUpGoogle(string username, string email, string token)
         {
 
-            var user = new User { Email = email, Username = username };
+            var user = new User { Email = email, Username = username, GoogleToken = token };
             _context.Users.Add(user);
 
                 return new JsonResult(new { success = true });
