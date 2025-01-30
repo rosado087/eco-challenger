@@ -22,7 +22,7 @@ export interface Result {
 export class HomeComponent implements OnInit {
     
   netApi = inject(NetApiService)
-  popupLoader = inject(PopupLoaderService)
+  //popupLoader = inject(PopupLoaderService)
   title = 'ClientApp'
 
   constructor(private router: Router) {
@@ -41,16 +41,17 @@ export class HomeComponent implements OnInit {
 
       },
       error: () => {
-        this.popupLoader.showPopup(
+        /*this.popupLoader.showPopup(
           'Whops',
           'Isto é um problema.'
           
-        )
+        )*/
+        alert("Fuck")
       }
     });
 
     google.accounts.id.initialize({
-      client_id: value,
+      client_id: "150491328796-vi5f0qscnjaj86s7lbvfnvruktce5aaa.apps.googleusercontent.com",
       callback: (resp: any) => this.handleLoginGoogle(resp)
     });
 
@@ -75,10 +76,7 @@ export class HomeComponent implements OnInit {
           }
         },
         error: () => {
-          this.popupLoader.showPopup(
-            'Whops :(',
-            'Ocorreu um erro desconhecido ao fazer login com conta Google.'
-          )
+          alert("Ggo")
         }
       })
       
