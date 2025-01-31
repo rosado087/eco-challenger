@@ -27,29 +27,26 @@ namespace EcoChallenger.Controllers
         [HttpPost("authenticate")]
         public async Task<JsonResult> AuthenticateGoogle(string token, string email)
         {
-            //Se o token por google é no UserToken
+
             var user = await _context.Users.FirstAsync(t => t.GoogleToken == token);
 
             
             if (user == null)
             {
+                user = await _context.Users.FirstAsync(u => u.Email == email);
+                
+                if(user != null)
+                {
+                    user.GoogleToken = token;
+                    _context.Users.Update(user);
+                    return new JsonResult(new { success = true });
+                }
+
                 return new JsonResult(new { success = false });
             }
 
             return new JsonResult(new { success = true });
 
-            /*
-              //Se o token por google é no User
-             var user = await _context.User.FirstAsync(t => t.Token == token);
-            
-            if (user == null)
-            {
-                return new JsonResult(new { success = false });
-            }
-
-            return new JsonResult(new { success = true });
-          
-            */
         }
 
         [HttpPut("signup-google")]

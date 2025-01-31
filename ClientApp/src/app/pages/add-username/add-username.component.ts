@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModu
 import { NetApiService } from '../../services/net-api.service';
 import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
+import { PopupLoaderService } from '../../services/popup-loader.service';
 
 export interface Result {
   success: boolean
@@ -17,6 +18,7 @@ export interface Result {
 export class AddUsernameComponent {
   netApi = inject(NetApiService)
   router = inject(Router)
+  popupLoader = inject(PopupLoaderService)
 
   usernameForm = new FormGroup({
     username: new FormControl('', [
@@ -41,7 +43,12 @@ export class AddUsernameComponent {
           return data.success ?{ usernameExists: true } : null
           
         },
-        error: () => alert('An error ocurred')
+        error: () =>
+          this.popupLoader.showPopup(
+            'Whops',
+            'Houve um problema a comparar nomes de utilizador.'
+
+          )
       });
 
       return null;
@@ -58,7 +65,13 @@ export class AddUsernameComponent {
         
 
       },
-      error: () => alert('An error ocurred')
+      error: () =>
+
+        this.popupLoader.showPopup(
+          'Whops',
+          'Houve um problema a adicionar o utilizador.'
+
+        )
     });
   }
 }
