@@ -22,7 +22,7 @@ export interface Result {
 export class HomeComponent implements OnInit {
     
   netApi = inject(NetApiService)
-  //popupLoader = inject(PopupLoaderService)
+  popupLoader = inject(PopupLoaderService)
   title = 'ClientApp'
 
   constructor(private router: Router) {
@@ -41,17 +41,16 @@ export class HomeComponent implements OnInit {
 
       },
       error: () => {
-        /*this.popupLoader.showPopup(
+        this.popupLoader.showPopup(
           'Whops',
           'Isto é um problema.'
           
-        )*/
-        alert("Fuck")
+        )
       }
     });
 
     google.accounts.id.initialize({
-      client_id: "150491328796-vi5f0qscnjaj86s7lbvfnvruktce5aaa.apps.googleusercontent.com",
+      client_id: value,
       callback: (resp: any) => this.handleLoginGoogle(resp)
     });
 
@@ -76,28 +75,14 @@ export class HomeComponent implements OnInit {
           }
         },
         error: () => {
-          alert("Ggo")
+          this.popupLoader.showPopup(
+            'Whops',
+            'Houve um problema ao autenticar com conta Google.'
+
+          )
         }
       })
       
     }
   }
-
-  
-
-   btnClick() {
-
-     this.netApi.get<Test>('test', 'testme').subscribe({
-
-       next: (data) => {
-
-         if (data.success) alert('Sent and success!')
-         else alert('there was no success')
-
-       },
-       error: () => alert('An error ocurred')
-     });
-  }
-
-
 }
