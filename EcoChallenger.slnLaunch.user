@@ -3,11 +3,11 @@
     "Name": "Novo Perfil",
     "Projects": [
       {
-        "Path": "EcoChallenger\\EcoChallenger.csproj",
+        "Path": "ClientApp\\ClientApp.esproj",
         "Action": "Start"
       },
       {
-        "Path": "ClientApp\\ClientApp.esproj",
+        "Path": "EcoChallenger\\EcoChallenger.csproj",
         "Action": "Start"
       }
     ]
