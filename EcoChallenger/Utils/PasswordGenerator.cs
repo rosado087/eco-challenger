@@ -37,9 +37,9 @@ public static class PasswordGenerator {
         return false;
     }
 
-            public static bool ValidatePassword(string password, string hashedPassword)
+            public static bool ValidatePassword(string password, string hashedpassword)
         {
-            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+            return GeneratePasswordHash(password) == hashedpassword;
         }
 
 }
