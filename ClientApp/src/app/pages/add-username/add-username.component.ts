@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NetApiService } from '../../services/net-api.service';
 import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
@@ -12,6 +12,7 @@ export interface Result {
 @Component({
   selector: 'app-add-username',
   imports: [FormsModule, ButtonComponent, ReactiveFormsModule],
+  providers: [PopupLoaderService],
   templateUrl: './add-username.component.html',
   styleUrl: './add-username.component.css'
 })
@@ -23,24 +24,25 @@ export class AddUsernameComponent {
   usernameForm = new FormGroup({
     username: new FormControl('', [
       Validators.required,
-      this.userExists()
+      
     ])
   })
 
   getUsername() {
-    return this.usernameForm.get('username');
+    return this.usernameForm?.get('username');
   }
 
   userExists() {
-    
 
+
+    if (!this.getUsername()?.value) return true
 
     return (control: AbstractControl): ValidationErrors | null => {
-      this.netApi.post<Result>('user', 'user-exists', [this.getUsername()?.value]).subscribe({
+      this.netApi.post<Result>('User', 'UserExists', [this.getUsername()?.value]).subscribe({
 
         next: (data) => {
 
-          return data.success ?{ usernameExists: true } : null
+          return data.success
           
         },
         error: () =>
@@ -57,7 +59,8 @@ export class AddUsernameComponent {
 
   addUser() {
     var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
-    this.netApi.post<Result>('user', 'signup-google', [this.getUsername()?.value, data.email, data.sub]).subscribe({
+    
+    this.netApi.put<Result>('User', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
 
       next: (data) => {
 

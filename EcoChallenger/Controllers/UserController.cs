@@ -17,51 +17,52 @@ namespace EcoChallenger.Controllers
             this._configuration = configuration;
         }
 
-        [HttpGet("id")]
-        public string GetId()
+        [HttpGet("GetGoogleId")]
+        public async Task<JsonResult> GetGoogleId()
         {
-            Console.WriteLine(_configuration["Google:ClientId"]);
-            return _configuration["Google:ClientId"];
-        } 
+            return new JsonResult(new { success = _configuration["GoogleClient:ClientId"] });
+        }
 
-        [HttpPost("authenticate")]
-        public async Task<JsonResult> AuthenticateGoogle(string token, string email)
+        [HttpPost("AuthenticateGoogle")]
+        public async Task<JsonResult> AuthenticateGoogle(string[] values)
         {
+            if (_context.Users.Any()) {
+                var user = await _context.Users.FirstAsync(u => u.GoogleToken == values[0] || u.Email == values[1]);
 
-            var user = await _context.Users.FirstAsync(t => t.GoogleToken == token);
-
-            
-            if (user == null)
-            {
-                user = await _context.Users.FirstAsync(u => u.Email == email);
-                
-                if(user != null)
+                if (user == null)
                 {
-                    user.GoogleToken = token;
-                    _context.Users.Update(user);
-                    return new JsonResult(new { success = true });
+                    return new JsonResult(new { success = false });
                 }
 
-                return new JsonResult(new { success = false });
+                if (user.GoogleToken == null)
+                {
+                    user.GoogleToken = values[0];
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                }
+                return new JsonResult(new { success = true });
             }
 
-            return new JsonResult(new { success = true });
+            return new JsonResult(new { success = false });
 
         }
 
-        [HttpPut("signup-google")]
-        public async Task<JsonResult> signUpGoogle(string username, string email, string token)
+        [HttpPut("SignUpGoogle")]
+        public async Task<JsonResult> SignUpGoogle(string[] values)
         {
 
-            var user = new User { Email = email, Username = username, GoogleToken = token };
+            var user = new User { Email = values[1], Username = values[0], GoogleToken = values[2] };
             _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
                 return new JsonResult(new { success = true });
         }
 
-        [HttpPost("user-exists")]
-        public async Task<JsonResult> userExists(string username)
+        [HttpPost("UserExists")]
+        public async Task<JsonResult> UserExists(string username)
         {
+            if(username == null) return new JsonResult(new { success = true });
+
             var user = await _context.Users.FirstAsync(u => u.Username == username);
 
             return new JsonResult((user != null) ? new {success = true} : new {success = false});
