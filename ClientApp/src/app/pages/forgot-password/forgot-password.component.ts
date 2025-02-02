@@ -25,7 +25,7 @@ import {
     ],
     templateUrl: './forgot-password.component.html',
     styleUrl: './forgot-password.component.css'
-})
+}) 
 export class ForgotPasswordComponent {
     netApi = inject(NetApiService)
     popupLoader = inject(PopupLoaderService)
