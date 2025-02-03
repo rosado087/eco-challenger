@@ -5,11 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "msedge",
+            "name": "C#: EcoChallenger [http]",
+            "type": "dotnet",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:5294",
-            "webRoot": "${workspaceFolder}"
+            "projectPath": "${workspaceFolder}\\EcoChallenger\\EcoChallenger.csproj",
+            "launchConfigurationId": "TargetFramework=;http"
+
         }
     ]
 }
