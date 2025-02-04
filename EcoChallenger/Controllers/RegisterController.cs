@@ -35,8 +35,6 @@ namespace EcoChallenger.Controllers
                     return new JsonResult(new { success = false, message = "Este email já existe" });
 
 
-                //userTkn.User.Password = PasswordGenerator.GeneratePasswordHash(data.Password);
-
                 data.Password = PasswordGenerator.GeneratePasswordHash(data.Password);
 
                 // Adiciona um novo utilizador
