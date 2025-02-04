@@ -10,6 +10,7 @@
             "request": "launch",
             "projectPath": "${workspaceFolder}\\EcoChallenger\\EcoChallenger.csproj",
             "launchConfigurationId": "TargetFramework=;http"
+
         }
     ]
 }

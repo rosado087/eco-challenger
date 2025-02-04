@@ -10,6 +10,7 @@ public class User {
     [Required]
     public required string Email { get; set; }
 
-    [Required]
-    public required string Password { get; set; }
+    public string? Password { get; set; }
+
+    public string? GoogleToken { get; set; }
 }

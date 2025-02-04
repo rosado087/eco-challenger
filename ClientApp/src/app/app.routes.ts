@@ -25,6 +25,24 @@ export const routes: Routes = [
                 './pages/reset-password/reset-password.component'
             ).then((m) => m.ResetPasswordComponent)
         }
+
+
+  },
+  {
+    path: 'main-page',
+    loadComponent: () => {
+      return import(
+        './pages/main-page/main-page.component'
+      ).then((m) => m.MainPageComponent)
+    }
+  },
+  {
+    path: 'add-username',
+    loadComponent: () => {
+      return import(
+        './pages/add-username/add-username.component'
+      ).then((m) => m.AddUsernameComponent)
+
     },
     {
         path: 'register',
@@ -33,5 +51,7 @@ export const routes: Routes = [
                 './pages/register/register.component'
             ).then((m) => m.RegisterComponent)
         }
+
     }
+  }
 ]
