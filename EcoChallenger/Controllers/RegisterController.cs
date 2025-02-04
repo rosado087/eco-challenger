@@ -34,13 +34,12 @@ namespace EcoChallenger.Controllers
                 if (emailExists)
                     return new JsonResult(new { success = false, message = "Este email já existe" });
 
-
                 data.Password = PasswordGenerator.GeneratePasswordHash(data.Password);
 
                 // Adiciona um novo utilizador
                 await _ctx.Users.AddAsync(data);
                 await _ctx.SaveChangesAsync();
-                // retorna uma resposta JSON com sucessor true
+
                 return new JsonResult(new { success = true });
             }
             catch (Exception e)
