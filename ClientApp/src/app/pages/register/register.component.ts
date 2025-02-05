@@ -91,7 +91,7 @@ export class RegisterComponent {
                 'O email já está a ser utilizado.',
               )
             }
-            
+
           },
           error: () =>
           this.popupLoader.showPopup(

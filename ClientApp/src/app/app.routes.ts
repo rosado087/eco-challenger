@@ -42,7 +42,7 @@ export const routes: Routes = [
       return import(
         './pages/add-username/add-username.component'
       ).then((m) => m.AddUsernameComponent)
-
+    }
     },
     {
         path: 'register',
@@ -52,6 +52,14 @@ export const routes: Routes = [
             ).then((m) => m.RegisterComponent)
         }
 
+    },
+    {
+      path: 'login',
+      loadComponent: () => {
+        return import(
+          './pages/login/login.component'
+        ).then((m) => m.LoginComponent)
+      }
     }
-  }
+  
 ]
