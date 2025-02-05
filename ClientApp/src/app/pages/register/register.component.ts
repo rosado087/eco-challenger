@@ -88,17 +88,19 @@ export class RegisterComponent {
             }else{
               this.popupLoader.showPopup(
                 'Erro ao registar a conta',
-                'O email já está a ser utilizado.',
+                response.message || 'Ocorreu um erro!',
               )
             }
+            this.disableSubmit = true
             
           },
-          error: () =>
+          error: () =>{          
           this.popupLoader.showPopup(
             'Erro ao registar a conta',
             'O email já está a ser utilizado.'
           )
+          this.disableSubmit = true
+        }
       })
-      this.disableSubmit = false
   }
 }

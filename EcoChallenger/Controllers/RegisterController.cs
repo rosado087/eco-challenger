@@ -15,6 +15,14 @@ namespace EcoChallenger.Controllers
             _ctx = context;
         }
 
+        /// <summary>
+        /// Handles the action that creates a new User.
+        /// Verifies if the email which the User wrote is not being used already.
+        /// If not, creates a new hashed password.
+        /// Add the new User into the database.
+        /// </summary>
+        /// <param name="data">Contains the user's username, email address and password</param>
+        /// <returns>JSON result indicating success or failure. If returns failure also returns the error message</returns>
 
         [HttpPost("RegisterAccount")]
         public async Task<JsonResult> RegisterAccount([FromBody] User data)  {
@@ -26,7 +34,9 @@ namespace EcoChallenger.Controllers
                 if (emailExists)
                     return new JsonResult(new { success = false, message = "Este email já existe" });
 
-                // Adiciona um novo usuário
+                data.Password = PasswordGenerator.GeneratePasswordHash(data.Password);
+
+                // Adiciona um novo utilizador
                 await _ctx.Users.AddAsync(data);
                 await _ctx.SaveChangesAsync();
 

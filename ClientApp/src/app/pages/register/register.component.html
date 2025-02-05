@@ -78,14 +78,10 @@
             </form>
 
             <div class="card-actions justify-center">
-                <app-button
-                    text="Login"
-                    (btnClick)="registerAccount()"
-                    [disabled]="disableSubmit" />
-                    <app-button class="ml-6"
-                    text="Registar"
-                    (btnClick)="registerAccount()"
-                    [disabled]="disableSubmit" />
+                <app-button class="ml-6"
+                text="Registar"
+                (btnClick)="registerAccount()"
+                [disabled]="disableSubmit" />
             </div>
         </div>
     </div>

@@ -1,3 +1,4 @@
 export interface SuccessModel {
-    success: boolean
+    success: boolean,
+    message?: string
 }
