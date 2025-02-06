@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router'
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
     {
@@ -7,7 +7,7 @@ export const routes: Routes = [
         loadComponent: () => {
             return import('./pages/home/home.component').then(
                 (m) => m.HomeComponent
-            )
+            );
         }
     },
     {
@@ -15,7 +15,7 @@ export const routes: Routes = [
         loadComponent: () => {
             return import(
                 './pages/forgot-password/forgot-password.component'
-            ).then((m) => m.ForgotPasswordComponent)
+            ).then((m) => m.ForgotPasswordComponent);
         }
     },
     {
@@ -23,35 +23,39 @@ export const routes: Routes = [
         loadComponent: () => {
             return import(
                 './pages/reset-password/reset-password.component'
-            ).then((m) => m.ResetPasswordComponent)
+            ).then((m) => m.ResetPasswordComponent);
         }
-
-
-  },
-  {
-    path: 'main-page',
-    loadComponent: () => {
-      return import(
-        './pages/main-page/main-page.component'
-      ).then((m) => m.MainPageComponent)
-    }
-  },
-  {
-    path: 'add-username',
-    loadComponent: () => {
-      return import(
-        './pages/add-username/add-username.component'
-      ).then((m) => m.AddUsernameComponent)
-
+    },
+    {
+        path: 'main-page',
+        loadComponent: () => {
+            return import(
+                './pages/main-page/main-page.component'
+            ).then((m) => m.MainPageComponent);
+        }
+    },
+    {
+        path: 'add-username',
+        loadComponent: () => {
+            return import(
+                './pages/add-username/add-username.component'
+            ).then((m) => m.AddUsernameComponent);
+        }
     },
     {
         path: 'register',
         loadComponent: () => {
             return import(
                 './pages/register/register.component'
-            ).then((m) => m.RegisterComponent)
+            ).then((m) => m.RegisterComponent);
         }
-
+    },
+    {
+        path: 'login',
+        loadComponent: () => {
+            return import(
+                './pages/login/login.component'
+            ).then((m) => m.LoginComponent);
+        }
     }
-  }
-]
+];
