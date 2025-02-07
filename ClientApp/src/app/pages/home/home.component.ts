@@ -11,7 +11,7 @@ export interface Result {
 
 @Component({
   selector: 'app-home',
-  imports: [ButtonComponent],
+  //imports: [ButtonComponent],
   providers: [PopupLoaderService],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
@@ -19,7 +19,7 @@ export interface Result {
 
 
 export class HomeComponent implements OnInit {
-    
+
   netApi = inject(NetApiService)
   popupLoader = inject(PopupLoaderService)
   router = inject(Router)
@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
     this.netApi.get<Result>('User', 'GetGoogleId').subscribe({
 
       next: (data) => {
-        
+
         google.accounts.id.initialize({
           client_id: data.success,
           callback: (resp: any) => this.handleLoginGoogle(resp)
@@ -49,12 +49,12 @@ export class HomeComponent implements OnInit {
         this.popupLoader.showPopup(
           'Whops',
           'Isto é um problema.'
-          
+
         )
       }
     });
 
-    
+
   }
 
   handleLoginGoogle(response: any) {
@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit {
           )
         }
       })
-      
+
     }
   }
 }
