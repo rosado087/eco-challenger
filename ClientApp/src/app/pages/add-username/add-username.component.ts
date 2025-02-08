@@ -38,7 +38,7 @@ export class AddUsernameComponent {
     if (!this.getUsername()?.value) return true
 
     return (control: AbstractControl): ValidationErrors | null => {
-      this.netApi.post<Result>('User', 'UserExists', [this.getUsername()?.value]).subscribe({
+      this.netApi.post<Result>('Login', 'UserExists', [this.getUsername()?.value]).subscribe({
 
         next: (data) => {
 
@@ -60,7 +60,7 @@ export class AddUsernameComponent {
   addUser() {
     var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
     
-    this.netApi.put<Result>('User', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
+    this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
 
       next: (data) => {
 

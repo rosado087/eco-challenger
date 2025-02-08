@@ -62,5 +62,57 @@ namespace EcoChallenger.Controllers
                 return new JsonResult(new { success = false, message = "An error occurred during login." });
             }
         }
+
+        [HttpGet("GetGoogleId")]
+        public async Task<JsonResult> GetGoogleId()
+        {
+            return new JsonResult(new { success = _configuration["GoogleClient:ClientId"] });
+        }
+
+        [HttpPost("AuthenticateGoogle")]
+        public async Task<JsonResult> AuthenticateGoogle(string[] values)
+        {
+            if (_ctx.Users.Any())
+            {
+                var user = await _ctx.Users.FirstAsync(u => u.GoogleToken == values[0] || u.Email == values[1]);
+
+                if (user == null)
+                {
+                    return new JsonResult(new { success = false });
+                }
+
+                if (user.GoogleToken == null)
+                {
+                    user.GoogleToken = values[0];
+                    _ctx.Users.Update(user);
+                    await _ctx.SaveChangesAsync();
+                }
+                return new JsonResult(new { success = true });
+            }
+
+            return new JsonResult(new { success = false });
+
+        }
+
+        [HttpPut("SignUpGoogle")]
+        public async Task<JsonResult> SignUpGoogle(string[] values)
+        {
+
+            var user = new User { Email = values[1], Username = values[0], GoogleToken = values[2] };
+            _ctx.Users.Add(user);
+            await _ctx.SaveChangesAsync();
+
+            return new JsonResult(new { success = true });
+        }
+
+        [HttpPost("UserExists")]
+        public async Task<JsonResult> UserExists(string username)
+        {
+            if (username == null) return new JsonResult(new { success = true });
+
+            var user = await _ctx.Users.FirstAsync(u => u.Username == username);
+
+            return new JsonResult((user != null) ? new { success = true } : new { success = false });
+        }
     }
 }
