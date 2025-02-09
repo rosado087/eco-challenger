@@ -110,14 +110,14 @@ loginUser() {
 
       this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {
-          if (data.success) this.router.navigate(['main-page']);
+          if (data.success) this.router.navigate(['/']);
           else {
             this.router.navigate(['add-username']);
           }
         },
         error: () => {
           this.popupLoader.showPopup(
-            'Whops',
+            'Erro',
             'Houve um problema ao autenticar com conta Google.'
 
           )
