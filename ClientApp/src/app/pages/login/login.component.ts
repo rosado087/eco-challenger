@@ -7,6 +7,7 @@ import { SuccessModel } from '../../models/success-model'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
 import { PopupButton } from '../../models/popup-button'
+import { Result } from '../home/home.component'
 
 @Component({
   selector: 'app-login',
