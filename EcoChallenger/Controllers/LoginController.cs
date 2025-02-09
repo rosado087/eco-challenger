@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -72,20 +73,23 @@ namespace EcoChallenger.Controllers
         [HttpPost("AuthenticateGoogle")]
         public async Task<JsonResult> AuthenticateGoogle(string[] values)
         {
+            
+
             if (_ctx.Users.Any())
             {
-                var user = await _ctx.Users.FirstAsync(u => u.GoogleToken == values[0] || u.Email == values[1]);
-
+                
+                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.GoogleToken == values[0] || u.Email == values[1]);
+                
                 if (user == null)
                 {
                     return new JsonResult(new { success = false });
                 }
-
-                if (user.GoogleToken == null)
+                else if (user.GoogleToken == null)
                 {
-                    user.GoogleToken = values[0];
+                    user.GoogleToken =  values[0].ToString();
                     _ctx.Users.Update(user);
                     await _ctx.SaveChangesAsync();
+                    return new JsonResult(new { success = true });
                 }
                 return new JsonResult(new { success = true });
             }
