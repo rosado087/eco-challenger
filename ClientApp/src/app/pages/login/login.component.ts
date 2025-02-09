@@ -8,7 +8,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router'
 import { PopupButton } from '../../models/popup-button'
 
-import { Result } from '../home/home.component'
 
 declare var google: any;
 
@@ -141,30 +140,6 @@ export class LoginComponent implements OnInit {
         this.disableSubmit = false;
       }
     });
-  }
-
-  handleLoginGoogle(response: any) {
-    if (response) {
-      const info = JSON.parse(atob(response.credential.split(".")[1]));
-      sessionStorage.setItem("loggedInUser", JSON.stringify(info));
-
-      this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
-        next: (data) => {
-          if (data.success) this.router.navigate(['main-page']);
-          else {
-            this.router.navigate(['add-username']);
-          }
-        },
-        error: () => {
-          this.popupLoader.showPopup(
-            'Whops',
-            'Houve um problema ao autenticar com conta Google.'
-
-          )
-        }
-      })
-
-    }
   }
 
   handleLoginGoogle(response: any) {
