@@ -1,11 +1,19 @@
 <div class="navbar bg-secondary">
-    <div class="flex-1">
-        <a routerLink="/" class="text-xl"><app-logo [height]="'4rem'" /></a>
-    </div>
-    <div class="flex-none">
-        <ul class="menu menu-horizontal px-1">
-            <li routerLink="/login"><a>Login</a></li>
-            <li routerLink="/register"><a>Registo</a></li>
-        </ul>
-    </div>
+  <div class="flex-1">
+      <a routerLink="/" class="text-xl"><app-logo [height]="'4rem'" /></a>
+  </div>
+  <div class="flex-none">
+      <ul class="menu menu-horizontal px-1">
+          @if (!isLoggedIn) {
+              <li routerLink="/login"><a>Login</a></li>
+              <li routerLink="/register"><a>Registo</a></li>
+          }
+          @if (isLoggedIn) {
+              <li><span class="text-black font-bold">{{ username }}</span></li>
+              <li (click)="logout()"><a>Logout</a></li>
+          }
+      </ul>
+  </div>
 </div>
+
+

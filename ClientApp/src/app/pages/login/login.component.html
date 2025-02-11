@@ -46,10 +46,10 @@
         </div>
         @if (getPassword()?.invalid && getPassword()?.touched) {
         @if (getPassword()?.errors?.['required']) {
-        <p class="text-red-500 text-sm">Este campo é obrigatório!</p>
+        <p class="text-red-500 text-sm">Este campo é obrigatório.</p>
         }
         @if (getPassword()?.errors?.['minlength']) {
-        <p class="text-red-500 text-sm">A palavra-passe deve ter pelo menos 8 caracteres.</p>
+        <p class="text-red-500 text-sm">A plavra-passe deve ter pelo menos 8 caracteres.</p>
         }
         }
       </div>
