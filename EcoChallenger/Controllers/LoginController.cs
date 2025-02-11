@@ -75,7 +75,7 @@ namespace EcoChallenger.Controllers
         {
             
 
-            if (_ctx.Users.Any())
+            if (await _ctx.Users.AnyAsync())
             {
                 
                 var user = await _ctx.Users.FirstOrDefaultAsync(u => u.GoogleToken == values[0] || u.Email == values[1]);
@@ -101,7 +101,7 @@ namespace EcoChallenger.Controllers
         [HttpPut("SignUpGoogle")]
         public async Task<JsonResult> SignUpGoogle(string[] values)
         {
-
+            if (await UserExists(values[0])) return new JsonResult(new {success = false});
             var user = new User { Email = values[1], Username = values[0], GoogleToken = values[2] };
             _ctx.Users.Add(user);
             await _ctx.SaveChangesAsync();
@@ -110,13 +110,13 @@ namespace EcoChallenger.Controllers
         }
 
         [HttpPost("UserExists")]
-        public async Task<JsonResult> UserExists(string username)
+        public async Task<bool> UserExists(string username = "")
         {
-            if (username == null) return new JsonResult(new { success = true });
+            if (! await _ctx.Users.AnyAsync())return true;
 
-            var user = await _ctx.Users.FirstAsync(u => u.Username == username);
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
 
-            return new JsonResult((user != null) ? new { success = true } : new { success = false });
+            return (user != null || username == "");
         }
     }
 }
