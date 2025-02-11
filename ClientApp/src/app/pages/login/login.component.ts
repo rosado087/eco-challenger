@@ -1,22 +1,24 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { NgIcon, provideIcons } from '@ng-icons/core'
 import { heroUser, heroLockClosed } from '@ng-icons/heroicons/outline'
-import { ButtonComponent } from '../../components/button/button.component'
 import { PopupLoaderService } from '../../services/popup-loader.service'
 import { NetApiService } from '../../services/net-api.service'
 import { SuccessModel } from '../../models/success-model'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Router } from '@angular/router' // Import Router
+import { Router, RouterLink } from '@angular/router'
 import { PopupButton } from '../../models/popup-button'
+
+
 declare var google: any;
 
 export interface Result {
   success: any
 }
 
+
 @Component({
   selector: 'app-login',
-  imports: [NgIcon, ReactiveFormsModule],
+  imports: [NgIcon, ReactiveFormsModule, RouterLink],
   providers: [
     provideIcons({ heroUser, heroLockClosed }),
     PopupLoaderService
@@ -147,14 +149,14 @@ export class LoginComponent implements OnInit {
 
       this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {
-          if (data.success) this.router.navigate(['main-page']);
+          if (data.success) this.router.navigate(['/']);
           else {
             this.router.navigate(['add-username']);
           }
         },
         error: () => {
           this.popupLoader.showPopup(
-            'Whops',
+            'Erro',
             'Houve um problema ao autenticar com conta Google.'
 
           )

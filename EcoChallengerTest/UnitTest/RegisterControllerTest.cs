@@ -1,7 +1,7 @@
 using EcoChallenger.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-namespace EcoChallengerTest
+namespace EcoChallengerTest.UnitTest
 {
     public class RegisterControllerTest
     {
@@ -22,7 +22,10 @@ namespace EcoChallengerTest
             //Arrange
             var context = GetInMemoryDbContext();
             var controller = new RegisterController(context);
-            var newUser = new User { Email = "test@gmail.com", Username = "test", Password = "123" };
+            var newUser = new User { Email = "test@gmail.com",
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("123")
+            };
 
             //Act
             var result = await controller.RegisterAccount(newUser) as JsonResult;
@@ -40,12 +43,19 @@ namespace EcoChallengerTest
         {
             // Arrange
             var context = GetInMemoryDbContext();
-            var existingUser = new User { Email = "test@gmail.com", Username = "test", Password = "123" };
+            var existingUser = new User { 
+                Email = "test@gmail.com", 
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("123")
+            };
+
             await context.Users.AddAsync(existingUser);
             await context.SaveChangesAsync();
 
             var controller = new RegisterController(context);
-            var newUser = new User { Email = "test@gmail.com", Username = "test", Password = "123" };
+            var newUser = new User { Email = "test@gmail.com",
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("123") };
 
             // Act
             var result = await controller.RegisterAccount(newUser) as JsonResult;
@@ -69,7 +79,11 @@ namespace EcoChallengerTest
             failingContext.Dispose(); // Simulate a failure scenario (DB is closed)
 
             var controller = new RegisterController(failingContext);
-            var newUser = new User { Email = "test@gmail.com", Username = "test", Password = "123" };
+            var newUser = new User { 
+                Email = "test@gmail.com",
+                Username = "test", 
+                Password = PasswordGenerator.GeneratePasswordHash("123") 
+            };
 
             // Act
             var result = await controller.RegisterAccount(newUser) as JsonResult;
@@ -83,7 +97,7 @@ namespace EcoChallengerTest
             Assert.NotNull(successProperty);
             Assert.NotNull(messageProperty);
             Assert.False(successValue);
-            Assert.Contains("Cannot access a disposed context instance", messageValue); 
+            Assert.Contains("Cannot access a disposed context instance", messageValue);
         }
     }
 }

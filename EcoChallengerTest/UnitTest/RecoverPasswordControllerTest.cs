@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EcoChallengerTest
+namespace EcoChallengerTest.UnitTest
 {
     public class RecoverPasswordControllerTest
     {
@@ -62,7 +62,7 @@ namespace EcoChallengerTest
         {
             // Arrange
             var context = GetInMemoryDbContext();
-            var validToken = TokenManager.CreateUserToken(new User { Email = "test@gmail.com", Username = "test" , Password = "123"});
+            var validToken = TokenManager.CreateUserToken(new User { Email = "test@gmail.com", Username = "test", Password = "123" });
             context.UserTokens.Add(validToken);
             context.SaveChanges();
 
