@@ -1,4 +1,4 @@
-<div class="flex items-center justify-center min-h-[80vh]">
+<div class="min-h-screen flex flex-col items-center justify-center">
     <div class="card bg-base-100 w-96 shadow-xl">
         <div class="card-body gap-6">
             <div class="flex flex-row justify-center">
@@ -6,14 +6,14 @@
             </div>
 
             <form [formGroup]="registerForm" id="registerForm">
-                <label class="block text-gray-700 font-medium mb-1">Username</label>
+                <label class="block text-gray-700 font-medium mb-1">Nome de utilizador</label>
                 <label
                     class="input input-bordered flex items-center gap-2 validator">
                     <ng-icon name="heroUser" />
                     <input
                         type="text"
                         class="grow"
-                        placeholder="Username"
+                        placeholder="Nome de utilizador"
                         formControlName="userName" />
                 </label>
                 @if (
@@ -50,14 +50,14 @@
                         </div>
                     }
                 }
-                <label class="block text-gray-700 font-medium mb-1 mt-3">Password</label>
+                <label class="block text-gray-700 font-medium mb-1 mt-3">Palavra-passe</label>
                 <label
                     class="input input-bordered flex items-center gap-2 validator">
                     <ng-icon name="heroKey" />
                     <input
                         type="password"
                         class="grow"
-                        placeholder="Password"
+                        placeholder="Palavra-passe"
                         formControlName="password" />
                 </label>
                 @if (
@@ -76,7 +76,8 @@
                 }
 
             </form>
-
+            
+            <!-- Register Button -->
             <div class="card-actions justify-center">
                 <app-button class="ml-6"
                 text="Registar"
@@ -85,4 +86,9 @@
             </div>
         </div>
     </div>
+
+    <div class="mt-6 text-center">
+        <a routerLink="/login" class="text-sm text-gray-500 hover:text-green-600">Já tem uma conta? Faça login aqui!</a>
+    </div>
 </div>
+

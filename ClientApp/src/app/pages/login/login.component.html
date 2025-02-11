@@ -19,15 +19,15 @@
                  id="email"
                  formControlName="email"
                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
-                 placeholder="Enter your email"
+                 placeholder="Email"
                  required>
         </div>
         @if (getEmail()?.invalid && getEmail()?.touched) {
         @if (getEmail()?.errors?.['required']) {
-        <p class="text-red-500 text-sm">Este campo é obrigatório.</p>
+        <p class="text-red-500 text-sm">Este campo é obrigatório!</p>
         }
         @if (getEmail()?.errors?.['email']) {
-        <p class="text-red-500 text-sm">Este campo é obrigatório.</p>
+        <p class="text-red-500 text-sm">Introduza um email válido.</p>
         }
         }
       </div>
@@ -41,7 +41,7 @@
                  id="password"
                  formControlName="password"
                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
-                 placeholder="Enter your password"
+                 placeholder="Palavra-passe"
                  required>
         </div>
         @if (getPassword()?.invalid && getPassword()?.touched) {
@@ -78,6 +78,6 @@
 
   <!-- Footer Links -->
   <div class="mt-6 text-center">
-    <a routerLink="/register" class="text-sm text-gray-500 hover:text-green-600">Não tem uma conta? Regista-te!</a>
+    <a routerLink="/register" class="text-sm text-gray-500 hover:text-green-600">Não tem uma conta? Registe-se!</a>
   </div>
 </div>

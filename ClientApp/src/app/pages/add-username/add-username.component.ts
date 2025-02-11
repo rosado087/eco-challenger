@@ -58,23 +58,31 @@ export class AddUsernameComponent {
   }
 
   addUser() {
-    var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
-    
-    this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
+    if (!this.userExists()) {
+      var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
 
-      next: (data) => {
+      this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
 
-        if (data.success) this.router.navigate(['main-page']);
-        
+        next: (data) => {
 
-      },
-      error: () =>
+          if (data.success) this.router.navigate(['main-page']);
 
-        this.popupLoader.showPopup(
-          'Whops',
-          'Houve um problema a adicionar o utilizador.'
 
-        )
-    });
+        },
+        error: () =>
+
+          this.popupLoader.showPopup(
+            'Whops',
+            'Houve um problema a adicionar o utilizador.'
+
+          )
+      });
+    } else {
+      this.popupLoader.showPopup(
+        'Whops',
+        'Este utilizador já está a ser utilizado.'
+
+      )
+    }
   }
 }
