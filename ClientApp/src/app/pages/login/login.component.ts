@@ -142,23 +142,12 @@ export class LoginComponent implements OnInit {
 
   handleLoginGoogle(response: any) {
     if (response) {
-      const popupButton: PopupButton[] = [
-        {
-          type: 'ok',
-          text: 'Okay',
-          callback: () => this.router.navigate(['main-page'])
-        }
-      ];
-
-      console.log(response.credential.split(".").length);
       const info = JSON.parse(atob(response.credential.split(".")[1]));
       sessionStorage.setItem("loggedInUser", JSON.stringify(info));
 
       this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {
-          if (data.success) {
-            this.popupLoader.showPopup('Olá','Bem Vindo ao Eco Challenger!', popupButton);
-          }
+          if (data.success) this.router.navigate(['main-page']);
           else {
             this.router.navigate(['add-username']);
           }
