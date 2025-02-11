@@ -115,9 +115,7 @@ public class LoginGoogleTest
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == "test@example.com");
         Assert.NotNull(user);
 
-        // 🔹 Ensure the username matches
         Assert.Equal("TestUser", user.Username);
         Assert.Equal("test-token", user.GoogleToken);
     }
-
 }
