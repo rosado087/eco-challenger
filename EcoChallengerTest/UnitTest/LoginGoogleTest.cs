@@ -75,12 +75,20 @@ public class LoginGoogleTest
         // Arrange
         string[] values = { "invalid-token", "nonexistent@example.com" };
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            await _controller.AuthenticateGoogle(values));
+        // Act
+        var result = await _controller.AuthenticateGoogle(values) as JsonResult;
 
-        Assert.Equal("Sequence contains no elements", exception.Message);
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotNull(result.Value);
+
+        var successProperty = result.Value.GetType().GetProperty("success");
+        Assert.NotNull(successProperty);
+
+        var successValue = (bool)successProperty.GetValue(result.Value);
+        Assert.False(successValue);
     }
+
 
     [Fact]
     public async Task SignUpGoogle_Creates_New_User_And_Returns_Success()
