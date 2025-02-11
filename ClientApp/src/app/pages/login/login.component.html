@@ -19,37 +19,37 @@
                  id="email"
                  formControlName="email"
                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
-                 placeholder="Enter your email"
+                 placeholder="Email"
                  required>
         </div>
         @if (getEmail()?.invalid && getEmail()?.touched) {
         @if (getEmail()?.errors?.['required']) {
-        <p class="text-red-500 text-sm">Email is required.</p>
+        <p class="text-red-500 text-sm">Este campo é obrigatório!</p>
         }
         @if (getEmail()?.errors?.['email']) {
-        <p class="text-red-500 text-sm">Please enter a valid email.</p>
+        <p class="text-red-500 text-sm">Introduza um email válido.</p>
         }
         }
       </div>
 
       <!-- Password Field -->
       <div>
-        <label class="block text-gray-700 font-medium mb-1" for="password">Password</label>
+        <label class="block text-gray-700 font-medium mb-1" for="password">Palavra-passe</label>
         <div class="relative">
           <ng-icon name="heroLockClosed" class="absolute left-3 top-3 text-gray-500"></ng-icon>
           <input type="password"
                  id="password"
                  formControlName="password"
                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
-                 placeholder="Enter your password"
+                 placeholder="Palavra-passe"
                  required>
         </div>
         @if (getPassword()?.invalid && getPassword()?.touched) {
         @if (getPassword()?.errors?.['required']) {
-        <p class="text-red-500 text-sm">Password is required.</p>
+        <p class="text-red-500 text-sm">Este campo é obrigatório!</p>
         }
         @if (getPassword()?.errors?.['minlength']) {
-        <p class="text-red-500 text-sm">Password must be at least 6 characters long.</p>
+        <p class="text-red-500 text-sm">A palavra-passe deve ter pelo menos 8 caracteres.</p>
         }
         }
       </div>
@@ -64,11 +64,11 @@
 
     <!-- Forgot Password Link -->
     <div class="mt-4 text-center">
-      <a routerLink="/forgot-password" class="text-sm text-green-500 hover:underline">Forgot your password?</a>
+      <a routerLink="/forgot-password" class="text-sm text-green-500 hover:underline">Esqueceu-se da palavra-passe?</a>
     </div>
 
     <hr />
-    <h3 class=" text-center" style="margin-top:10%">Continue with</h3>
+    <h3 class=" text-center" style="margin-top:10%">Com conta Google</h3>
 
     <div style="align-content:center center">
       <div id="google-btn"></div>
@@ -78,6 +78,6 @@
 
   <!-- Footer Links -->
   <div class="mt-6 text-center">
-    <a routerLink="/register" class="text-sm text-gray-500 hover:text-green-600">Don't have an account? Register</a>
+    <a routerLink="/register" class="text-sm text-gray-500 hover:text-green-600">Não tem uma conta? Registe-se!</a>
   </div>
 </div>
