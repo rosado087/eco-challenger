@@ -147,9 +147,19 @@ export class LoginComponent implements OnInit {
       const info = JSON.parse(atob(response.credential.split(".")[1]));
       sessionStorage.setItem("loggedInUser", JSON.stringify(info));
 
+      const popupButton: PopupButton[] = [
+        {
+          type: 'ok',
+          text: 'Okay',
+          callback: () => this.router.navigate(['main-page'])
+        }
+      ];
+
       this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {
-          if (data.success) this.router.navigate(['/']);
+          if (data.success)
+            this.popupLoader.showPopup('Olá', 'Bem Vindo ao Eco Challenger!', popupButton);
+ 
           else {
             this.router.navigate(['add-username']);
           }
