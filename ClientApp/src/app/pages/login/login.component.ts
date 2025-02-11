@@ -137,6 +137,7 @@ export class LoginComponent implements OnInit {
       // Store user info in sessionStorage
       sessionStorage.setItem("loggedInUser", JSON.stringify(info));
 
+
       // Call API to authenticate Google user
       this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {

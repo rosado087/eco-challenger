@@ -34,7 +34,6 @@ public class RecoverPasswordAutomationTest
             .Options;
         dbContext = new AppDbContext(options);
 
-        // Navigate to the forgot password page
         driver.Navigate().GoToUrl("http://localhost:4200/forgot-password");
     }
 
@@ -56,10 +55,8 @@ public class RecoverPasswordAutomationTest
 
         string token = RetrieveTokenFromDatabase(emailAddress);
 
-        // Navigate to reset password page
         driver.Navigate().GoToUrl($"http://localhost:4200/reset-password/{token}");
 
-        // Fill in new password
         var newPasswordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='newPassword']")));
         var confirmPasswordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='confirmPassword']")));
         var submitButton = wait.Until(d => d.FindElement(By.XPath("//app-button[@text='Submeter']")));

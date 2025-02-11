@@ -4,6 +4,7 @@ import { NetApiService } from '../../services/net-api.service';
 import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
 import { PopupLoaderService } from '../../services/popup-loader.service';
+import { PopupButton } from '../../models/popup-button';
 
 export interface Result {
   success: boolean
@@ -23,8 +24,7 @@ export class AddUsernameComponent {
 
   usernameForm = new FormGroup({
     username: new FormControl('', [
-      Validators.required,
-      
+      Validators.required
     ])
   })
 
@@ -32,57 +32,39 @@ export class AddUsernameComponent {
     return this.usernameForm?.get('username');
   }
 
-  userExists() {
-
-
-    if (!this.getUsername()?.value) return true
-
-    return (control: AbstractControl): ValidationErrors | null => {
-      this.netApi.post<Result>('Login', 'UserExists', [this.getUsername()?.value]).subscribe({
-
-        next: (data) => {
-
-          return data.success
-          
-        },
-        error: () =>
-          this.popupLoader.showPopup(
-            'Whops',
-            'Houve um problema a comparar nomes de utilizador.'
-
-          )
-      });
-
-      return null;
-    }
-  }
-
   addUser() {
-    if (!this.userExists()) {
-      var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
 
-      this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
+    const popupButton: PopupButton[] = [
+      {
+        type: 'ok',
+        text: 'Okay',
+        callback: () => this.router.navigate(['main-page'])
+      }
+    ];
+    var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
 
-        next: (data) => {
+    this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
 
-          if (data.success) this.router.navigate(['main-page']);
+      next: (data) => {
 
+        if (data.success) {
+          this.popupLoader.showPopup('Olá', 'Obrigado por se juntar ao Eco Challenger!', popupButton);
 
-        },
-        error: () =>
-
+        } else
           this.popupLoader.showPopup(
             'Whops',
-            'Houve um problema a adicionar o utilizador.'
+            'Este username já existe'
 
           )
-      });
-    } else {
-      this.popupLoader.showPopup(
-        'Whops',
-        'Este utilizador já está a ser utilizado.'
+      },
+      error: () =>
 
-      )
-    }
+        this.popupLoader.showPopup(
+          'Whops',
+          'Houve um problema a adicionar o utilizador.'
+
+        )
+    });
+
   }
 }

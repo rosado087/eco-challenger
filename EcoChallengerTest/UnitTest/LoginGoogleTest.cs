@@ -3,15 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using EcoChallenger.Controllers;
-using Newtonsoft.Json.Linq;
 
-public class UserControllerTest
+public class LoginGoogleTest
 {
-    private readonly UserController _controller;
+    private readonly LoginController _controller;
     private readonly Mock<IConfiguration> _mockConfig;
     private readonly AppDbContext _dbContext;
 
-    public UserControllerTest()
+    public LoginGoogleTest()
     {
         _mockConfig = new Mock<IConfiguration>();
 
@@ -22,7 +21,7 @@ public class UserControllerTest
         _dbContext = new AppDbContext(options);
 
         // Initialize the controller with dependencies
-        _controller = new UserController(_dbContext, _mockConfig.Object);
+        _controller = new LoginController(_dbContext, _mockConfig.Object);
     }
 
     [Fact]
@@ -34,13 +33,12 @@ public class UserControllerTest
         // Act
         var result = await _controller.GetGoogleId() as JsonResult;
 
-        // Assert result is not null
+        // Assert
         Assert.NotNull(result);
         Assert.NotNull(result.Value);
 
-        // Extract 'success' property using reflection
         var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty); // Ensure the property exists
+        Assert.NotNull(successProperty);
 
         var successValue = successProperty.GetValue(result.Value) as string;
         Assert.NotNull(successValue);
@@ -91,10 +89,14 @@ public class UserControllerTest
         Assert.False(successValue);
     }
 
+
     [Fact]
     public async Task SignUpGoogle_Creates_New_User_And_Returns_Success()
     {
         // Arrange
+        _dbContext.Users.RemoveRange(_dbContext.Users); // Clear existing users
+        await _dbContext.SaveChangesAsync();
+
         string[] values = { "TestUser", "test@example.com", "test-token" };
 
         // Act
@@ -112,29 +114,8 @@ public class UserControllerTest
 
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == "test@example.com");
         Assert.NotNull(user);
+
         Assert.Equal("TestUser", user.Username);
         Assert.Equal("test-token", user.GoogleToken);
-    }
-
-    [Fact]
-    public async Task UserExists_Returns_True_When_User_Exists()
-    {
-        // Arrange
-        var testUser = new User { Email = "test@example.com", Username = "ExistingUser", Password = "123", GoogleToken = "test-token" };
-        _dbContext.Users.Add(testUser);
-        await _dbContext.SaveChangesAsync();
-
-        // Act
-        var result = await _controller.UserExists("ExistingUser") as JsonResult;
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
-
-        var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty);
-
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        Assert.True(successValue);
     }
 }
