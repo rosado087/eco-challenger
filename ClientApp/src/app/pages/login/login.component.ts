@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit {
       },
       error: () => {
         this.popupLoader.showPopup(
-          'Whops',
+          'Erro',
           'Isto é um problema.'
 
         )
@@ -104,14 +104,25 @@ export class LoginComponent implements OnInit {
 
     this.netApi.post<LoginResponseModel>('Login', 'Login', params).subscribe({
       next: (response) => {
+        const popupButton: PopupButton[] = [
+          {
+            type: 'ok',
+            text: 'Okay',
+            callback: () => this.router.navigate(['/'])
+          }
+        ]
         if (response.success) {
           const userInfo = {
             Username: response.username,
             Email: response.email
           };
 
-          this.authService.login(userInfo, response.token); // ✅ Use AuthService
-          this.router.navigate(['/']);
+          this.authService.login(userInfo, response.token); // Use AuthService
+          this.popupLoader.showPopup(
+            'Login Bem-Sucedido',
+            'Entrou na sua conta!',
+            popupButton
+          )
         } else {
           this.popupLoader.showPopup('Erro ao fazer login', 'Email ou senha incorretos.');
         }
@@ -142,13 +153,13 @@ export class LoginComponent implements OnInit {
       this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {
           if (data.success) {
-            // ✅ Update AuthService so the Header updates
+            // Update AuthService so the Header updates
             const userInfo = {
               Username: info.name || info.email.split("@")[0], // Use name if available
               Email: info.email
             };
 
-            this.authService.login(userInfo, "google-token"); // ✅ Notify AuthService
+            this.authService.login(userInfo, "google-token"); // Notify AuthService
             this.router.navigate(['/']);
           } else {
             this.router.navigate(['add-username']);

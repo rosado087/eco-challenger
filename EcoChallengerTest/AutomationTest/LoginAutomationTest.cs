@@ -43,6 +43,11 @@ namespace EcoChallengerTest.AutomationTest
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
+            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
+
+            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
+            okayButton.Click();
+
             wait.Until(d => d.Url.Contains("http://localhost:4200/")); 
         }
 
@@ -64,12 +69,17 @@ namespace EcoChallengerTest.AutomationTest
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
+            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
+
+            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
+            okayButton.Click();
+
             wait.Until(d => d.Url.Contains("http://localhost:4200/"));
 
             var logout = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[2]/a")));
             logout.Click();
 
-            var popup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div")));
+            var logoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div")));
 
             var okayLogout = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div/div/form/app-button/button")));
             okayLogout.Click();
