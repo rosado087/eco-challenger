@@ -18,4 +18,6 @@ public class LoginRequestModel
     public bool Success { get; set; }
     public string Message { get; set; }
     public string Token { get; set; }
+    public string Username { get; set; } // ✅ Add username
+    public string Email { get; set; } // ✅ Add email
 }

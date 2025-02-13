@@ -9,7 +9,7 @@ import { ButtonComponent } from '../../components/button/button.component'
 import { PopupLoaderService } from '../../services/popup-loader.service'
 import { NetApiService } from '../../services/net-api.service'
 import { SuccessModel } from '../../models/success-model'
-import { ActivatedRoute, Router } from '@angular/router'
+import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { PopupButton } from '../../models/popup-button'
 import {
   FormControl,
@@ -21,7 +21,7 @@ import {
 
 @Component({
   selector: 'app-register',
-  imports: [NgIcon, ButtonComponent, ReactiveFormsModule],
+  imports: [NgIcon, ButtonComponent, ReactiveFormsModule, RouterLink],
   providers: [
     provideIcons({ heroAtSymbol, heroUser, heroKey }),
     PopupLoaderService
