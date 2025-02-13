@@ -38,7 +38,7 @@ export class AddUsernameComponent {
       {
         type: 'ok',
         text: 'Okay',
-        callback: () => this.router.navigate(['main-page'])
+        callback: () => this.router.navigate(['/'])
       }
     ];
     var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
@@ -48,11 +48,11 @@ export class AddUsernameComponent {
       next: (data) => {
 
         if (data.success) {
-          this.popupLoader.showPopup('Olá', 'Obrigado por se juntar ao Eco Challenger!', popupButton);
+          this.popupLoader.showPopup('Login', 'Obrigado por se juntar ao Eco Challenger!', popupButton);
 
         } else
           this.popupLoader.showPopup(
-            'Whops',
+            'Erro',
             'Este username já existe'
 
           )
