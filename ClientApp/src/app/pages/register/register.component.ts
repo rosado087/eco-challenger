@@ -74,7 +74,7 @@ export class RegisterComponent {
               {
                 type: 'ok',
                 text: 'Okay',
-                callback: () => this.router.navigate(['/'])
+                callback: () => this.router.navigate(['/login'])
               }
             ]
 
