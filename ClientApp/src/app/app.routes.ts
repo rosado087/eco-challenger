@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../guards/auth-guard.guard';
 
 export const routes: Routes = [
     {
@@ -8,7 +9,8 @@ export const routes: Routes = [
             return import('./pages/home/home.component').then(
                 (m) => m.HomeComponent
             );
-        }
+        },
+        canActivate: [authGuard]
     },
     {
         path: 'forgot-password',
@@ -32,7 +34,7 @@ export const routes: Routes = [
             return import(
                 './pages/main-page/main-page.component'
             ).then((m) => m.MainPageComponent);
-        }
+        },
     },
     {
         path: 'add-username',
