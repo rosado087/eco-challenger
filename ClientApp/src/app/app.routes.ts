@@ -57,5 +57,13 @@ export const routes: Routes = [
                 './pages/login/login.component'
             ).then((m) => m.LoginComponent);
         }
+    },
+    {
+        path: 'user-profile',
+        loadComponent: () => {
+            return import(
+                './pages/user-profile/user-profile.component'
+            ).then((m) => m.UserProfileComponent);
+        }
     }
 ];

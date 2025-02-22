@@ -9,9 +9,11 @@
               <li routerLink="/register"><a>Registo</a></li>
           }
           @if (isLoggedIn) {
-              <li><span class="text-black font-bold">{{ username }}</span></li>
-              <li (click)="logout()"><a>Logout</a></li>
-          }
+            <li>
+                <a routerLink="/user-profile" class="text-black font-bold hover:text-green-600">{{ username }}</a>
+            </li>
+            <li (click)="logout()"><a>Logout</a></li>
+        }
       </ul>
   </div>
 </div>
