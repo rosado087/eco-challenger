@@ -19,6 +19,10 @@ export class AuthService {
     return user ? JSON.parse(user).Username : null;
   }
 
+  get isLoggedIn(): boolean {
+    return this.isLoggedInSubject.getValue();
+  }
+
   login(userInfo: any, token: string) {
     sessionStorage.setItem('loggedInUser', JSON.stringify(userInfo));
     sessionStorage.setItem('authToken', token);
