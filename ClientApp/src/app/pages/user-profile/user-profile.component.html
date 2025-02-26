@@ -94,13 +94,24 @@
         <!-- Campo de Nome -->
         <div class="mt-4">
           <label class="block text-gray-700 font-medium mb-1">Nome de utilizador:</label>
-          <input type="text" [(ngModel)]="searchUsername"
-                 class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200">
+          <input id="InputAdd" type="text" (input) = "findUser()"
+                 class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200"> 
         </div>
 
         <!-- Lista de Utilizadores -->
         <div class="mt-4 border rounded-lg p-2 h-32 overflow-y-auto text-gray-600">
-          Lista de utilizadores <!-- Aqui pode-se integrar com a base de dados futuramente -->
+          Lista de utilizadores
+          <table class="w-full text-left">
+            <tbody>
+              <tr *ngFor="let username of userList; let i = index" class="border-b">
+              @if(username === selectedUser){
+                <td class="p-2 bg-green-600 text-white" (click)="selectUser(username)">{{ username }}</td>
+              }@else{
+                <td class="p-2" (click)="selectUser(username)">{{ username }}</td>
+              }
+              </tr><!-- Aqui pode-se integrar com a base de dados futuramente -->
+            </tbody>
+          </table>
         </div>
 
         <!-- Botões -->

@@ -91,9 +91,8 @@ namespace EcoChallenger.Controllers
                     user.GoogleToken =  values[0].ToString();
                     _ctx.Users.Update(user);
                     await _ctx.SaveChangesAsync();
-                    return new JsonResult(new { success = true });
                 }
-                return new JsonResult(new { success = true });
+                return new JsonResult(new { success = true, name = user.Username });
             }
 
             return new JsonResult(new { success = false });
@@ -114,7 +113,7 @@ namespace EcoChallenger.Controllers
         [HttpPost("UserExists")]
         public async Task<bool> UserExists(string username = "")
         {
-            if (!await _ctx.Users.AnyAsync()) return true;
+            
 
             var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
 

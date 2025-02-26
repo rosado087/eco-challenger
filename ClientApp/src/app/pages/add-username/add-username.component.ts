@@ -5,6 +5,7 @@ import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
 import { PopupLoaderService } from '../../services/popup-loader.service';
 import { PopupButton } from '../../models/popup-button';
+import { AuthService } from '../../services/auth.service';
 
 export interface Result {
   success: boolean
@@ -19,6 +20,7 @@ export interface Result {
 })
 export class AddUsernameComponent {
   netApi = inject(NetApiService)
+  authService = inject(AuthService)
   router = inject(Router)
   popupLoader = inject(PopupLoaderService)
 
@@ -34,15 +36,26 @@ export class AddUsernameComponent {
 
   addUser() {
 
+    var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
+
     const popupButton: PopupButton[] = [
       {
         type: 'ok',
         text: 'Okay',
-        callback: () => this.router.navigate(['/'])
+        callback: () => {
+          const userInfo = {
+            Username: this.getUsername()?.value,
+            Email: data.email
+          };
+
+          this.authService.login(userInfo, "google-token"); // Notify AuthService
+          this.router.navigate(['/']);
+
+        }
       }
     ];
-    var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
-
+    
+    
     this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
 
       next: (data) => {
