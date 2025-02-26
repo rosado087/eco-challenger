@@ -91,9 +91,8 @@ namespace EcoChallenger.Controllers
                     user.GoogleToken =  values[0].ToString();
                     _ctx.Users.Update(user);
                     await _ctx.SaveChangesAsync();
-                    return new JsonResult(new { success = true });
                 }
-                return new JsonResult(new { success = true });
+                return new JsonResult(new { success = true, name = user.Username });
             }
 
             return new JsonResult(new { success = false });

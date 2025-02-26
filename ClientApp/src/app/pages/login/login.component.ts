@@ -150,12 +150,12 @@ export class LoginComponent implements OnInit {
 
 
       // Call API to authenticate Google user
-      this.netApi.post<Result>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
+      this.netApi.post<any>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {
           if (data.success) {
             // Update AuthService so the Header updates
             const userInfo = {
-              Username: info.name || info.email.split("@")[0], // Use name if available
+              Username: data.name || info.email.split("@")[0], // Use name if available
               Email: info.email
             };
 
