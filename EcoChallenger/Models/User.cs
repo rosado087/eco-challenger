@@ -1,3 +1,4 @@
+using EcoChallenger.Models;
 using System.ComponentModel.DataAnnotations;
 
 public class User {
@@ -13,4 +14,6 @@ public class User {
     public string? Password { get; set; }
 
     public string? GoogleToken { get; set; }
+    
+    
 }

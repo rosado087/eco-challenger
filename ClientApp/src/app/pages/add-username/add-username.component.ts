@@ -42,7 +42,7 @@ export class AddUsernameComponent {
       }
     ];
     var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
-
+    console.log(this.getUsername()?.value);
     this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
 
       next: (data) => {

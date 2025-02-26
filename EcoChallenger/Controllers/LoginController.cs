@@ -114,7 +114,7 @@ namespace EcoChallenger.Controllers
         [HttpPost("UserExists")]
         public async Task<bool> UserExists(string username = "")
         {
-            if (!await _ctx.Users.AnyAsync()) return true;
+            
 
             var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
 
