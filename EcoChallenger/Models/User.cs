@@ -2,6 +2,7 @@ using EcoChallenger.Models;
 using System.ComponentModel.DataAnnotations;
 
 public class User {
+    [Key]
     public int Id { get; set; }
     
     [Required]
@@ -14,6 +15,6 @@ public class User {
     public string? Password { get; set; }
 
     public string? GoogleToken { get; set; }
-    
-    
+
+    public int Points { get; set; }
 }

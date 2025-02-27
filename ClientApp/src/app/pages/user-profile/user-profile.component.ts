@@ -5,6 +5,7 @@ import { NetApiService } from '../../services/net-api.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { UserModel } from '../../models/user-model';
 import { NgFor, NgIf } from '@angular/common';
 import { heroUser, heroLockClosed, heroPencil } from '@ng-icons/heroicons/outline';
 
@@ -33,12 +34,11 @@ export class UserProfileComponent implements OnInit {
   router = inject(Router);
   authService = inject(AuthService);
 
-  // Dados do usuário
-  username: string = "Badao";
-  email: string = "ddd@gmail.com";
-  points: number = 350;
-  completedChallenges: number = 5;
-  tags: string = "Nenhuma tag equipada";
+  username: string = "";
+  email: string = "";
+  points: string = "";
+  tag: string = "";
+
 
   // Lista de amigos
   friendsList: { username: string }[] = [
@@ -72,37 +72,49 @@ export class UserProfileComponent implements OnInit {
       { username: "Amigo8" }
     ];
 
-    console.log("🚀 Amigos carregados:", this.friendsList); // <--- Testar se os amigos existem
+    console.log("Amigos carregados:", this.friendsList); // <--- Testar se os amigos existem
   }
-
-
 
   /**
    * Carregar informações do perfil do user
    */
   loadUserProfile() {
-    // Simulação de requisição à API para buscar dados do user
-    /*this.netApi.get<any>('Profile', 'GetUserProfile').subscribe({
-      next: (data) => {
-        this.username = data.username;
-        this.email = data.email;
-        this.points = data.points;
-        this.completedChallenges = data.completedChallenges;
-        this.tags =/* data.tags ||*/ /*"Nenhuma tag equipada";
-        this.friendsList = data.friends || [];
-      },
-      error: () => {
-        this.popupLoader.showPopup('Erro', 'Não foi possível carregar os dados do perfil.');
-      }
-    });*/
+    const email = this.authService.getUserEmail;
+  
+    this.netApi.get<UserModel>('Profile', 'GetUserInfo', email)
+      .subscribe({
+        next: (data) => {
+          if (data.success) {
+            this.username = data.username;
+            this.email = data.email;
+            this.points = data.points;
+            this.tag = data.tag;
+          }else {
+            this.popupLoader.showPopup('Erro', data.message || 'Ocorreu um erro!');
+          }
+        },
+        error: () => {
+          this.popupLoader.showPopup('Erro', 'Não foi possível carregar os dados do perfil.');
+        }
+      });
+  }
 
+  getTags(){
+    this.netApi.get<UserModel>('Profile', 'GetTags', this.email)
+    .subscribe({
+      next: (data) => {
+
+      }, error: () => {
+        this.popupLoader.showPopup('Erro', 'Não foi possível editar os dados do perfil.')
+      }
+    })
   }
 
   /**
    * Atualizar nome de utilizador na API
    */
   updateUsername() {
-    if (this.username.trim() === "") {
+    if (this.username != null && this.username.trim() === "") {
       this.popupLoader.showPopup('Erro', 'O nome de utilizador não pode estar vazio.');
       return;
     }
