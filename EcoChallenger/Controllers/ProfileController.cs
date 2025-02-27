@@ -111,5 +111,28 @@ namespace EcoChallenger.Controllers
 
             return new JsonResult(new { result = true });
         }
+
+        
+[HttpGet("GetFriends")]
+public async Task<IActionResult> GetFriends(string username)
+{
+    var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
+    if (user == null)
+    {
+        return NotFound(new { success = false, message = "Usuário não encontrado." });
+    }
+
+    var friends = await _ctx.Friendships
+        .Where(f => f.UserId == user.Id)
+        .Join(_ctx.Users, // Faz JOIN com a tabela Users
+              f => f.FriendId, // Chave estrangeira na tabela Friendships
+              u => u.Id, // ID do usuário na tabela Users
+              (f, u) => u.Username) // Obtém apenas o nome do usuário amigo
+        .ToListAsync();
+
+    return Ok(new { success = true, friends });
+}
+
+
     }
 }
