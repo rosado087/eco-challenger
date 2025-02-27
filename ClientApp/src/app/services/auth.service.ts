@@ -19,6 +19,11 @@ export class AuthService {
     return user ? JSON.parse(user).Username : null;
   }
 
+  get getUserEmail(): string {
+    const user = sessionStorage.getItem('loggedInUser');
+    return user ? JSON.parse(user).Email : "";
+  }
+
   get isLoggedIn(): boolean {
     return this.isLoggedInSubject.getValue();
   }

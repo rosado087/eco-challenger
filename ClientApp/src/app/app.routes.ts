@@ -29,14 +29,6 @@ export const routes: Routes = [
         }
     },
     {
-        path: 'main-page',
-        loadComponent: () => {
-            return import(
-                './pages/main-page/main-page.component'
-            ).then((m) => m.MainPageComponent);
-        },
-    },
-    {
         path: 'add-username',
         loadComponent: () => {
             return import(
