@@ -36,21 +36,22 @@ export class NetApiService {
         )
     }
 
-  put<T>(controller: string,
-    action: string,
-    data: any,
-    ...routeParams: string[]
-  ): Observable<T> {
-    return this.http.put<T>(
-      this.#buildUrl(controller, action, routeParams),
-      data,
-      {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json'
-        })
-      }
-    )
-  }
+    put<T>(
+        controller: string,
+        action: string,
+        data: any,
+        ...routeParams: string[]
+    ): Observable<T> {
+        return this.http.put<T>(
+            this.#buildUrl(controller, action, routeParams),
+            data,
+            {
+                headers: new HttpHeaders({
+                    'Content-Type': 'application/json'
+                })
+            }
+        )
+    }
 
     #buildUrl(controller: string, action: string, routeParams: string[]) {
         let route = `${this.baseUrl}/${controller.toLowerCase()}/${action.toLocaleLowerCase()}`

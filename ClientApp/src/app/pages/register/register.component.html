@@ -6,7 +6,11 @@
             </div>
 
             <form [formGroup]="registerForm" id="registerForm">
-                <label for="username-input" class="block text-gray-700 font-medium mb-1">Nome de utilizador</label>
+                <label
+                    for="username-input"
+                    class="block text-gray-700 font-medium mb-1"
+                    >Nome de utilizador</label
+                >
                 <label
                     id="username-input"
                     class="input input-bordered flex items-center gap-2 validator">
@@ -27,7 +31,11 @@
                         </div>
                     }
                 }
-                <label for="email-input" class="block text-gray-700 font-medium mb-1 mt-3">Email</label>
+                <label
+                    for="email-input"
+                    class="block text-gray-700 font-medium mb-1 mt-3"
+                    >Email</label
+                >
                 <label
                     id="email-input"
                     class="input input-bordered flex items-center gap-2 validator">
@@ -52,7 +60,11 @@
                         </div>
                     }
                 }
-                <label for="password-input" class="block text-gray-700 font-medium mb-1 mt-3">Palavra-passe</label>
+                <label
+                    for="password-input"
+                    class="block text-gray-700 font-medium mb-1 mt-3"
+                    >Palavra-passe</label
+                >
                 <label
                     id="password-input"
                     class="input input-bordered flex items-center gap-2 validator">
@@ -77,21 +89,24 @@
                         </div>
                     }
                 }
-
             </form>
-            
+
             <!-- Register Button -->
             <div class="card-actions justify-center">
-                <app-button class="ml-6"
-                text="Registar"
-                (btnClick)="registerAccount()"
-                [disabled]="disableSubmit" />
+                <app-button
+                    class="ml-6"
+                    text="Registar"
+                    (btnClick)="registerAccount()"
+                    [disabled]="disableSubmit" />
             </div>
         </div>
     </div>
 
     <div class="mt-6 text-center">
-        <a routerLink="/login" class="text-sm text-gray-500 hover:text-green-600">Já tem uma conta? Faça login aqui!</a>
+        <a
+            routerLink="/login"
+            class="text-sm text-gray-500 hover:text-green-600"
+            >Já tem uma conta? Faça login aqui!</a
+        >
     </div>
 </div>
-
