@@ -23,7 +23,6 @@ export class HeaderComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        const testvar = ''
         this.authService.isLoggedIn$.subscribe(
             (status) => (this.isLoggedIn = status)
         )
