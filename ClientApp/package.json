@@ -23,7 +23,6 @@
     "@angular/router": "^19.0.0",
     "@ng-icons/core": "^30.2.0",
     "@ng-icons/heroicons": "^30.2.0",
-    "client-app": "file:",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
