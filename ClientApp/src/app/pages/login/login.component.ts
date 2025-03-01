@@ -1,29 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Component, inject, OnInit } from '@angular/core'
 import { NgIcon, provideIcons } from '@ng-icons/core'
 import { heroUser, heroLockClosed } from '@ng-icons/heroicons/outline'
 import { PopupLoaderService } from '../../services/popup-loader.service'
 import { NetApiService } from '../../services/net-api.service'
-import { SuccessModel } from '../../models/success-model'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
 import { PopupButton } from '../../models/popup-button'
 import { AuthService } from '../../services/auth.service';
+import { GAuthLoginModel, GAuthLoginResponseModel } from '../../models/gauth-login'
 
-
+/*
+  This google variable is filled through a script tag that is placed
+  in index.html and must be here, from my understanding this is an awful hack
+  since google GIS doesn't have any proper packages to implement this.
+*/
 declare var google: any;
-
-export interface Result {
-  success: any
-}
-
-interface LoginResponseModel {
-  success: boolean;
-  message: string;
-  token: string;
-  username: string;
-  email: string;
-}
-
 
 @Component({
   selector: 'app-login',
@@ -49,16 +42,11 @@ export class LoginComponent implements OnInit {
   })
 
   ngOnInit(): void {
-
-    let value;
-
-    this.netApi.get<Result>('Login', 'GetGoogleId').subscribe({
-
+    this.netApi.get<GAuthLoginModel>('Login', 'GetGoogleId').subscribe({
       next: (data) => {
-
         google.accounts.id.initialize({
-          client_id: data.success,
-          callback: (resp: any) => this.handleLoginGoogle(resp)
+          client_id: data.clientId,
+          callback: (resp: unknown) => this.handleLoginGoogle(resp)
         });
 
         google.accounts.id.renderButton(document.getElementById("google-btn"), {
@@ -70,13 +58,10 @@ export class LoginComponent implements OnInit {
       error: () => {
         this.popupLoader.showPopup(
           'Erro',
-          'Isto é um problema.'
-
+          'Ocorreu um erro ao inicializar o serviço de autenticação google.'
         )
       }
     });
-
-
   }
 
   getEmail() {
@@ -139,8 +124,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-
-
   handleLoginGoogle(response: any) {
     if (response) {
       const info = JSON.parse(atob(response.credential.split(".")[1]));
@@ -148,9 +131,8 @@ export class LoginComponent implements OnInit {
       // Store user info in sessionStorage
       sessionStorage.setItem("loggedInUser", JSON.stringify(info));
 
-
       // Call API to authenticate Google user
-      this.netApi.post<any>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
+      this.netApi.post<GAuthLoginResponseModel>('Login', 'AuthenticateGoogle', [info.sub, info.email]).subscribe({
         next: (data) => {
           if (data.success) {
             // Update AuthService so the Header updates
@@ -171,6 +153,4 @@ export class LoginComponent implements OnInit {
       });
     }
   }
-
-
 }
