@@ -1,9 +1,9 @@
-export interface UserModel{
-    username: string,
-    email: string,
-    points: string,
-    tag: string,
-    message: string 
-    success: boolean,
+export interface UserModel {
+    username: string
+    email: string
+    points: string
+    tag: string
+    message: string
+    success: boolean
     list: string[]
 }

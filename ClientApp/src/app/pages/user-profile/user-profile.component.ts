@@ -1,219 +1,260 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { PopupLoaderService } from '../../services/popup-loader.service';
-import { NetApiService } from '../../services/net-api.service';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { FormsModule } from '@angular/forms';
-import { UserModel } from '../../models/user-model';
-import { NgFor, NgIf } from '@angular/common';
-import { heroUser, heroLockClosed, heroPencil } from '@ng-icons/heroicons/outline';
+import { Component, inject, OnInit } from '@angular/core'
+import { NgIcon, provideIcons } from '@ng-icons/core'
+import { PopupLoaderService } from '../../services/popup-loader.service'
+import { NetApiService } from '../../services/net-api.service'
+import { Router } from '@angular/router'
+import { AuthService } from '../../services/auth.service'
+import { FormsModule } from '@angular/forms'
+import { UserModel } from '../../models/user-model'
+import { NgFor, NgIf } from '@angular/common'
+import {
+    heroUser,
+    heroLockClosed,
+    heroPencil
+} from '@ng-icons/heroicons/outline'
 
 export interface UserList {
-  usernames: string[] 
-}
-
-export interface Result {
-  success : any
+    usernames: string[]
 }
 
 @Component({
-  selector: 'app-user-profile',
-  imports: [NgIcon, NgFor, NgIf, FormsModule],
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.css'],
-  providers: [
-    provideIcons({ heroUser, heroLockClosed, heroPencil }),
-    PopupLoaderService
-]
+    selector: 'app-user-profile',
+    imports: [NgIcon, NgFor, NgIf, FormsModule],
+    templateUrl: './user-profile.component.html',
+    styleUrls: ['./user-profile.component.css'],
+    providers: [
+        provideIcons({ heroUser, heroLockClosed, heroPencil }),
+        PopupLoaderService
+    ]
 })
 export class UserProfileComponent implements OnInit {
+    netApi = inject(NetApiService)
+    popupLoader = inject(PopupLoaderService)
+    router = inject(Router)
+    authService = inject(AuthService)
 
-  netApi = inject(NetApiService);
-  popupLoader = inject(PopupLoaderService);
-  router = inject(Router);
-  authService = inject(AuthService);
+    username: string = ''
+    email: string = ''
+    points: string = ''
+    tag: string = ''
 
-  username: string = "";
-  email: string = "";
-  points: string = "";
-  tag: string = "";
+    // Lista de amigos
+    friendsList: { username: string }[] = [
+        { username: 'Amigo1' },
+        { username: 'Amigo2' },
+        { username: 'Amigo3' },
+        { username: 'Amigo4' },
+        { username: 'Amigo5' }
+    ]
 
+    userList: string[] = []
 
-  // Lista de amigos
-  friendsList: { username: string }[] = [
-    { username: "Amigo1" },
-    { username: "Amigo2" },
-    { username: "Amigo3" },
-    { username: "Amigo4" },
-    { username: "Amigo5" }
-  ];
+    // Controle de modais
+    showAddFriendModal: boolean = false
+    showRemoveFriendModal: boolean = false
+    selectedFriendIndex: number | null = null
+    searchUsername: string = ''
+    selectedUser: string = ''
 
-  userList : string [] = [];
+    ngOnInit(): void {
+        //this.loadUserProfile();
 
-  // Controle de modais
-  showAddFriendModal: boolean = false;
-  showRemoveFriendModal: boolean = false;
-  selectedFriendIndex: number | null = null;
-  searchUsername: string = "";
-  selectedUser: string = "";
+        this.friendsList = [
+            { username: 'Amigo1' },
+            { username: 'Amigo2' },
+            { username: 'Amigo3' },
+            { username: 'Amigo4' },
+            { username: 'Amigo5' },
+            { username: 'Amigo6' },
+            { username: 'Amigo7' },
+            { username: 'Amigo8' }
+        ]
 
-  ngOnInit(): void {
-    //this.loadUserProfile();
+        console.log('Amigos carregados:', this.friendsList) // <--- Testar se os amigos existem
+    }
 
-    this.friendsList = [
-      { username: "Amigo1" },
-      { username: "Amigo2" },
-      { username: "Amigo3" },
-      { username: "Amigo4" },
-      { username: "Amigo5" },
-      { username: "Amigo6" },
-      { username: "Amigo7" },
-      { username: "Amigo8" }
-    ];
+    /**
+     * Carregar informações do perfil do user
+     */
+    loadUserProfile() {
+        const email = this.authService.getUserEmail
 
-    console.log("Amigos carregados:", this.friendsList); // <--- Testar se os amigos existem
-  }
+        this.netApi.get<UserModel>('Profile', 'GetUserInfo', email).subscribe({
+            next: (data) => {
+                if (data.success) {
+                    this.username = data.username
+                    this.email = data.email
+                    this.points = data.points
+                    this.tag = data.tag
+                } else {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        data.message || 'Ocorreu um erro!'
+                    )
+                }
+            },
+            error: () => {
+                this.popupLoader.showPopup(
+                    'Erro',
+                    'Não foi possível carregar os dados do perfil.'
+                )
+            }
+        })
+    }
 
-  /**
-   * Carregar informações do perfil do user
-   */
-  loadUserProfile() {
-    const email = this.authService.getUserEmail;
-  
-    this.netApi.get<UserModel>('Profile', 'GetUserInfo', email)
-      .subscribe({
-        next: (data) => {
-          if (data.success) {
-            this.username = data.username;
-            this.email = data.email;
-            this.points = data.points;
-            this.tag = data.tag;
-          }else {
-            this.popupLoader.showPopup('Erro', data.message || 'Ocorreu um erro!');
-          }
-        },
-        error: () => {
-          this.popupLoader.showPopup('Erro', 'Não foi possível carregar os dados do perfil.');
+    getTags() {
+        this.netApi.get<UserModel>('Profile', 'GetTags', this.email).subscribe({
+            /*next: () => {
+
+      },*/ error: () => {
+                this.popupLoader.showPopup(
+                    'Erro',
+                    'Não foi possível editar os dados do perfil.'
+                )
+            }
+        })
+    }
+
+    /**
+     * Atualizar nome de utilizador na API
+     */
+    updateUsername() {
+        if (this.username != null && this.username.trim() === '') {
+            this.popupLoader.showPopup(
+                'Erro',
+                'O nome de utilizador não pode estar vazio.'
+            )
+            return
         }
-      });
-  }
 
-  getTags(){
-    this.netApi.get<UserModel>('Profile', 'GetTags', this.email)
-    .subscribe({
-      next: (data) => {
-
-      }, error: () => {
-        this.popupLoader.showPopup('Erro', 'Não foi possível editar os dados do perfil.')
-      }
-    })
-  }
-
-  /**
-   * Atualizar nome de utilizador na API
-   */
-  updateUsername() {
-    if (this.username != null && this.username.trim() === "") {
-      this.popupLoader.showPopup('Erro', 'O nome de utilizador não pode estar vazio.');
-      return;
+        this.netApi
+            .post('Profile', 'UpdateUsername', { username: this.username })
+            .subscribe({
+                next: () => {
+                    this.popupLoader.showPopup(
+                        'Sucesso',
+                        'Nome de utilizador atualizado com sucesso.'
+                    )
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível atualizar o nome de utilizador.'
+                    )
+                }
+            })
     }
 
-    this.netApi.post<any>('Profile', 'UpdateUsername', { username: this.username }).subscribe({
-      next: () => {
-        this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');
-      },
-      error: () => {
-        this.popupLoader.showPopup('Erro', 'Não foi possível atualizar o nome de utilizador.');
-      }
-    });
-  }
+    /**
+     * Abrir o perfil de um amigo
+     */
+    viewProfile(username: string) {
+        this.router.navigate(['/friend-profile', username])
+    }
 
-  /**
-   * Abrir o perfil de um amigo
-   */
-  viewProfile(username: string) {
-    this.router.navigate(['/friend-profile', username]);
-  }
-
-  findUser() {
-    this.userList = [];
-    this.searchUsername = (document.getElementById("InputAdd") as HTMLInputElement).value || "";
-    if (this.searchUsername.trim() !== ""){
-      this.netApi.post<UserList>('Profile', 'UserList', [this.username, this.searchUsername]).subscribe({
-
-        next: (data) => {
-          this.userList = this.userList.concat(data.usernames)
-        },
-        error: () => {
-          this.popupLoader.showPopup(
-            'Erro',
-            'Isto é um problema.'
-
-          )
+    findUser() {
+        this.userList = []
+        this.searchUsername =
+            (document.getElementById('InputAdd') as HTMLInputElement).value ||
+            ''
+        if (this.searchUsername.trim() !== '') {
+            this.netApi
+                .post<UserList>('Profile', 'UserList', [
+                    this.username,
+                    this.searchUsername
+                ])
+                .subscribe({
+                    next: (data) => {
+                        this.userList = this.userList.concat(data.usernames)
+                    },
+                    error: () => {
+                        this.popupLoader.showPopup(
+                            'Erro',
+                            'Isto é um problema.'
+                        )
+                    }
+                })
         }
-      });
-    }
-    
-  }
-
-  /**
-   * Guarda o nome de utilizador para adicionar como amigo.
-   * 
-   * @param username selected username
-   */
-  selectUser(username: string) {
-    if (this.selectedUser.toLowerCase() === username.toLowerCase()) this.selectedUser = "";
-    else this.selectedUser = username;
-
-  }
-
-  /**
-   * Adicionar um amigo à lista
-   */
-  addFriend() {
-    if (this.searchUsername.trim() === "") {
-      this.popupLoader.showPopup('Erro', 'Digite um nome de utilizador válido.');
-      return;
     }
 
-    this.netApi.post<Result>('Profile', 'AddFriend', [this.username, this.selectedUser]).subscribe({
-      next: (data) => {
-        this.friendsList.push({ username: this.selectedUser });
-        this.selectedUser = "";
-        this.userList = [];
-        this.showAddFriendModal = false;
-        this.popupLoader.showPopup('Sucesso', 'Amigo adicionado com sucesso.');
-      },
-      error: () => {
-        this.popupLoader.showPopup('Erro', 'Não foi possível adicionar o amigo.');
-      }
-    });
-  }
-
-  /**
-   * Remover um amigo da lista
-   */
-  removeFriend(index: number | null) {
-    if (index === null) {
-      this.popupLoader.showPopup('Erro', 'Nenhum amigo selecionado.');
-      return;
+    /**
+     * Guarda o nome de utilizador para adicionar como amigo.
+     *
+     * @param username selected username
+     */
+    selectUser(username: string) {
+        if (this.selectedUser.toLowerCase() === username.toLowerCase())
+            this.selectedUser = ''
+        else this.selectedUser = username
     }
 
-    const friendUsername = this.friendsList[index]?.username;
-    if (!friendUsername) return;
+    /**
+     * Adicionar um amigo à lista
+     */
+    addFriend() {
+        if (this.searchUsername.trim() === '') {
+            this.popupLoader.showPopup(
+                'Erro',
+                'Digite um nome de utilizador válido.'
+            )
+            return
+        }
 
-    this.netApi.post<any>('Friends', 'RemoveFriend', { username: friendUsername }).subscribe({
-      next: () => {
-        this.friendsList = [...this.friendsList.slice(0, index), ...this.friendsList.slice(index + 1)];
-        this.showRemoveFriendModal = false;
-        this.selectedFriendIndex = null; // Reset após remoção
-        this.popupLoader.showPopup('Sucesso', 'Amigo removido com sucesso.');
-      },
-      error: () => {
-        this.popupLoader.showPopup('Erro', 'Não foi possível remover o amigo.');
-      }
-    });
-  }
+        this.netApi
+            .post('Profile', 'AddFriend', [this.username, this.selectedUser])
+            .subscribe({
+                next: () => {
+                    this.friendsList.push({ username: this.selectedUser })
+                    this.selectedUser = ''
+                    this.userList = []
+                    this.showAddFriendModal = false
+                    this.popupLoader.showPopup(
+                        'Sucesso',
+                        'Amigo adicionado com sucesso.'
+                    )
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível adicionar o amigo.'
+                    )
+                }
+            })
+    }
 
+    /**
+     * Remover um amigo da lista
+     */
+    removeFriend(index: number | null) {
+        if (index === null) {
+            this.popupLoader.showPopup('Erro', 'Nenhum amigo selecionado.')
+            return
+        }
+
+        const friendUsername = this.friendsList[index]?.username
+        if (!friendUsername) return
+
+        this.netApi
+            .post('Friends', 'RemoveFriend', { username: friendUsername })
+            .subscribe({
+                next: () => {
+                    this.friendsList = [
+                        ...this.friendsList.slice(0, index),
+                        ...this.friendsList.slice(index + 1)
+                    ]
+                    this.showRemoveFriendModal = false
+                    this.selectedFriendIndex = null // Reset após remoção
+                    this.popupLoader.showPopup(
+                        'Sucesso',
+                        'Amigo removido com sucesso.'
+                    )
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível remover o amigo.'
+                    )
+                }
+            })
+    }
 }

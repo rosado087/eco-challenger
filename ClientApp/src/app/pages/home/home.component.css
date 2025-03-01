@@ -1,13 +1,12 @@
 :root {
-  --root-space: 1rem;
-  --root-half-space: calc(var(--root-space) / 2);
-  --root-third-space: calc(var(--root-space) / 3);
+    --root-space: 1rem;
+    --root-half-space: calc(var(--root-space) / 2);
+    --root-third-space: calc(var(--root-space) / 3);
 }
 
-
 .division {
-  height: 50%;
-  width:20%;
-  align-self: center;
-  margin: 10% 10% 10% 10%;
+    height: 50%;
+    width: 20%;
+    align-self: center;
+    margin: 10% 10% 10% 10%;
 }
