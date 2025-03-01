@@ -7,10 +7,7 @@ import { PopupLoaderService } from '../../services/popup-loader.service';
 import { PopupButton } from '../../models/popup-button';
 import { AuthService } from '../../services/auth.service';
 import { AuthUserInfo } from '../../models/auth-user-info';
-
-export interface Result {
-  success: boolean
-}
+import { SuccessModel } from '../../models/success-model';
 
 @Component({
   selector: 'app-add-username',
@@ -32,7 +29,7 @@ export class AddUsernameComponent {
   })
 
   getUsername() {
-    return this.usernameForm?.get('username')?.value || '';
+    return this.usernameForm?.get('username');
   }
 
   addUser() {
@@ -43,7 +40,7 @@ export class AddUsernameComponent {
         type: 'ok',
         text: 'Okay',
         callback: () => {
-          const userInfo = new AuthUserInfo(this.getUsername(), data.email)
+          const userInfo = new AuthUserInfo(this.getUsername()?.value || '', data.email)
 
           this.authService.login(userInfo, "google-token"); // Notify AuthService
           this.router.navigate(['/']);
@@ -52,7 +49,7 @@ export class AddUsernameComponent {
       }
     ];    
     
-    this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername(), data.email, data.sub]).subscribe({
+    this.netApi.put<SuccessModel>('Login', 'SignUpGoogle', [this.getUsername()?.value || '', data.email, data.sub]).subscribe({
 
       next: (data) => {
 
