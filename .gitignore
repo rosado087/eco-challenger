@@ -50,3 +50,4 @@ ClientApp/node_modules
 appsettings.json
 appsettings.Development.json
 package-lock.json
+**/dist
