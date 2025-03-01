@@ -26,4 +26,4 @@ jobs:
         run: cd ClientApp && npm install
 
       - name: Run lint
-        run: cd ClientApp && npm lint
+        run: cd ClientApp && npm run lint
