@@ -1,13 +1,9 @@
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcoChallenger.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class RegisterController : ControllerBase
+    public class RegisterController : BaseApiController
     {
         private readonly AppDbContext _ctx;
 
