@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NetApiService } from '../../services/net-api.service';
 import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
 import { PopupLoaderService } from '../../services/popup-loader.service';
 import { PopupButton } from '../../models/popup-button';
 import { AuthService } from '../../services/auth.service';
+import { AuthUserInfo } from '../../models/auth-user-info';
 
 export interface Result {
   success: boolean
@@ -31,32 +32,27 @@ export class AddUsernameComponent {
   })
 
   getUsername() {
-    return this.usernameForm?.get('username');
+    return this.usernameForm?.get('username')?.value || '';
   }
 
   addUser() {
-
-    var data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
+    const data = JSON.parse(`${sessionStorage.getItem("loggedInUser")}`);
 
     const popupButton: PopupButton[] = [
       {
         type: 'ok',
         text: 'Okay',
         callback: () => {
-          const userInfo = {
-            Username: this.getUsername()?.value,
-            Email: data.email
-          };
+          const userInfo = new AuthUserInfo(this.getUsername(), data.email)
 
           this.authService.login(userInfo, "google-token"); // Notify AuthService
           this.router.navigate(['/']);
 
         }
       }
-    ];
+    ];    
     
-    
-    this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername()?.value, data.email, data.sub]).subscribe({
+    this.netApi.put<Result>('Login', 'SignUpGoogle', [this.getUsername(), data.email, data.sub]).subscribe({
 
       next: (data) => {
 

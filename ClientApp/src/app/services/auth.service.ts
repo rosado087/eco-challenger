@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { AuthUserInfo } from '../models/auth-user-info';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasUser());
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
@@ -28,11 +30,11 @@ export class AuthService {
     return this.isLoggedInSubject.getValue();
   }
 
-  login(userInfo: any, token: string) {
+  login(userInfo: AuthUserInfo, token: string) {
     sessionStorage.setItem('loggedInUser', JSON.stringify(userInfo));
     sessionStorage.setItem('authToken', token);
     this.isLoggedInSubject.next(true);
-    this.usernameSubject.next(userInfo.Username);
+    this.usernameSubject.next(userInfo.username);
   }
 
   logout() {

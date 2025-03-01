@@ -6,8 +6,9 @@
             </div>
 
             <form [formGroup]="registerForm" id="registerForm">
-                <label class="block text-gray-700 font-medium mb-1">Nome de utilizador</label>
+                <label for="username-input" class="block text-gray-700 font-medium mb-1">Nome de utilizador</label>
                 <label
+                    id="username-input"
                     class="input input-bordered flex items-center gap-2 validator">
                     <ng-icon name="heroUser" />
                     <input
@@ -26,8 +27,9 @@
                         </div>
                     }
                 }
-                <label class="block text-gray-700 font-medium mb-1 mt-3">Email</label>
+                <label for="email-input" class="block text-gray-700 font-medium mb-1 mt-3">Email</label>
                 <label
+                    id="email-input"
                     class="input input-bordered flex items-center gap-2 validator">
                     <ng-icon name="heroAtSymbol" />
                     <input
@@ -50,8 +52,9 @@
                         </div>
                     }
                 }
-                <label class="block text-gray-700 font-medium mb-1 mt-3">Palavra-passe</label>
+                <label for="password-input" class="block text-gray-700 font-medium mb-1 mt-3">Palavra-passe</label>
                 <label
+                    id="password-input"
                     class="input input-bordered flex items-center gap-2 validator">
                     <ng-icon name="heroKey" />
                     <input

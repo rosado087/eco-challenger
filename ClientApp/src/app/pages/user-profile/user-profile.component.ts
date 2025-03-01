@@ -13,10 +13,6 @@ export interface UserList {
   usernames: string[] 
 }
 
-export interface Result {
-  success : any
-}
-
 @Component({
   selector: 'app-user-profile',
   imports: [NgIcon, NgFor, NgIf, FormsModule],
@@ -102,9 +98,9 @@ export class UserProfileComponent implements OnInit {
   getTags(){
     this.netApi.get<UserModel>('Profile', 'GetTags', this.email)
     .subscribe({
-      next: (data) => {
+      /*next: () => {
 
-      }, error: () => {
+      },*/ error: () => {
         this.popupLoader.showPopup('Erro', 'Não foi possível editar os dados do perfil.')
       }
     })
@@ -119,7 +115,7 @@ export class UserProfileComponent implements OnInit {
       return;
     }
 
-    this.netApi.post<any>('Profile', 'UpdateUsername', { username: this.username }).subscribe({
+    this.netApi.post('Profile', 'UpdateUsername', { username: this.username }).subscribe({
       next: () => {
         this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');
       },
@@ -177,8 +173,8 @@ export class UserProfileComponent implements OnInit {
       return;
     }
 
-    this.netApi.post<Result>('Profile', 'AddFriend', [this.username, this.selectedUser]).subscribe({
-      next: (data) => {
+    this.netApi.post('Profile', 'AddFriend', [this.username, this.selectedUser]).subscribe({
+      next: () => {
         this.friendsList.push({ username: this.selectedUser });
         this.selectedUser = "";
         this.userList = [];
@@ -203,7 +199,7 @@ export class UserProfileComponent implements OnInit {
     const friendUsername = this.friendsList[index]?.username;
     if (!friendUsername) return;
 
-    this.netApi.post<any>('Friends', 'RemoveFriend', { username: friendUsername }).subscribe({
+    this.netApi.post('Friends', 'RemoveFriend', { username: friendUsername }).subscribe({
       next: () => {
         this.friendsList = [...this.friendsList.slice(0, index), ...this.friendsList.slice(index + 1)];
         this.showRemoveFriendModal = false;

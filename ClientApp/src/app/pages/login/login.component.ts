@@ -9,13 +9,16 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router'
 import { PopupButton } from '../../models/popup-button'
 import { AuthService } from '../../services/auth.service';
+import { LoginResponseModel } from '../../models/login-response-model'
 import { GAuthLoginModel, GAuthLoginResponseModel } from '../../models/gauth-login'
+import { AuthUserInfo } from '../../models/auth-user-info'
 
 /*
   This google variable is filled through a script tag that is placed
   in index.html and must be here, from my understanding this is an awful hack
   since google GIS doesn't have any proper packages to implement this.
 */
+/* eslint-disable no-var */
 declare var google: any;
 
 @Component({
@@ -97,10 +100,7 @@ export class LoginComponent implements OnInit {
           }
         ]
         if (response.success) {
-          const userInfo = {
-            Username: response.username,
-            Email: response.email
-          };
+          const userInfo = new AuthUserInfo(response.username, response.email)
 
           this.authService.login(userInfo, response.token); // Use AuthService
           this.popupLoader.showPopup(
@@ -136,10 +136,7 @@ export class LoginComponent implements OnInit {
         next: (data) => {
           if (data.success) {
             // Update AuthService so the Header updates
-            const userInfo = {
-              Username: data.name || info.email.split("@")[0], // Use name if available
-              Email: info.email
-            };
+            const userInfo = new AuthUserInfo(data.name || info.email.split("@")[0], info.email)
 
             this.authService.login(userInfo, "google-token"); // Notify AuthService
             this.router.navigate(['/']);

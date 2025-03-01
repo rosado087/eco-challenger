@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { inject, Injectable } from '@angular/core'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable } from 'rxjs'
@@ -17,7 +19,6 @@ export class NetApiService {
         return this.http.get<T>(this.#buildUrl(controller, action, routeParams))
     }
 
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     post<T>(
         controller: string,
         action: string,
