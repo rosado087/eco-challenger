@@ -46,3 +46,6 @@ ClientApp/node_modules
 **/obj
 **/.angular
 .vs
+
+appsettings.json
+appsettings.Development.json
