@@ -1,0 +1,11 @@
+.devcontainer
+.github
+EcoChallengerTest
+
+**/.vscode/
+**/.angular/
+**/node_modules/
+**/dist
+
+EcoChallenger/bin
+EcoChallenger/obj
