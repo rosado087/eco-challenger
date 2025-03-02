@@ -24,9 +24,13 @@ jobs:
 
       - name: Copy SSH Key
         run: echo "$SSH_PRIVATE_KEY" > id_ed25519
+
+        
       - name: Set Key Permissions
         run: chmod 600 id_ed25519
-
+        
+      - name: Test
+        run: cat id_ed25519
       # - name: Add SSH Key and Known Hosts
       #   run: |
       #     eval $(ssh-agent -s)
@@ -41,7 +45,7 @@ jobs:
 
               cd /var/opt/docker/eco-challenger &&
               docker compose down &&
-              
+
               docker compose build --no-cache &&
               docker compose up -d
           '"
