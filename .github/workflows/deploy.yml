@@ -26,6 +26,12 @@ jobs:
       - name: Set Key Permissions
         run: chmod 600 id_ed25519
 
+      - name: Check Key Format and Encoding
+        run: |
+          file id_ed25519
+          hexdump -C id_ed25519 | head -n 20  # Show first 20 lines in hex for debugging
+      
+
       - name: Extract Public Key for Validation
         run: ssh-keygen -y -f id_ed25519 > id_ed25519.pub
       
