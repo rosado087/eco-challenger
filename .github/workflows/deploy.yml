@@ -22,11 +22,14 @@ jobs:
 
       - name: Copy SSH Key
         run: echo "$SSH_PRIVATE_KEY" > id_ed25519
-
         
       - name: Set Key Permissions
         run: chmod 600 id_ed25519
-        
+
+      - name: Validate SSH Key
+        run: ssh-keygen -l -f id_ed25519
+      
+
       # - name: Add SSH Key and Known Hosts
       #   run: |
       #     eval $(ssh-agent -s)
