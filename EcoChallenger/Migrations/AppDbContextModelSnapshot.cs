@@ -21,49 +21,6 @@ namespace EcoChallenger.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Tag", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.HasKey("Id");
-
-                b.ToTable("Tags");
-            });
-            
-            modelBuilder.Entity("TagUsers", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<bool>("SelectedTag")
-                    .HasColumnType("bit");
-
-                b.Property<int>("TagId")
-                    .HasColumnType("int");
-
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
-
-                b.HasKey("Id");
-
-                b.HasIndex("TagId");
-
-                b.HasIndex("UserId");
-
-                b.ToTable("TagUsers");
-            });
-            
             modelBuilder.Entity("EcoChallenger.Models.Friend", b =>
                 {
                     b.Property<int>("Id")
@@ -81,6 +38,49 @@ namespace EcoChallenger.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Friendships");
+                });
+
+            modelBuilder.Entity("Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("TagUsers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("SelectedTag")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TagId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TagUsers");
                 });
 
             modelBuilder.Entity("User", b =>

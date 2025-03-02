@@ -3,9 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcoChallenger.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class LoginController : ControllerBase
+    public class LoginController : BaseApiController
     {
         private readonly AppDbContext _ctx;
         private readonly IConfiguration _configuration;

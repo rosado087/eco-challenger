@@ -29,10 +29,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Run migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
 //app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
