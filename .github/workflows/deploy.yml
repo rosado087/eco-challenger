@@ -13,8 +13,6 @@ jobs:
     name: Deploy to Server
     runs-on: ubuntu-latest
 
-    environment: main
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
