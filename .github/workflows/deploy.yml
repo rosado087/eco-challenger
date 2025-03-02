@@ -35,15 +35,17 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no -i id_ed25519 $SSH_USER@$SERVER_HOST << EOF
-            cd /var/opt/docker/eco-challenger/eco-challenger
-            git pull origin main
-            
-            cd /var/opt/docker/eco-challenger
-            docker compose down
-            docker compose build --no-cache
-            docker compose up -d
-          EOF
+          ssh -o StrictHostKeyChecking=no -i id_ed25519 $SSH_USER@$SERVER_HOST "bash -c '
+              cd /var/opt/docker/eco-challenger/eco-challenger &&
+              git pull origin main &&
+
+              cd /var/opt/docker/eco-challenger &&
+              docker compose down &&
+              
+              docker compose build --no-cache &&
+              docker compose up -d
+          '"
+
 
       - name: Cleanup SSH Key
         run: rm id_ed25519
