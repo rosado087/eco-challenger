@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    name: Run linter for client side
+    name: Run linter for client side in Angular
     runs-on: ubuntu-latest
 
     steps:
@@ -27,3 +27,43 @@ jobs:
 
       - name: Run lint
         run: cd ClientApp && npm run lint
+
+  build:
+    name: Build Frontend and Backend
+    runs-on: ubuntu-latest
+    needs: lint  # Run this only if lint job succeeds
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Build Angular App
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.9.0
+
+      - name: Install dependencies for Angular
+        run: cd ClientApp && npm install
+
+      - name: Build Angular App
+        run: cd ClientApp && npm run build --prod
+
+      # Build .NET Core Backend
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.0
+
+      - name: Restore .NET Core dependencies
+        run: dotnet restore EcoChallenger/EcoChallenger.csproj
+
+      - name: Build .NET Core Backend
+        run: dotnet publish EcoChallenger/EcoChallenger.csproj -c Release -o /app/publish
+
+      # Verify Build Artifacts
+      - name: List Angular Build Artifacts
+        run: ls -la ClientApp/dist/client-app/browser
+
+      - name: List .NET Core Build Artifacts
+        run: ls -la /app/publish
