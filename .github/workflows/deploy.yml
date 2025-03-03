@@ -21,7 +21,7 @@ jobs:
         run: sudo apt-get install -y openssh-client
 
       - name: Copy SSH Key
-        run: echo "$SSH_PRIVATE_KEY" > id_ed25519
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_ed25519
         
       - name: Set Key Permissions
         run: chmod 600 id_ed25519
@@ -48,7 +48,7 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no -i id_ed25519 $SSH_USER@$SERVER_HOST "bash -c '
+          ssh -o StrictHostKeyChecking=no -i id_ed25519 ${{ vars.SSH_USER }}@${{ vars.SERVER_HOST }} "bash -c '
               cd /var/opt/docker/eco-challenger/eco-challenger &&
               git pull origin main &&
 
