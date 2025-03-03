@@ -1,0 +1,49 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to main branch
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install SSH Client
+        run: sudo apt-get install -y openssh-client
+
+      - name: Copy SSH Key
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_ed25519
+        
+      - name: Set Key Permissions
+        run: chmod 600 id_ed25519
+
+      - name: Create .ssh Directory
+        run: mkdir -p ~/.ssh      
+
+      - name: Add SSH Key and Known Hosts
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add -t 60 id_ed25519  # Add ed25519 key with 60s timeout
+          ssh-keyscan -t ed25519 -H ${{ vars.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        run: |
+          ssh -i id_ed25519 ${{ vars.SSH_USER }}@${{ vars.SERVER_HOST }} "bash -c '
+              cd /var/opt/docker/eco-challenger/eco-challenger &&
+              git pull origin main &&
+
+              cd /var/opt/docker/eco-challenger &&
+              docker compose down &&
+
+              docker compose build --no-cache &&
+              docker compose up -d
+          '"
+
+      - name: Cleanup SSH Key
+        run: rm id_ed25519

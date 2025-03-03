@@ -9,21 +9,51 @@ on:
       - '*'
 
 jobs:
-  lint:
-    name: Run linter for client side
+  frontend:
+    name: Build and run linter for frontend
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.9.0
+          node-version: 23.9.0
 
       - name: Install dependencies
         run: cd ClientApp && npm install
 
       - name: Run lint
         run: cd ClientApp && npm run lint
+
+      - name: Build Angular App
+        run: cd ClientApp && npm run build --prod
+
+      # Small check for the build files
+      - name: List Angular Build Artifacts
+        run: ls -la ClientApp/dist/client-app/browser
+
+  build:
+    name: Build backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.113
+
+      - name: Restore .NET Core dependencies
+        run: dotnet restore EcoChallenger/EcoChallenger.csproj
+
+      - name: Build .NET Core Backend
+        run: dotnet publish EcoChallenger/EcoChallenger.csproj -c Release -o ~/EcoChallenger/publish
+      
+      # Small check for the build files
+      - name: List .NET Core Build Artifacts
+        run: ls -la ~/EcoChallenger/publish
