@@ -50,11 +50,11 @@ jobs:
         run: dotnet restore EcoChallenger/EcoChallenger.csproj
 
       - name: Build .NET Core Backend
-        run: dotnet publish EcoChallenger/EcoChallenger.csproj -c Release -o /app/publish
+        run: dotnet publish EcoChallenger/EcoChallenger.csproj -c Release -o ~/EcoChallenger/publish
 
       # Verify Build Artifacts
       - name: List Angular Build Artifacts
         run: ls -la ClientApp/dist/client-app/browser
 
       - name: List .NET Core Build Artifacts
-        run: ls -la /app/publish
+        run: ls -la ~/EcoChallenger/publish
