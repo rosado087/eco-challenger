@@ -36,7 +36,8 @@ jobs:
         run: |
           ssh -i id_ed25519 ${{ vars.SSH_USER }}@${{ vars.SERVER_HOST }} "bash -c '
               cd /var/opt/docker/eco-challenger/eco-challenger &&
-              git pull origin main &&
+              git fetch --all &&
+              git reset --hard origin/main &&
 
               cd /var/opt/docker/eco-challenger &&
               docker compose down &&
