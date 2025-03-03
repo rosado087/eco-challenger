@@ -26,29 +26,15 @@ jobs:
       - name: Set Key Permissions
         run: chmod 600 id_ed25519
 
-      - name: Check Key Format and Encoding
+      - name: Add SSH Key and Known Hosts
         run: |
-          file id_ed25519
-          hexdump -C id_ed25519 | head -n 20  # Show first 20 lines in hex for debugging
-      
-
-      - name: Extract Public Key for Validation
-        run: ssh-keygen -y -f id_ed25519 > id_ed25519.pub
-      
-      - name: Validate SSH Key
-        run: ssh-keygen -l -f id_ed25519.pub
-      
-      
-
-      # - name: Add SSH Key and Known Hosts
-      #   run: |
-      #     eval $(ssh-agent -s)
-      #     ssh-add -t 60 id_ed25519  # Add ed25519 key with 60s timeout
-      #     ssh-keyscan -t ed25519 -H $SERVER_HOST >> ~/.ssh/known_hosts
+          eval $(ssh-agent -s)
+          ssh-add -t 60 id_ed25519  # Add ed25519 key with 60s timeout
+          ssh-keyscan -t ed25519 -H ${{ vars.SERVER_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no -i id_ed25519 ${{ vars.SSH_USER }}@${{ vars.SERVER_HOST }} "bash -c '
+          ssh -i id_ed25519 ${{ vars.SSH_USER }}@${{ vars.SERVER_HOST }} "bash -c '
               cd /var/opt/docker/eco-challenger/eco-challenger &&
               git pull origin main &&
 
@@ -58,7 +44,6 @@ jobs:
               docker compose build --no-cache &&
               docker compose up -d
           '"
-
 
       - name: Cleanup SSH Key
         run: rm id_ed25519
