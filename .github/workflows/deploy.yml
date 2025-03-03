@@ -26,6 +26,9 @@ jobs:
       - name: Set Key Permissions
         run: chmod 600 id_ed25519
 
+      - name: Create .ssh Directory
+        run: mkdir -p ~/.ssh      
+
       - name: Add SSH Key and Known Hosts
         run: |
           eval $(ssh-agent -s)
