@@ -44,7 +44,7 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.0
+          dotnet-version: 8.0.113
 
       - name: Restore .NET Core dependencies
         run: dotnet restore EcoChallenger/EcoChallenger.csproj
