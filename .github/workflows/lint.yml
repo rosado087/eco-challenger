@@ -9,18 +9,18 @@ on:
       - '*'
 
 jobs:
-  lint:
-    name: Run linter for client side in Angular
+  frontend:
+    name: Build and run linter for frontend
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.9.0
+          node-version: 23.9.0
 
       - name: Install dependencies
         run: cd ClientApp && npm install
@@ -28,30 +28,21 @@ jobs:
       - name: Run lint
         run: cd ClientApp && npm run lint
 
-  build:
-    name: Build Frontend and Backend
-    runs-on: ubuntu-latest
-    needs: lint  # Run this only if lint job succeeds
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Build Angular App
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.9.0
-
-      - name: Install dependencies for Angular
-        run: cd ClientApp && npm install
-
       - name: Build Angular App
         run: cd ClientApp && npm run build --prod
 
+  build:
+    name: Build backend
+    runs-on: ubuntu-latest
+    needs: frontend  # Run this only if frontend job succeeds
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       # Build .NET Core Backend
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.0
 
