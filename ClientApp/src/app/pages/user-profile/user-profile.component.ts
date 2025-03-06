@@ -39,13 +39,7 @@ export class UserProfileComponent implements OnInit {
     tag: string = ''
 
     // Lista de amigos
-    friendsList: { username: string }[] = [
-        { username: 'Amigo1' },
-        { username: 'Amigo2' },
-        { username: 'Amigo3' },
-        { username: 'Amigo4' },
-        { username: 'Amigo5' }
-    ]
+    friendsList: { username: string }[] = []
 
     userList: string[] = []
 
@@ -57,27 +51,18 @@ export class UserProfileComponent implements OnInit {
     selectedUser: string = ''
 
     ngOnInit(): void {
-        //this.loadUserProfile();
+        this.loadUserProfile();
 
-        this.friendsList = [
-            { username: 'Amigo1' },
-            { username: 'Amigo2' },
-            { username: 'Amigo3' },
-            { username: 'Amigo4' },
-            { username: 'Amigo5' },
-            { username: 'Amigo6' },
-            { username: 'Amigo7' },
-            { username: 'Amigo8' }
-        ]
+        
 
-        console.log('Amigos carregados:', this.friendsList) // <--- Testar se os amigos existem
+         
     }
 
     /**
      * Carregar informações do perfil do user
      */
     loadUserProfile() {
-        const email = this.authService.getUserEmail
+      const email = this.authService.getUserEmail
 
         this.netApi.get<UserModel>('Profile', 'GetUserInfo', email).subscribe({
             next: (data) => {
@@ -155,7 +140,7 @@ export class UserProfileComponent implements OnInit {
     findUser() {
         this.userList = []
         this.searchUsername =
-            (document.getElementById('InputAdd') as HTMLInputElement).value ||
+            (document.getElementById('input-add') as HTMLInputElement).value ||
             ''
         if (this.searchUsername.trim() !== '') {
             this.netApi
@@ -165,7 +150,7 @@ export class UserProfileComponent implements OnInit {
                 ])
                 .subscribe({
                     next: (data) => {
-                        this.userList = this.userList.concat(data.usernames)
+                        this.userList = data.usernames
                     },
                     error: () => {
                         this.popupLoader.showPopup(
@@ -237,11 +222,12 @@ export class UserProfileComponent implements OnInit {
         this.netApi
             .post('Friends', 'RemoveFriend', { username: friendUsername })
             .subscribe({
-                next: () => {
-                    this.friendsList = [
+              next: () => {
+                  this.friendsList.splice(index,1)
+                    /*this.friendsList = [
                         ...this.friendsList.slice(0, index),
                         ...this.friendsList.slice(index + 1)
-                    ]
+                    ]*/
                     this.showRemoveFriendModal = false
                     this.selectedFriendIndex = null // Reset após remoção
                     this.popupLoader.showPopup(

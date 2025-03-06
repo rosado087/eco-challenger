@@ -19,12 +19,12 @@ export class AuthService {
 
     private getUsername(): string | null {
         const user = sessionStorage.getItem('loggedInUser')
-        return user ? JSON.parse(user).Username : null
+        return user ? JSON.parse(user).username : null
     }
 
     get getUserEmail(): string {
         const user = sessionStorage.getItem('loggedInUser')
-        return user ? JSON.parse(user).Email : ''
+        return user ? JSON.parse(user).email : ''
     }
 
     get isLoggedIn(): boolean {
