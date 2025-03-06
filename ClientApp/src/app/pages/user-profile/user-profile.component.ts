@@ -6,16 +6,35 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { UserModel } from '../../models/user-model';
-import { NgFor, NgIf } from '@angular/common';
-import { heroUser, heroLockClosed, heroPencil } from '@ng-icons/heroicons/outline';
+
 
 export interface UserList {
   usernames: string[];
 }
 
 export interface Result {
-  success: any;
+  success: boolean;
 }
+
+interface FriendsResponse {
+  success: boolean;
+  friends: string[];
+  message?: string;
+}
+
+interface TagsResponse {
+  success: boolean;
+  list: string[];
+  message?: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+
 
 @Component({
   selector: 'app-user-profile',
@@ -104,7 +123,7 @@ export class UserProfileComponent implements OnInit {
 loadFollowingList() {
   if (!this.username) return;
 
-  this.netApi.get<any>('Profile', `GetFriends?username=${this.username}`)
+  this.netApi.get<FriendsResponse>('Profile', `GetFriends?username=${this.username}`)
     .subscribe({
       next: (data) => {
         if (data.success) {
@@ -121,25 +140,10 @@ loadFollowingList() {
 }
 
 
-  /**
-   * Buscar as tags disponíveis para o usuário
-   */
-  /*getTags() {
-    this.netApi.get<any>('Profile', `GetTags?email=${this.email}`)
-      .subscribe({
-        next: (data) => {
-          console.log("Tags recebidas:", data); // <-- Verifica se os dados estão chegando
-          this.availableTags = data.tags;
-          this.selectedTag = this.tag || this.availableTags[0] || "";
-        },
-        error: () => {
-          this.popupLoader.showPopup('Erro', 'Não foi possível carregar as tags.');
-        }
-      });
-  }*/
+
 
       getTags() {
-        this.netApi.get<any>('Profile', `GetTags/${this.email}`)
+        this.netApi.get<TagsResponse>('Profile', `GetTags/${this.email}`)
           .subscribe({
             next: (data) => {
               console.log("Resposta da API:", data); // <-- Depuração no console
@@ -171,7 +175,7 @@ loadFollowingList() {
       return;
     }
 
-    this.netApi.post<any>('Profile', 'UpdateUsername', { username: this.username })
+    this.netApi.post<ApiResponse>('Profile', 'UpdateUsername', { username: this.username })
       .subscribe({
         next: () => {
           this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');
@@ -187,7 +191,7 @@ loadFollowingList() {
    * Salvar a tag selecionada na API
    */
   saveTag() {
-    this.netApi.post<any>('Profile', 'UpdateTag', { email: this.email, tag: this.selectedTag })
+    this.netApi.post<ApiResponse>('Profile', 'UpdateTag', { email: this.email, tag: this.selectedTag })
       .subscribe({
         next: () => {
           this.popupLoader.showPopup('Sucesso', 'Tag atualizada com sucesso.');
@@ -249,7 +253,7 @@ loadFollowingList() {
             return
         }
 
-    this.netApi.post<any>('Friends', 'AddFriend', { username: this.searchUsername }).subscribe({
+    this.netApi.post<ApiResponse>('Friends', 'AddFriend', { username: this.searchUsername }).subscribe({
       next: () => {
         this.friendsList.push({ username: this.searchUsername });
         this.searchUsername = "";
@@ -274,7 +278,7 @@ loadFollowingList() {
         const friendUsername = this.friendsList[index]?.username
         if (!friendUsername) return
 
-    this.netApi.post<any>('Profile', 'UnfollowUser', [this.username, friendUsername])
+    this.netApi.post<ApiResponse>('Profile', 'UnfollowUser', [this.username, friendUsername])
       .subscribe({
         next: (data) => {
           if (data.success) {
