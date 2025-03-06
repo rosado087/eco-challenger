@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcoChallenger.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ProfileController : ControllerBase
+    public class ProfileController : BaseApiController
     {
         private readonly AppDbContext _ctx;
 

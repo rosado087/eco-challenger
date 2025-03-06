@@ -11,3 +11,5 @@ proxy.conf.json
 tsconfig.app.json
 tsconfig.json
 tsconfig.spec.json
+eslint.config.js
+**/dist

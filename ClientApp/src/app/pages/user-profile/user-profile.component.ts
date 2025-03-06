@@ -51,12 +51,12 @@ export class UserProfileComponent implements OnInit {
   availableTags: string[] = [];
   selectedTag: string = "";
 
-  // Controle de modais
-  showAddFriendModal: boolean = false;
-  showRemoveFriendModal: boolean = false;
-  selectedFriendIndex: number | null = null;
-  searchUsername: string = "";
-  selectedUser: string = "";
+    // Controle de modais
+    showAddFriendModal: boolean = false
+    showRemoveFriendModal: boolean = false
+    selectedFriendIndex: number | null = null
+    searchUsername: string = ''
+    selectedUser: string = ''
 
   ngOnInit(): void {
     this.loadUserProfile();
@@ -199,12 +199,12 @@ loadFollowingList() {
       });
   }
 
-  /**
-   * Abrir o perfil de um amigo
-   */
-  viewProfile(username: string) {
-    this.router.navigate(['/friend-profile', username]);
-  }
+    /**
+     * Abrir o perfil de um amigo
+     */
+    viewProfile(username: string) {
+        this.router.navigate(['/friend-profile', username])
+    }
 
   /**
    * Buscar usuários pelo nome
@@ -237,14 +237,17 @@ loadFollowingList() {
     this.selectedUser = this.selectedUser.toLowerCase() === username.toLowerCase() ? "" : username;
   }
 
-  /**
-   * Adicionar um amigo à lista
-   */
-  addFriend() {
-    if (this.searchUsername.trim() === "") {
-      this.popupLoader.showPopup('Erro', 'Digite um nome de utilizador válido.');
-      return;
-    }
+    /**
+     * Adicionar um amigo à lista
+     */
+    addFriend() {
+        if (this.searchUsername.trim() === '') {
+            this.popupLoader.showPopup(
+                'Erro',
+                'Digite um nome de utilizador válido.'
+            )
+            return
+        }
 
     this.netApi.post<any>('Friends', 'AddFriend', { username: this.searchUsername }).subscribe({
       next: () => {
@@ -268,8 +271,8 @@ loadFollowingList() {
       return;
     }
 
-    const friendUsername = this.friendsList[index]?.username;
-    if (!friendUsername) return;
+        const friendUsername = this.friendsList[index]?.username
+        if (!friendUsername) return
 
     this.netApi.post<any>('Profile', 'UnfollowUser', [this.username, friendUsername])
       .subscribe({

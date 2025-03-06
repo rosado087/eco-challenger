@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcoChallenger.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class RecoverPasswordController : ControllerBase
+    public class RecoverPasswordController : BaseApiController
     {
         private readonly AppDbContext _ctx;
         private readonly IEmailService _emailService;

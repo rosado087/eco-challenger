@@ -1,83 +1,116 @@
 <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-  <!-- Logo and Header -->
-  <div class="text-center mb-8">
-    <h1 class="text-2xl font-bold text-green-600">Eco Challenger</h1>
-  </div>
-
-  <!-- Card -->
-  <div class="w-full max-w-sm bg-white rounded-lg shadow-lg p-6">
-    <h2 class="text-xl font-semibold text-gray-800 text-center mb-6">Login</h2>
-
-    <!-- Login Form -->
-    <form [formGroup]="loginForm" (ngSubmit)="loginUser()" class="space-y-4">
-      <!-- Email Field -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-1" for="email">Email</label>
-        <div class="relative">
-          <ng-icon name="heroUser" class="absolute left-3 top-3 text-gray-500"></ng-icon>
-          <input type="email"
-                 id="email"
-                 formControlName="email"
-                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
-                 placeholder="Email"
-                 required>
-        </div>
-        @if (getEmail()?.invalid && getEmail()?.touched) {
-        @if (getEmail()?.errors?.['required']) {
-        <p class="text-red-500 text-sm">Este campo é obrigatório!</p>
-        }
-        @if (getEmail()?.errors?.['email']) {
-        <p class="text-red-500 text-sm">Introduza um email válido.</p>
-        }
-        }
-      </div>
-
-      <!-- Password Field -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-1" for="password">Palavra-passe</label>
-        <div class="relative">
-          <ng-icon name="heroLockClosed" class="absolute left-3 top-3 text-gray-500"></ng-icon>
-          <input type="password"
-                 id="password"
-                 formControlName="password"
-                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
-                 placeholder="Palavra-passe"
-                 required>
-        </div>
-        @if (getPassword()?.invalid && getPassword()?.touched) {
-        @if (getPassword()?.errors?.['required']) {
-        <p class="text-red-500 text-sm">Este campo é obrigatório.</p>
-        }
-        @if (getPassword()?.errors?.['minlength']) {
-        <p class="text-red-500 text-sm">A plavra-passe deve ter pelo menos 8 caracteres.</p>
-        }
-        }
-      </div>
-
-      <!-- Submit Button -->
-      <button type="submit"
-              [disabled]="loginForm.invalid || disableSubmit"
-              class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:bg-gray-400">
-        Login
-      </button>
-    </form>
-
-    <!-- Forgot Password Link -->
-    <div class="mt-4 text-center">
-      <a routerLink="/forgot-password" class="text-sm text-green-500 hover:underline">Esqueceu-se da palavra-passe?</a>
+    <!-- Logo and Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-green-600">Eco Challenger</h1>
     </div>
 
-    <hr />
-    <h3 class=" text-center" style="margin-top:10%">Com conta Google</h3>
+    <!-- Card -->
+    <div class="w-full max-w-sm bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-800 text-center mb-6">
+            Login
+        </h2>
 
-    <div style="align-content:center center">
-      <div id="google-btn"></div>
+        <!-- Login Form -->
+        <form
+            [formGroup]="loginForm"
+            (ngSubmit)="loginUser()"
+            class="space-y-4">
+            <!-- Email Field -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-1" for="email"
+                    >Email</label
+                >
+                <div class="relative">
+                    <ng-icon
+                        name="heroUser"
+                        class="absolute left-3 top-3 text-gray-500"></ng-icon>
+                    <input
+                        type="email"
+                        id="email"
+                        formControlName="email"
+                        class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
+                        placeholder="Email"
+                        required />
+                </div>
+                @if (getEmail()?.invalid && getEmail()?.touched) {
+                    @if (getEmail()?.errors?.['required']) {
+                        <p class="text-red-500 text-sm">
+                            Este campo é obrigatório!
+                        </p>
+                    }
+                    @if (getEmail()?.errors?.['email']) {
+                        <p class="text-red-500 text-sm">
+                            Introduza um email válido.
+                        </p>
+                    }
+                }
+            </div>
+
+            <!-- Password Field -->
+            <div>
+                <label
+                    class="block text-gray-700 font-medium mb-1"
+                    for="password"
+                    >Palavra-passe</label
+                >
+                <div class="relative">
+                    <ng-icon
+                        name="heroLockClosed"
+                        class="absolute left-3 top-3 text-gray-500"></ng-icon>
+                    <input
+                        type="password"
+                        id="password"
+                        formControlName="password"
+                        class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-200"
+                        placeholder="Palavra-passe"
+                        required />
+                </div>
+                @if (getPassword()?.invalid && getPassword()?.touched) {
+                    @if (getPassword()?.errors?.['required']) {
+                        <p class="text-red-500 text-sm">
+                            Este campo é obrigatório.
+                        </p>
+                    }
+                    @if (getPassword()?.errors?.['minlength']) {
+                        <p class="text-red-500 text-sm">
+                            A plavra-passe deve ter pelo menos 8 caracteres.
+                        </p>
+                    }
+                }
+            </div>
+
+            <!-- Submit Button -->
+            <button
+                type="submit"
+                [disabled]="loginForm.invalid || disableSubmit"
+                class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:bg-gray-400">
+                Login
+            </button>
+        </form>
+
+        <!-- Forgot Password Link -->
+        <div class="mt-4 text-center">
+            <a
+                routerLink="/forgot-password"
+                class="text-sm text-green-500 hover:underline"
+                >Esqueceu-se da palavra-passe?</a
+            >
+        </div>
+
+        <hr />
+        <h3 class="text-center" style="margin-top: 10%">Com conta Google</h3>
+
+        <div style="align-content: center center">
+            <div id="google-btn"></div>
+        </div>
     </div>
-  </div>
 
-
-  <!-- Footer Links -->
-  <div class="mt-6 text-center">
-    <a routerLink="/register" class="text-sm text-gray-500 hover:text-green-600">Não tem uma conta? Registe-se!</a>
-  </div>
+    <!-- Footer Links -->
+    <div class="mt-6 text-center">
+        <a
+            routerLink="/register"
+            class="text-sm text-gray-500 hover:text-green-600"
+            >Não tem uma conta? Registe-se!</a
+        >
+    </div>
 </div>

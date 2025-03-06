@@ -1,15 +1,9 @@
-using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace EcoChallenger.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class LoginController : ControllerBase
+    public class LoginController : BaseApiController
     {
         private readonly AppDbContext _ctx;
         private readonly IConfiguration _configuration;
@@ -52,8 +46,8 @@ namespace EcoChallenger.Controllers
                     success = true,
                     message = "Login successful!",
                     token = userToken.Token,
-                    Username = user.Username, // ✅ Return username
-                    Email = user.Email // ✅ Return email
+                    user.Username,
+                    user.Email
                 });
             }
             catch (Exception ex)
@@ -67,19 +61,16 @@ namespace EcoChallenger.Controllers
         }
 
         [HttpGet("GetGoogleId")]
-        public async Task<JsonResult> GetGoogleId()
+        public JsonResult GetGoogleId()
         {
-            return new JsonResult(new { success = _configuration["GoogleClient:ClientId"] });
+            return new JsonResult(new { clientId = _configuration["GoogleClient:ClientId"] });
         }
 
         [HttpPost("AuthenticateGoogle")]
         public async Task<JsonResult> AuthenticateGoogle(string[] values)
         {
-            
-
             if (await _ctx.Users.AnyAsync())
             {
-                
                 var user = await _ctx.Users.FirstOrDefaultAsync(u => u.GoogleToken == values[0] || u.Email == values[1]);
                 
                 if (user == null)
@@ -96,7 +87,6 @@ namespace EcoChallenger.Controllers
             }
 
             return new JsonResult(new { success = false });
-
         }
 
         [HttpPut("SignUpGoogle")]
@@ -113,11 +103,9 @@ namespace EcoChallenger.Controllers
         [HttpPost("UserExists")]
         public async Task<bool> UserExists(string username = "")
         {
-            
-
             var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
 
-            return (user != null || username == "");
+            return user != null || username == "";
         }
     }
 }

@@ -1,0 +1,8 @@
+services:
+  eco-challenger:
+    build: .
+    container_name: eco_challenger    
+    volumes:
+      - ./EcoChallenger/appsettings.json:/app/appsettings.json
+    ports:
+      - 9099:8080
