@@ -5,10 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 using EcoChallenger.Controllers;
+using EcoChallenger.Models;
 
 namespace EcoChallengerTest.UnitTest
 {
-   
+
     public class ProfileControllerTest
     {
 
@@ -86,6 +87,85 @@ namespace EcoChallengerTest.UnitTest
             var valueProperty = result.Value.GetType().GetProperty("result");
             Assert.True((bool)valueProperty.GetValue(result.Value));
         }
+
+        [Fact]
+public async Task GetFriends_Returns_List_Of_Friends()
+{
+    // Arrange
+    var testUser = new User
+    {
+        Email = "test@example.com",
+        Username = "test",
+        Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+    };
+
+    var friendUser = new User
+    {
+        Email = "friend@example.com",
+        Username = "friendUser",
+        Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+    };
+
+    _dbContext.Users.Add(testUser);
+    _dbContext.Users.Add(friendUser);
+    await _dbContext.SaveChangesAsync();
+
+    // Add Friendship
+    _dbContext.Friendships.Add(new Friend { UserId = testUser.Id, FriendId = friendUser.Id });
+    await _dbContext.SaveChangesAsync();
+
+    // Act
+    var result = await _controller.GetFriends(testUser.Username) as OkObjectResult;
+
+    // Assert
+    Assert.NotNull(result);
+    Assert.Equal(200, result.StatusCode);
+
+    var valueProperty = result.Value.GetType().GetProperty("friends").GetValue(result.Value);
+    Assert.NotNull(valueProperty);
+    Assert.Single((ICollection<object>)valueProperty); // Should have one friend
+}
+
+[Fact]
+public async Task GetFriends_Returns_Empty_List_When_No_Friends()
+{
+    // Arrange
+    var testUser = new User
+    {
+        Email = "lonely@example.com",
+        Username = "lonelyUser",
+        Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+    };
+
+    _dbContext.Users.Add(testUser);
+    await _dbContext.SaveChangesAsync();
+
+    // Act
+    var result = await _controller.GetFriends(testUser.Username) as OkObjectResult;
+
+    // Assert
+    Assert.NotNull(result);
+    Assert.Equal(200, result.StatusCode);
+
+    var valueProperty = result.Value.GetType().GetProperty("friends").GetValue(result.Value);
+    Assert.NotNull(valueProperty);
+    Assert.Empty((ICollection<object>)valueProperty); // Should return an empty list
+}
+
+[Fact]
+public async Task GetFriends_Returns_NotFound_For_Nonexistent_User()
+{
+    // Act
+    var result = await _controller.GetFriends("nonexistentUser") as NotFoundObjectResult;
+
+    // Assert
+    Assert.NotNull(result);
+    Assert.Equal(404, result.StatusCode);
+
+    var messageProperty = result.Value.GetType().GetProperty("message").GetValue(result.Value);
+    Assert.Equal("Usuário não encontrado.", messageProperty);
+}
+
 
     }
 }

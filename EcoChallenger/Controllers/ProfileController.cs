@@ -17,97 +17,150 @@ namespace EcoChallenger.Controllers
         /// Handles the action that gets the user information.
         /// Gets the information of the logged user.
         /// </summary>
-        /// <param name="email">Is the email of the logged account</param>
-        /// <returns>JSON result indicating success or failure. If returns failure also returns the error message. If success also returns the user information.</returns>
-
+        /// <param name="email">Email of the logged-in account</param>
+        /// <returns>JSON result indicating success or failure.</returns>
         [HttpGet("GetUserInfo/{email}")]
-        public async Task<JsonResult> GetUserInfo(string email)  {
+        public async Task<JsonResult> GetUserInfo(string email)
+        {
             try
             {
                 if (string.IsNullOrEmpty(email))
-                    return new JsonResult(new {success = false, message = "O email é nulo"});
+                    return new JsonResult(new { success = false, message = "O email é nulo" });
 
                 var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Email == email);
 
                 if (user == null)
-                    return new JsonResult(new {success = false, message = "O utilizador não existe"});
+                    return new JsonResult(new { success = false, message = "O utilizador não existe" });
 
-                var currentTag = await _ctx.TagUsers.Where(tg => tg.SelectedTag == true && tg.User.Id == user.Id).Select(tg => tg.Tag.Name).FirstOrDefaultAsync();
+                var currentTag = await _ctx.TagUsers
+                    .Where(tg => tg.SelectedTag && tg.User.Id == user.Id)
+                    .Select(tg => tg.Tag.Name)
+                    .FirstOrDefaultAsync();
 
-                return new JsonResult(new {success = true,  username = user.Username, email = user.Email, points = user.Points, tag = currentTag });
+                return new JsonResult(new { success = true, username = user.Username, email = user.Email, points = user.Points, tag = currentTag });
             }
             catch (Exception e)
             {
-                return new JsonResult(new {success = false, message = e.Message });
-            }      
+                return new JsonResult(new { success = false, message = e.Message });
+            }
         }
 
-
         /// <summary>
-        /// Handles the action that gets all the tags which user owns
-        /// Gets all the tags that the user owns.
+        /// Gets all tags that the user owns.
         /// </summary>
-        /// <param name="email">Is the email of the logged person</param>
-        /// <returns>JSON result indicating success or failure. If returns failure also returns the error message. If returns success also returns the list of tags that the user owns.</returns>
+        /// <param name="email">Email of the logged-in user</param>
+        /// <returns>JSON result containing a list of tags.</returns>
         [HttpGet("GetTags/{email}")]
-        public async Task<JsonResult> GetTags(string email)  {
+        public async Task<JsonResult> GetTags(string email)
+        {
             try
             {
                 if (string.IsNullOrEmpty(email))
-                    return new JsonResult(new {success = false, message = "O email é nulo"});
+                    return new JsonResult(new { success = false, message = "O email é nulo" });
 
                 var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Email == email);
 
                 if (user == null)
-                    return new JsonResult(new {success = false, message = "O utilizador não existe"});
+                    return new JsonResult(new { success = false, message = "O utilizador não existe" });
 
-                var tags = await _ctx.TagUsers.Where(tg => tg.User.Id == user.Id).Select(tg => tg.Tag.Name).ToListAsync();
+                var tags = await _ctx.TagUsers
+                    .Where(tg => tg.User.Id == user.Id)
+                    .Select(tg => tg.Tag.Name)
+                    .ToListAsync();
 
-                return new JsonResult(new {success = true,  list = tags });
+                return new JsonResult(new { success = true, list = tags });
             }
             catch (Exception e)
             {
-                return new JsonResult(new {success = false, message = e.Message });
-            }      
-        }
-    
-        ///<summary>
-        /// Handles the action getting a list of users that contain a searched name.
-        /// </summary>
-        /// <param name="username"> is a part of the username of user/s o</param>
-        /// <returns>JSON result with list of usernames. If returns failure also returns the error message</returns>
-
-        [HttpPost("UserList")]
-        public async Task<JsonResult> UserList(string[] values) {
-
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
-            var friends = await _ctx.Friendships.Where(u => u.UserId == user.Id).Select(u => u.FriendId).ToListAsync();
-            var users = await _ctx.Users.Where( u => u.Username.Contains(values[1]) && !u.Username.Equals(values[0]) && !friends.Contains(u.Id))
-                              .Select(u => u.Username).ToListAsync();
-            
-            
-            
-            return new JsonResult(new { usernames = users });
+                return new JsonResult(new { success = false, message = e.Message });
+            }
         }
 
         /// <summary>
-        /// Handles the action that adds a User as a friend.
-        /// Verifies if User is already in friend list.
-        /// Updates the friend list in the User into the database.
+        /// Retrieves a list of users containing a searched username.
         /// </summary>
-        /// <param name="data">Contains the user's username, email address and password</param>
-        /// <returns>JSON result indicating success or failure. If returns failure also returns the error message</returns>
+        /// <param name="values">Array containing the username of the requesting user and the search term.</param>
+        /// <returns>JSON result with a list of usernames.</returns>
+        [HttpPost("UserList")]
+        public async Task<JsonResult> UserList(string[] values)
+        {
+            if (values.Length < 2)
+                return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
+
+            var currentUser = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
+
+            if (currentUser == null)
+                return new JsonResult(new { success = false, message = "Usuário não encontrado" });
+
+            var friends = await _ctx.Friendships
+                .Where(f => f.UserId == currentUser.Id)
+                .Select(f => f.FriendId)
+                .ToListAsync();
+
+            var users = await _ctx.Users
+                .Where(u => u.Username.Contains(values[1]) && !u.Username.Equals(values[0]) && !friends.Contains(u.Id))
+                .Select(u => u.Username)
+                .ToListAsync();
+
+            return new JsonResult(new { success = true, usernames = users });
+        }
+
+        /// <summary>
+        /// Adds a user as a friend.
+        /// </summary>
+        /// <param name="values">Array containing the username of the requester and the friend’s username.</param>
+        /// <returns>JSON result indicating success or failure.</returns>
         [HttpPost("AddFriend")]
         public async Task<JsonResult> AddFriend(string[] values)
         {
-            var user = await _ctx.Users.FirstAsync(u => u.Username == values[0]);
-            var friend = await _ctx.Users.FirstAsync(u => u.Username == values[1]);
-            
-            var friendship = new Friend { UserId = user.Id, FriendId = friend.Id };
+            if (values.Length < 2)
+                return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
+
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
+            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[1]);
+
+            if (user == null || friend == null)
+                return new JsonResult(new { success = false, message = "Usuário ou amigo não encontrado" });
+
+            var friendshipExists = await _ctx.Friendships
+                .AnyAsync(f => f.UserId == user.Id && f.FriendId == friend.Id);
+
+            if (friendshipExists)
+                return new JsonResult(new { success = false, message = "Usuário já é amigo" });
+
             _ctx.Friendships.Add(new Friend { UserId = user.Id, FriendId = friend.Id });
             await _ctx.SaveChangesAsync();
 
-            return new JsonResult(new { result = true });
+            return new JsonResult(new { success = true });
         }
+
+        /// <summary>
+        /// Retrieves a list of a user's friends.
+        /// </summary>
+        /// <param name="username">Username of the requested user.</param>
+        /// <returns>JSON result with the list of friends.</returns>
+        
+[HttpGet("GetFriends/{username}")]
+public async Task<IActionResult> GetFriends(string username)
+{
+    if (string.IsNullOrEmpty(username))
+        return BadRequest(new { success = false, message = "Nome de utilizador é obrigatório." });
+
+    var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
+    if (user == null)
+        return NotFound(new { success = false, message = "Usuário não encontrado." });
+
+    var friends = await _ctx.Friendships
+        .Where(f => f.UserId == user.Id)
+        .Join(_ctx.Users, 
+              f => f.FriendId, 
+              u => u.Id, 
+              (f, u) => new { u.Username, u.Email })
+        .ToListAsync();
+
+    return Ok(new { success = true, friends });
+}
+
+
     }
 }
