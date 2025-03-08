@@ -52,4 +52,4 @@ appsettings.Development.json
 package-lock.json
 **/dist
 
-**/*.slnLaunch.user
+*.user
