@@ -52,4 +52,4 @@ appsettings.Development.json
 package-lock.json
 **/dist
 
-*.user
+EcoChallenger.slnLaunch.user
