@@ -31,7 +31,7 @@ public class LoginGoogleTest
         _mockConfig.Setup(c => c["GoogleClient:ClientId"]).Returns("test-client-id");
 
         // Act
-        var result = await _controller.GetGoogleId() as JsonResult;
+        var result = _controller.GetGoogleId() as JsonResult;
 
         // Assert
         Assert.NotNull(result);
