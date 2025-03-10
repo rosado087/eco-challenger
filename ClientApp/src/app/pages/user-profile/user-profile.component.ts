@@ -59,17 +59,26 @@ export class UserProfileComponent implements OnInit {
     userList: string[] = [];
     showAddFriendModal: boolean = false;
     showRemoveFriendModal: boolean = false;
-    selectedFriendIndex: number | null = null;
+  editProfile: boolean = false;
+  editUsername: string = '';
+  editTag: string = '';
+  selectedFriendIndex: number | null = null;
     searchUsername: string = '';
     selectedUser: string = '';
 
+
     ngOnInit(): void {
-      this.authService.username$.subscribe(username => {
-          if (username) {
-              this.username = username;
-              this.loadFriendsList();
-          }
+      
+
+      this.authService.email$.subscribe(email => {
+        if (email) {
+          this.email = email;
+          
+        }
+        this.loadUserProfile();
       });
+
+      
   }
 
 
@@ -77,14 +86,17 @@ export class UserProfileComponent implements OnInit {
      * Load user profile details from API.
      */
     loadUserProfile() {
-      this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
-        next: (data: FriendsResponse) => {
-            if (data.success) {
-                this.friendsList = data.friends;
-                console.log('Lista de amigos carregada:', this.friendsList); // Debugging
+      this.netApi.get<UserProfileResponse>('Profile', 'GetUserInfo', this.email).subscribe({
+        next: (data) => {
+          if (data.success) {
+            this.username = data.username;
+            this.tag = data.tag;
+            this.points = data.points;
+            this.loadFriendsList();
             } else {
                 this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
-            }
+          }
+          
         },
         error: (err) => {
             console.error('Erro ao buscar amigos:', err);
@@ -103,6 +115,8 @@ export class UserProfileComponent implements OnInit {
           this.popupLoader.showPopup('Erro', 'Nome de utilizador não encontrado.');
           return;
       }
+
+      
 
       this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
           next: (data: FriendsResponse) => {
@@ -128,9 +142,14 @@ export class UserProfileComponent implements OnInit {
         this.userList = [];
         this.searchUsername = (document.getElementById('InputAdd') as HTMLInputElement)?.value || '';
 
+        const params = {
+          Username: this.username,
+          SearchedOrSelectedName: this.searchUsername
+        }
+
         if (this.searchUsername.trim() !== '') {
             this.netApi
-                .post<UserList>('Profile', 'UserList', [this.username, this.searchUsername])
+              .post<UserList>('Profile', 'UserList', params)
                 .subscribe({
                     next: (data) => {
                         this.userList = data.usernames;
@@ -157,10 +176,13 @@ export class UserProfileComponent implements OnInit {
         if (this.selectedUser.trim() === '') {
             this.popupLoader.showPopup('Erro', 'Digite um nome de utilizador válido.');
             return;
-        }
+      }
+      const params = {
+        Username: this.username,
+        SearchedOrSelectedName: this.selectedUser
+      }
 
-        this.netApi
-            .post('Profile', 'AddFriend', [this.username, this.selectedUser])
+        this.netApi.post('Profile', 'AddFriend', params)
             .subscribe({
                 next: () => {
                     this.friendsList.push({ username: this.selectedUser, email: '' }); // Email isn't provided by the API, so left empty
@@ -213,9 +235,10 @@ export class UserProfileComponent implements OnInit {
     /**
      * Salva a tag selecionada no perfil do usuário
      */
-    saveTag() {
+  saveTag() {
+      
       this.netApi
-          .post('Profile', 'UpdateUserTag', { email: this.email, tag: this.tag })
+          .post('Profile', 'UpdateUserTag', { email: this.email, tag: this.editTag })
           .subscribe({
               next: () => {
                   this.popupLoader.showPopup('Sucesso', 'Tag atualizada com sucesso.');
@@ -230,13 +253,14 @@ export class UserProfileComponent implements OnInit {
  * Atualiza o nome de utilizador no perfil do usuário.
  */
 updateUsername() {
-  if (!this.username || this.username.trim() === '') {
+  if (!this.editUsername || this.editUsername.trim() === '') {
       this.popupLoader.showPopup('Erro', 'O nome de utilizador não pode estar vazio.');
       return;
   }
 
+  
   this.netApi
-      .post('Profile', 'UpdateUsername', { email: this.email, username: this.username })
+      .post('Profile', 'UpdateUsername', { email: this.email, username: this.editUsername })
       .subscribe({
           next: () => {
               this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');

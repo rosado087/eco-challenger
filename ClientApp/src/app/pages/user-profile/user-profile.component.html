@@ -4,25 +4,36 @@
 
       <!-- Seção Esquerda: Informações do Usuário -->
       <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3">
-          <div class="text-center">
-              <h2 class="text-xl font-semibold text-gray-700">
-                  Perfil de Utilizador
-              </h2>
-          </div>
+        <div class="flex items-center md:flex-row gap-24">
+          <h2 class="text-xl font-semibold text-gray-700">
+            Perfil de Utilizador
+          </h2>
+          @if(!editProfile){
+          <button (click)="editProfile = true"
+                  class="bg-green-600 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition self-right">
+            Edit
+          </button>
+          }@else{
+          <button (click)="editProfile = false; saveTag(); updateUsername()" value="{{username}}"
+                  class="bg-green-600 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition self-right">
+            Guardar
+          </button>
+          }
+
+        </div>
 
           <!-- Nome de Utilizador -->
           <div class="mt-4">
               <span class="font-medium text-gray-700">Nome de Utilizador:</span>
               <div class="flex items-center gap-2">
-                  <input
-                      type="text"
-                      [(ngModel)]="username"
-                      class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200" />
-                  <button
-                      (click)="updateUsername()"
-                      class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                      Guardar
-                  </button>
+                @if(!editProfile){
+                  <label>{{username}}</label>
+                  }@else{
+                  <input id="edit-username"
+                         type="text"
+                         [(ngModel)]="editUsername"
+                         class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200"/>
+                }
               </div>
           </div>
 
@@ -36,18 +47,17 @@
           <div class="mt-4">
               <span class="font-medium text-gray-700">Tags:</span>
               <div class="flex items-center gap-2">
-                  <select
-                      [(ngModel)]="tag"
-                      class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200">
-                      <option *ngFor="let tagOption of availableTags" [value]="tagOption">
-                          {{ tagOption }}
-                      </option>
+                @if(!editProfile){
+                <label>{{tag}}</label>
+                }@else{
+                  <select id="edit-tag"
+                          [(ngModel)]="editTag"
+                          class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200" [value] ="tag">
+                    <option id="option-{{tagOption}}" *ngFor="let tagOption of availableTags" [value]="tagOption">
+                      {{ tagOption }}
+                    </option>
                   </select>
-                  <button
-                      (click)="saveTag()"
-                      class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                      Guardar
-                  </button>
+                }
               </div>
           </div>
 
@@ -62,7 +72,7 @@
       <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
           <div class="flex items-center gap-2 mb-4">
               <h2 class="text-xl font-semibold text-gray-700">Lista de amigos</h2>
-              <button
+              <button id="add-friend-modal"
                   (click)="showAddFriendModal = true"
                   class="text-green-600 hover:text-green-800 text-lg font-bold">
                   +
@@ -76,14 +86,14 @@
                       <tr *ngFor="let friend of friendsList; let i = index" class="border-b">
                           <td class="p-2">{{ friend.username }}</td>
                           <td class="p-2">
-                              <button
+                              <button id="view-{{friend.username}}"
                                   (click)="viewProfile(friend.username)"
                                   class="text-green-600 hover:text-green-800">
                                   Ver perfil
                               </button>
                           </td>
                           <td class="p-2">
-                              <button
+                              <button id="rem-{{friend.username}}"
                                   (click)="selectedFriendIndex = i; showRemoveFriendModal = true"
                                   class="text-red-600 hover:text-red-800">
                                   Remover
@@ -102,15 +112,16 @@
   </div>
 
   <!-- MODAL: ADICIONAR AMIGO -->
-  <div *ngIf="showAddFriendModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+  <div id="add-div"
+       *ngIf="showAddFriendModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white p-6 rounded-lg shadow-lg w-96">
           <h2 class="text-xl font-semibold text-gray-700 text-center">Adicionar amigo</h2>
 
           <!-- Campo de Nome -->
           <div class="mt-4">
-              <label for="InputAdd" class="block text-gray-700 font-medium mb-1">Nome de utilizador:</label>
+              <label for="input-add" class="block text-gray-700 font-medium mb-1">Nome de utilizador:</label>
               <input
-                  id="InputAdd"
+                  id="input-add"
                   type="text"
                   (input)="findUser()"
                   class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
@@ -122,7 +133,7 @@
               <table class="w-full text-left">
                   <tbody>
                       <tr *ngFor="let username of userList; let i = index" class="border-b">
-                          <td
+                          <td id="pos-{{username}}"
                               class="p-2 cursor-pointer"
                               [class.bg-green-600]="username === selectedUser"
                               [class.text-white]="username === selectedUser"
@@ -136,7 +147,7 @@
 
           <!-- Botões -->
           <div class="flex justify-between mt-6">
-              <button
+              <button id="add-friend-modal"
                   (click)="addFriend()"
                   class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
                   Adicionar
@@ -158,7 +169,7 @@
 
           <!-- Botões -->
           <div class="flex justify-between mt-6">
-              <button
+              <button id="confirm-rem"
                   (click)="removeFriend(selectedFriendIndex)"
                   class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
                   Sim

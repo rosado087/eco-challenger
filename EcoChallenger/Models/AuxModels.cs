@@ -21,3 +21,9 @@ public class LoginRequestModel
     public string Username { get; set; } // ✅ Add username
     public string Email { get; set; } // ✅ Add email
 }
+
+public class ProfileAddFriendModel
+{
+    public string Username { get; set; }
+    public string SearchedOrSelectedName { get; set; }
+}

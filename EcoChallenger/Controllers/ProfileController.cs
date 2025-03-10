@@ -79,15 +79,15 @@ namespace EcoChallenger.Controllers
         /// <summary>
         /// Retrieves a list of users containing a searched username.
         /// </summary>
-        /// <param name="values">Array containing the username of the requesting user and the search term.</param>
+        /// <param name="values">Auxiliary Model object containg user name and searched name.</param>
         /// <returns>JSON result with a list of usernames.</returns>
         [HttpPost("UserList")]
-        public async Task<JsonResult> UserList(string[] values)
+        public async Task<JsonResult> UserList([FromBody] ProfileAddFriendModel data)
         {
-            if (values.Length < 2)
+            if (data.SearchedOrSelectedName == "" || data.Username == "")
                 return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
 
-            var currentUser = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
+            var currentUser = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == data.Username);
 
             if (currentUser == null)
                 return new JsonResult(new { success = false, message = "Usuário não encontrado" });
@@ -98,7 +98,7 @@ namespace EcoChallenger.Controllers
                 .ToListAsync();
 
             var users = await _ctx.Users
-                .Where(u => u.Username.Contains(values[1]) && !u.Username.Equals(values[0]) && !friends.Contains(u.Id))
+                .Where(u => u.Username.Contains(data.SearchedOrSelectedName) && !u.Username.Equals(data.Username) && !friends.Contains(u.Id))
                 .Select(u => u.Username)
                 .ToListAsync();
 
@@ -108,16 +108,16 @@ namespace EcoChallenger.Controllers
         /// <summary>
         /// Adds a user as a friend.
         /// </summary>
-        /// <param name="values">Array containing the username of the requester and the friend’s username.</param>
+        /// <param name="values">Auxiliary Model object containg user name and selected user name.</param>
         /// <returns>JSON result indicating success or failure.</returns>
         [HttpPost("AddFriend")]
-        public async Task<JsonResult> AddFriend(string[] values)
+        public async Task<JsonResult> AddFriend([FromBody] ProfileAddFriendModel data)
         {
-            if (values.Length < 2)
+            if (data.SearchedOrSelectedName == "" || data.Username == "")
                 return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
 
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
-            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[1]);
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == data.Username);
+            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == data.SearchedOrSelectedName);
 
             if (user == null || friend == null)
                 return new JsonResult(new { success = false, message = "Usuário ou amigo não encontrado" });

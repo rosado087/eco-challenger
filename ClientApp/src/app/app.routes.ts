@@ -18,7 +18,7 @@ export const routes: Routes = [
             return import(
                 './pages/forgot-password/forgot-password.component'
             ).then((m) => m.ForgotPasswordComponent)
-        }
+      }
     },
     {
         path: 'reset-password/:token',
@@ -26,7 +26,7 @@ export const routes: Routes = [
             return import(
                 './pages/reset-password/reset-password.component'
             ).then((m) => m.ResetPasswordComponent)
-        }
+      }
     },
     {
         path: 'add-username',
@@ -34,7 +34,7 @@ export const routes: Routes = [
             return import('./pages/add-username/add-username.component').then(
                 (m) => m.AddUsernameComponent
             )
-        }
+      }
     },
     {
         path: 'register',
@@ -42,7 +42,8 @@ export const routes: Routes = [
             return import('./pages/register/register.component').then(
                 (m) => m.RegisterComponent
             )
-        }
+      }
+
     },
     {
         path: 'login',
@@ -50,7 +51,8 @@ export const routes: Routes = [
             return import('./pages/login/login.component').then(
                 (m) => m.LoginComponent
             )
-        }
+      }
+      
     },
     {
         path: 'user-profile',
@@ -58,6 +60,7 @@ export const routes: Routes = [
             return import('./pages/user-profile/user-profile.component').then(
                 (m) => m.UserProfileComponent
             )
-        }
+      },
+      canActivate: [authGuard]
     }
 ]
