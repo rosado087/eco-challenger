@@ -99,7 +99,7 @@ namespace EcoChallenger.Utils
                 Expires = DateTime.UtcNow.Add(new TimeSpan(8, 0, 0)),
                 Issuer = _jwtSettings.Issuer,
                 Audience = _jwtSettings.Audience,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.Sha256)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);

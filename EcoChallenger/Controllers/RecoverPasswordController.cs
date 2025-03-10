@@ -1,5 +1,5 @@
-using System.Text;
-using System.Threading.Tasks;
+using EcoChallenger.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +26,7 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="data">Contains the user's email address</param>
         /// <returns>JSON result indicating success or failure</returns>
+        [AllowAnonymous]
         [HttpPost("SendRecoveryEmail")]
         public async Task<JsonResult> SendRecoveryEmail([FromBody] SendRecoveryEmailModel data)
         {
@@ -74,6 +75,7 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="token">The token to be checked, this comes as a route param</param>
         /// <returns>JSON result indicating success or failure</returns>
+        [AllowAnonymous]
         [HttpGet("CheckToken/{token}")]
         public JsonResult CheckToken(string token) {
             var userTkn = TokenManager.GetValidTokenRecord(_ctx, token);
@@ -90,6 +92,7 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="data">Contains the user's email address</param>
         /// <returns>JSON result indicating success or failure</returns>
+        [AllowAnonymous]
         [HttpPost("SetNewPassword")]
         public async Task<JsonResult> SetNewPassword([FromBody] SetNewPasswordModel data) {
             var userTkn = TokenManager.GetValidTokenRecord(_ctx, data.Token);

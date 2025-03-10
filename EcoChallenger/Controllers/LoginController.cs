@@ -1,4 +1,5 @@
 using EcoChallenger.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ namespace EcoChallenger.Controllers
             _configuration = configuration;
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<JsonResult> Login([FromBody] LoginRequestModel data)
         {
@@ -61,12 +63,14 @@ namespace EcoChallenger.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetGoogleId")]
         public JsonResult GetGoogleId()
         {
             return new JsonResult(new { clientId = _configuration["GoogleClient:ClientId"] });
         }
 
+        [AllowAnonymous]
         [HttpPost("AuthenticateGoogle")]
         public async Task<JsonResult> AuthenticateGoogle(string[] values)
         {
@@ -90,6 +94,7 @@ namespace EcoChallenger.Controllers
             return new JsonResult(new { success = false });
         }
 
+        [AllowAnonymous]
         [HttpPut("SignUpGoogle")]
         public async Task<JsonResult> SignUpGoogle(string[] values)
         {
@@ -101,6 +106,7 @@ namespace EcoChallenger.Controllers
             return new JsonResult(new { success = true });
         }
 
+        [AllowAnonymous]
         [HttpPost("UserExists")]
         public async Task<bool> UserExists(string username = "")
         {
