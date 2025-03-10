@@ -13,15 +13,10 @@ import { PopupLoaderService } from '../../services/popup-loader/popup-loader.ser
     providers: [PopupLoaderService]
 })
 
-export class HeaderComponent implements OnInit {
-    isLoggedIn = false
+export class HeaderComponent {
     popupLoader = inject(PopupLoaderService)
     authService = inject(AuthService)
     router = inject(Router)
-
-    ngOnInit() {
-        this.isLoggedIn = this.authService.isLoggedIn()
-    }
 
     logout() {
         this.popupLoader.showPopup(
