@@ -44,7 +44,7 @@ namespace EcoChallenger.Controllers
                 .ToList();
             _ctx.UserTokens.RemoveRange(userTokens);
             
-            var userToken = TokenManager.CreateUserToken(users.First());
+            var userToken = TokenManager.CreateUserToken(users.First(), true);
             _ctx.UserTokens.Add(userToken);
 
             await _ctx.SaveChangesAsync();

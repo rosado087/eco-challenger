@@ -62,7 +62,7 @@ namespace EcoChallengerTest.UnitTest
         {
             // Arrange
             var context = GetInMemoryDbContext();
-            var validToken = TokenManager.CreateUserToken(new User { Email = "test@gmail.com", Username = "test", Password = "123" });
+            var validToken = TokenManager.CreateUserToken(new User { Email = "test@gmail.com", Username = "test", Password = "123" }, true);
             context.UserTokens.Add(validToken);
             context.SaveChanges();
 
@@ -84,7 +84,7 @@ namespace EcoChallengerTest.UnitTest
             // Arrange
             var context = GetInMemoryDbContext();
             var user = new User { Email = "test@gmail.com", Username = "test", Password = "oldPassword" };
-            var validToken = TokenManager.CreateUserToken(user);
+            var validToken = TokenManager.CreateUserToken(user, true);
             context.Users.Add(user);
             context.UserTokens.Add(validToken);
             await context.SaveChangesAsync();
