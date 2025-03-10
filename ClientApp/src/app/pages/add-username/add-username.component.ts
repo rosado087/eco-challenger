@@ -6,12 +6,12 @@ import {
     ReactiveFormsModule,
     Validators
 } from '@angular/forms'
-import { NetApiService } from '../../services/net-api.service'
+import { NetApiService } from '../../services/net-api/net-api.service'
 import { ButtonComponent } from '../../components/button/button.component'
 import { Router } from '@angular/router'
-import { PopupLoaderService } from '../../services/popup-loader.service'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 import { PopupButton } from '../../models/popup-button'
-import { AuthService } from '../../services/auth.service'
+import { AuthService } from '../../services/auth/auth.service'
 import { AuthUserInfo } from '../../models/auth-user-info'
 import { SuccessModel } from '../../models/success-model'
 
@@ -44,12 +44,12 @@ export class AddUsernameComponent {
                 type: 'ok',
                 text: 'Okay',
                 callback: () => {
-                    const userInfo = new AuthUserInfo(
-                        this.getUsername()?.value || '',
-                        data.email
-                    )
+                    //const userInfo = new AuthUserInfo(
+                    //    this.getUsername()?.value || '',
+                    //    data.email
+                    //)TODO
 
-                    this.authService.login(userInfo, 'google-token') // Notify AuthService
+                    //this.authService.login(userInfo, 'google-token') // Notify AuthService
                     this.router.navigate(['/'])
                 }
             }

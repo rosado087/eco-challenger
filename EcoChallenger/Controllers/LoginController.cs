@@ -49,8 +49,12 @@ namespace EcoChallenger.Controllers
                     success = true,
                     message = "Login successful!",
                     token = userToken.Token,
-                    user.Username,
-                    user.Email
+                    user = new {
+                        id = user.Id,
+                        username = user.Username,
+                        email = user.Email,
+                        isAdmin = user.IsAdmin
+                    }
                 });
             }
             catch (Exception ex)

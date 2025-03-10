@@ -4,8 +4,8 @@ import {
     Injectable,
     ViewContainerRef
 } from '@angular/core'
-import { PopupButton } from '../models/popup-button'
-import { PopupComponent } from '../components/popup/popup.component'
+import { PopupButton } from '../../models/popup-button'
+import { PopupComponent } from '../../components/popup/popup.component'
 
 @Injectable({
     providedIn: 'root'

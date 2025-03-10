@@ -8,12 +8,12 @@
                 <li routerLink="/login"><a>Login</a></li>
                 <li routerLink="/register"><a>Registo</a></li>
             }
-            @if (isLoggedIn) {
+            @else {
                 <li>
                     <a
                         routerLink="/user-profile"
                         class="text-black font-bold hover:text-green-600"
-                        >{{ username }}</a
+                        >{{ authService.getUserInfo().username }}</a
                     >
                 </li>
                 <li><button (click)="logout()">Logout</button></li>

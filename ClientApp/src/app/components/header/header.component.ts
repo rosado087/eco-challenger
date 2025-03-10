@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core'
 import { LogoComponent } from '../logo/logo.component'
 import { Router, RouterLink } from '@angular/router'
-import { AuthService } from '../../services/auth.service'
-import { PopupLoaderService } from '../../services/popup-loader.service'
+import { AuthService } from '../../services/auth/auth.service'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 
 @Component({
     selector: 'app-header',
@@ -10,23 +10,17 @@ import { PopupLoaderService } from '../../services/popup-loader.service'
     imports: [LogoComponent, RouterLink],
     templateUrl: './header.component.html',
     styleUrl: './header.component.css',
-    providers: [PopupLoaderService] // ✅ Ensure service is provided
+    providers: [PopupLoaderService]
 })
+
 export class HeaderComponent implements OnInit {
     isLoggedIn = false
-    username: string | null = null
-    popupLoader = inject(PopupLoaderService) // ✅ Inject PopupLoaderService properly
-
-    constructor(
-        private authService: AuthService,
-        private router: Router
-    ) {}
+    popupLoader = inject(PopupLoaderService)
+    authService = inject(AuthService)
+    router = inject(Router)
 
     ngOnInit() {
-        this.authService.isLoggedIn$.subscribe(
-            (status) => (this.isLoggedIn = status)
-        )
-        this.authService.username$.subscribe((name) => (this.username = name))
+        this.isLoggedIn = this.authService.isLoggedIn()
     }
 
     logout() {

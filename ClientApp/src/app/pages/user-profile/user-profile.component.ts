@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { PopupLoaderService } from '../../services/popup-loader.service';
-import { NetApiService } from '../../services/net-api.service';
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service';
+import { NetApiService } from '../../services/net-api/net-api.service';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf } from '@angular/common';
 import {
@@ -34,7 +34,7 @@ export interface FriendsResponse {
 @Component({
     selector: 'app-user-profile',
     standalone: true,
-    imports: [NgIcon, NgFor, NgIf, FormsModule],
+    imports: [NgFor, NgIf, FormsModule],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],
     providers: [
@@ -64,14 +64,8 @@ export class UserProfileComponent implements OnInit {
     selectedUser: string = '';
 
     ngOnInit(): void {
-      this.authService.username$.subscribe(username => {
-          if (username) {
-              this.username = username;
-              this.loadFriendsList();
-          }
-      });
-  }
-
+      this.username = this.authService.getUserInfo().username
+    }
 
     /**
      * Load user profile details from API.

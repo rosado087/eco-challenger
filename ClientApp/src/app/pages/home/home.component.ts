@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { PopupLoaderService } from '../../services/popup-loader.service'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 
 @Component({
     selector: 'app-home',

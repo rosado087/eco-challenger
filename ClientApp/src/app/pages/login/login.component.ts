@@ -3,8 +3,8 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { NgIcon, provideIcons } from '@ng-icons/core'
 import { heroUser, heroLockClosed } from '@ng-icons/heroicons/outline'
-import { PopupLoaderService } from '../../services/popup-loader.service'
-import { NetApiService } from '../../services/net-api.service'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
+import { NetApiService } from '../../services/net-api/net-api.service'
 import {
     FormControl,
     FormGroup,
@@ -13,13 +13,12 @@ import {
 } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
 import { PopupButton } from '../../models/popup-button'
-import { AuthService } from '../../services/auth.service'
+import { AuthService } from '../../services/auth/auth.service'
 import { LoginResponseModel } from '../../models/login-response-model'
 import {
     GAuthLoginModel,
     GAuthLoginResponseModel
 } from '../../models/gauth-login'
-import { AuthUserInfo } from '../../models/auth-user-info'
 
 /*
   This google variable is filled through a script tag that is placed
@@ -114,13 +113,11 @@ export class LoginComponent implements OnInit {
                             callback: () => this.router.navigate(['/'])
                         }
                     ]
+                    
                     if (response.success) {
-                        const userInfo = new AuthUserInfo(
-                            response.username,
-                            response.email
-                        )
+                        // Init user auth service
+                        this.authService.login(response.user, response.token) 
 
-                        this.authService.login(userInfo, response.token) // Use AuthService
                         this.popupLoader.showPopup(
                             'Login Bem-Sucedido',
                             'Entrou na sua conta!',
@@ -162,12 +159,12 @@ export class LoginComponent implements OnInit {
                     next: (data) => {
                         if (data.success) {
                             // Update AuthService so the Header updates
-                            const userInfo = new AuthUserInfo(
-                                data.name || info.email.split('@')[0],
-                                info.email
-                            )
+                            //const userInfo = new AuthUserInfo(
+                            //    data.name || info.email.split('@')[0],
+                            //    info.email
+                            //)
 
-                            this.authService.login(userInfo, 'google-token') // Notify AuthService
+                            //this.authService.login(userInfo, 'google-token') // Notify AuthService
                             this.router.navigate(['/'])
                         } else {
                             this.router.navigate(['add-username'])
