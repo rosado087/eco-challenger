@@ -53,6 +53,10 @@ builder.Services.AddDbContext<AppDbContext>(
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+// User Context initialization
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+UserContext.Initialize(builder.Services.BuildServiceProvider().GetRequiredService<IHttpContextAccessor>());
+
 
 var app = builder.Build();
 
