@@ -91,7 +91,6 @@ namespace EcoChallenger.Controllers
                     string username = data.Email.Split('@')[0];
 
                     User newUser = new User {
-                        Id = 0, //TODO
                         Username = username,
                         Email = data.Email,
                         GoogleToken = data.GoogleToken
