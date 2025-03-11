@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250310230924_Initial")]
+    [Migration("20250311115721_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

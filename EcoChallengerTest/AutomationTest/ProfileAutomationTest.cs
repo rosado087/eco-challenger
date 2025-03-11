@@ -96,8 +96,15 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Username_Profile_Success()
         {
-            var addButton = wait.Until(d => d.FindElement(By.Id("add-friend-modal")));
-            addButton.Click();
+            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            editButton.Click();
+
+            var inputName = wait.Until(d => d.FindElement(By.Id("edit-username")));
+            TypeWithDelay(inputName, "Test Name", 100);
+            Thread.Sleep(500);
+
+            var saveButton = wait.Until(d => d.FindElement(By.Id("save-info")));
+            saveButton.Click();
 
             var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
             Thread.Sleep(500);
@@ -109,8 +116,16 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Username_Profile_Failure()
         {
+            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            editButton.Click();
 
+            var inputName = wait.Until(d => d.FindElement(By.Id("edit-username")));
+            TypeWithDelay(inputName, "Test Name", 100);
+            Thread.Sleep(500);
 
+            var saveButton = wait.Until(d => d.FindElement(By.Id("save-info")));
+            saveButton.Click();
+            
             var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
             Thread.Sleep(500);
             var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
@@ -121,19 +136,18 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Tag_Profile_Success()
         {
+            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            editButton.Click();
 
+            var selectTag = wait.Until(d => d.FindElement(By.Id("edit-tag")));
+            selectTag.Click();
+            
+            var optionTag = wait.Until(d => d.FindElement(By.Id("option-Eco Warrior")));
+            optionTag.Click();
+            
 
-            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
-            Thread.Sleep(500);
-            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
-
-            okayButton.Click();
-        }
-
-        [Test]
-        public void Edit_Tag_Profile_Failure()
-        {
-
+            var saveButton = wait.Until(d => d.FindElement(By.Id("save-info")));
+            saveButton.Click();
 
             var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
             Thread.Sleep(500);
@@ -145,13 +159,25 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Nothing_Profile_Success()
         {
+            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            editButton.Click();
 
-
-            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
+        
+            var inputName = wait.Until(d => d.FindElement(By.Id("edit-username")));
+            TypeWithDelay(inputName, "Test Name", 100);
             Thread.Sleep(500);
-            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
 
-            okayButton.Click();
+            var selectTag = wait.Until(d => d.FindElement(By.Id("edit-tag")));
+            selectTag.Click();
+            
+            var optionTag = wait.Until(d => d.FindElement(By.Id("option-Eco Warrior")));
+            optionTag.Click();
+            
+
+            var saveButton = wait.Until(d => d.FindElement(By.Id("save-info")));
+            saveButton.Click();
+
+            
         }
 
         

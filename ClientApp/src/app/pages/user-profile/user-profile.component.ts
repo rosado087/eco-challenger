@@ -90,7 +90,9 @@ export class UserProfileComponent implements OnInit {
         next: (data) => {
           if (data.success) {
             this.username = data.username;
+            this.editUsername = data.username;
             this.tag = data.tag;
+            this.editTag = data.tag;
             this.points = data.points;
             this.loadFriendsList();
             } else {
@@ -236,7 +238,8 @@ export class UserProfileComponent implements OnInit {
      * Salva a tag selecionada no perfil do usuário
      */
   saveTag() {
-      
+
+      if(this.tag !== this.editTag && this.editTag != '')
       this.netApi
           .post('Profile', 'UpdateUserTag', { email: this.email, tag: this.editTag })
           .subscribe({
@@ -258,9 +261,8 @@ updateUsername() {
       return;
   }
 
-  
-  this.netApi
-      .post('Profile', 'UpdateUsername', { email: this.email, username: this.editUsername })
+  if (this.editUsername !== this.username)
+    this.netApi.post('Profile', 'UpdateUsername', { email: this.email, username: this.editUsername })
       .subscribe({
           next: () => {
               this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');

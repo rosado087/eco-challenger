@@ -9,12 +9,14 @@
             Perfil de Utilizador
           </h2>
           @if(!editProfile){
-          <button (click)="editProfile = true"
+          <button id="edit-info"
+                  (click)="editProfile = true"
                   class="bg-green-600 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition self-right">
             Edit
           </button>
           }@else{
-          <button (click)="editProfile = false; saveTag(); updateUsername()" value="{{username}}"
+          <button id="save-info"
+                  (click)="editProfile = false; saveTag(); updateUsername()"
                   class="bg-green-600 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition self-right">
             Guardar
           </button>
@@ -48,11 +50,11 @@
               <span class="font-medium text-gray-700">Tags:</span>
               <div class="flex items-center gap-2">
                 @if(!editProfile){
-                <label>{{tag}}</label>
+                <span >{{tag}}</span>
                 }@else{
                   <select id="edit-tag"
                           [(ngModel)]="editTag"
-                          class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200" [value] ="tag">
+                          class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200">
                     <option id="option-{{tagOption}}" *ngFor="let tagOption of availableTags" [value]="tagOption">
                       {{ tagOption }}
                     </option>
