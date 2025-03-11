@@ -72,13 +72,9 @@ export class UserProfileComponent implements OnInit {
 
       
 
-      this.authService.email$.subscribe(email => {
-        if (email) {
-          this.email = email;
-          
-        }
+      this.email = this.authService.getUserInfo().email;
         this.loadUserProfile();
-      });
+      
 
       
   }

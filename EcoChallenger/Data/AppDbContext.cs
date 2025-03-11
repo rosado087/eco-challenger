@@ -1,4 +1,5 @@
 using EcoChallenger.Models;
+using EcoChallenger.Utils;
 using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
