@@ -36,7 +36,7 @@
         <h3 class="text-lg font-bold">{{ title() }}</h3>
         <p class="py-4">{{ message() }}</p>
         <div class="modal-action">
-            <form method="dialog">
+            <form method="dialog" class="flex gap-1">
                 @for (btn of getButtons(); track btn.text) {
                     <app-button
                         [customClass]="

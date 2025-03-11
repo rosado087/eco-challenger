@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Xunit;
 using EcoChallenger.Controllers;
+using Microsoft.Extensions.Logging;
+using EcoChallenger.Utils;
 
 public class LoginControllerTest
 {
@@ -14,6 +14,8 @@ public class LoginControllerTest
 
     public LoginControllerTest()
     {
+        var mockLogger = new Mock<ILogger<LoginController>>();
+
         // Set up in-memory database
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -22,7 +24,7 @@ public class LoginControllerTest
         _dbContext = new AppDbContext(options);
         _mockConfig = new Mock<IConfiguration>();
 
-        _controller = new LoginController(_dbContext, _mockConfig.Object);
+        _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
     }
 
     [Fact]

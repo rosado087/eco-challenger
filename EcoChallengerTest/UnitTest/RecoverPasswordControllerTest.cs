@@ -1,4 +1,5 @@
 ﻿using EcoChallenger.Controllers;
+using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -62,14 +63,14 @@ namespace EcoChallengerTest.UnitTest
         {
             // Arrange
             var context = GetInMemoryDbContext();
-            var validToken = TokenManager.CreateUserToken(new User { Email = "test@gmail.com", Username = "test", Password = "123" });
+            var validToken = TokenManager.CreateRecoveryUserToken(new User { Email = "test@gmail.com", Username = "test", Password = "123" });
             context.UserTokens.Add(validToken);
             context.SaveChanges();
 
             var controller = new RecoverPasswordController(context, null, null, null);
 
             // Act
-            var result = controller.CheckToken(validToken.Token) as JsonResult;
+            var result = controller.CheckToken(validToken.Token);
             var successProperty = result.Value.GetType().GetProperty("success");
             var successValue = (bool)successProperty.GetValue(result.Value);
 
@@ -84,7 +85,7 @@ namespace EcoChallengerTest.UnitTest
             // Arrange
             var context = GetInMemoryDbContext();
             var user = new User { Email = "test@gmail.com", Username = "test", Password = "oldPassword" };
-            var validToken = TokenManager.CreateUserToken(user);
+            var validToken = TokenManager.CreateRecoveryUserToken(user);
             context.Users.Add(user);
             context.UserTokens.Add(validToken);
             await context.SaveChangesAsync();

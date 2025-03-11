@@ -1,4 +1,5 @@
 using EcoChallenger.Controllers;
+using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace EcoChallengerTest.UnitTest
@@ -68,7 +69,7 @@ namespace EcoChallengerTest.UnitTest
             Assert.NotNull(result);
             Assert.NotNull(successProperty);
             Assert.False(successValue);
-            Assert.Equal("Este email j· existe", messageValue);
+            Assert.Equal("Este email j√° existe", messageValue);
         }
 
         [Fact]

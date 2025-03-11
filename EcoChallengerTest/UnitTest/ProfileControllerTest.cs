@@ -6,6 +6,7 @@ using Moq;
 using Xunit;
 using EcoChallenger.Controllers;
 using EcoChallenger.Models;
+using EcoChallenger.Utils;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -84,7 +85,7 @@ namespace EcoChallengerTest.UnitTest
             // Act
             var result = await _controller.AddFriend([testUser.Username, testUser2.Username]) as JsonResult;
 
-            var valueProperty = result.Value.GetType().GetProperty("result");
+            var valueProperty = result.Value.GetType().GetProperty("success");
             Assert.True((bool)valueProperty.GetValue(result.Value));
         }
 
