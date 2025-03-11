@@ -32,7 +32,10 @@
                         placeholder="Email"
                         required />
                 </div>
-                @if (this.loginForm.get('email')?.invalid && this.loginForm.get('email')?.touched) {
+                @if (
+                    this.loginForm.get('email')?.invalid &&
+                    this.loginForm.get('email')?.touched
+                ) {
                     @if (this.loginForm.get('email')?.errors?.['required']) {
                         <p class="text-red-500 text-sm">
                             Este campo é obrigatório!
@@ -65,13 +68,18 @@
                         placeholder="Palavra-passe"
                         required />
                 </div>
-                @if (this.loginForm.get('password')?.invalid && this.loginForm.get('password')?.touched) {
+                @if (
+                    this.loginForm.get('password')?.invalid &&
+                    this.loginForm.get('password')?.touched
+                ) {
                     @if (this.loginForm.get('password')?.errors?.['required']) {
                         <p class="text-red-500 text-sm">
                             Este campo é obrigatório.
                         </p>
                     }
-                    @if (this.loginForm.get('password')?.errors?.['minlength']) {
+                    @if (
+                        this.loginForm.get('password')?.errors?.['minlength']
+                    ) {
                         <p class="text-red-500 text-sm">
                             A plavra-passe deve ter pelo menos 8 caracteres.
                         </p>

@@ -18,7 +18,7 @@ export class AuthService {
     login(userInfo: AuthUserInfo, token: string) {
         this.mapUserCookies(userInfo) // Save user data
 
-        this.cookieService.set("auth_token", token) // Save JWT token
+        this.cookieService.set('auth_token', token) // Save JWT token
     }
 
     logout() {
@@ -26,7 +26,7 @@ export class AuthService {
     }
 
     isLoggedIn() {
-        return !!this.cookieService.get("auth_token")
+        return !!this.cookieService.get('auth_token')
     }
 
     getUserInfo() {
@@ -34,13 +34,14 @@ export class AuthService {
             id: parseInt(this.cookieService.get('auth_id')),
             username: this.cookieService.get('auth_username'),
             email: this.cookieService.get('auth_email'),
-            isAdmin: this.cookieService.get('auth_isAdmin').toLowerCase() == 'true'
+            isAdmin:
+                this.cookieService.get('auth_isAdmin').toLowerCase() == 'true'
         }
 
-        return user;
+        return user
     }
 
     getAuthToken() {
-        return this.cookieService.get("auth_token")
+        return this.cookieService.get('auth_token')
     }
 }

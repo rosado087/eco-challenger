@@ -1,4 +1,4 @@
-import { AuthUserInfo } from "./auth-user-info"
+import { AuthUserInfo } from './auth-user-info'
 
 export interface LoginResponseModel {
     success: boolean

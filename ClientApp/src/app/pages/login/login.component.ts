@@ -14,9 +14,7 @@ import {
 import { Router, RouterLink } from '@angular/router'
 import { AuthService } from '../../services/auth/auth.service'
 import { LoginResponseModel } from '../../models/login-response-model'
-import {
-    GAuthLoginModel
-} from '../../models/gauth-login'
+import { GAuthLoginModel } from '../../models/gauth-login'
 
 /*
   This google variable is filled through a script tag that is placed
@@ -93,7 +91,7 @@ export class LoginComponent implements OnInit {
         this.netApi
             .post<LoginResponseModel>('Login', 'Login', params)
             .subscribe({
-                next: (response) => {                    
+                next: (response) => {
                     if (response.success) {
                         // Init user auth service
                         this.authService.login(response.user, response.token)
@@ -103,7 +101,8 @@ export class LoginComponent implements OnInit {
 
                     this.popupLoader.showPopup(
                         'Erro ao fazer login',
-                        response.message || 'Ocorreu um erro ao tentar fazer login.'
+                        response.message ||
+                            'Ocorreu um erro ao tentar fazer login.'
                     )
 
                     this.disableSubmit = false
@@ -131,14 +130,15 @@ export class LoginComponent implements OnInit {
             .subscribe({
                 next: (data) => {
                     if (data.success) {
-                        this.authService.login(data.user, data.token) 
+                        this.authService.login(data.user, data.token)
                         this.router.navigate(['/'])
                         return
                     }
 
                     this.popupLoader.showPopup(
                         'Erro',
-                        data.message || 'Houve um problema ao autenticar com conta Google.'
+                        data.message ||
+                            'Houve um problema ao autenticar com conta Google.'
                     )
                 },
                 error: () => {

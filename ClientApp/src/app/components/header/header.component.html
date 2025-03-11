@@ -1,31 +1,28 @@
-
-
 <div class="navbar bg-secondary">
     <div class="navbar-start flex">
         <a routerLink="/" class="text-xl"><app-logo [height]="'4rem'" /></a>
         @if (authService.isLoggedIn()) {
             <ul class="menu menu-horizontal px-1">
-              <li><a>Desafios</a></li>
-              <li><a>Loja</a></li>
+                <li><a>Desafios</a></li>
+                <li><a>Loja</a></li>
 
-            @if (authService.getUserInfo().isAdmin) {
-                <li>
-                    <details>
-                        <summary>Admin</summary>
-                        <ul class="p-2">
-                        <li><a>Utilizadores</a></li>
-                        <li><a>Desafios</a></li>
-                        <li><a>Tags</a></li>
-                        <li><a>Estatística</a></li>
-                        </ul>
-                    </details>
-                </li>
-            }              
+                @if (authService.getUserInfo().isAdmin) {
+                    <li>
+                        <details>
+                            <summary>Admin</summary>
+                            <ul class="p-2">
+                                <li><a>Utilizadores</a></li>
+                                <li><a>Desafios</a></li>
+                                <li><a>Tags</a></li>
+                                <li><a>Estatística</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                }
             </ul>
         }
     </div>
 
-    
     @if (!authService.isLoggedIn()) {
         <div class="navbar-end flex-none">
             <ul class="menu menu-horizontal px-1">
@@ -33,33 +30,48 @@
                 <li routerLink="/register"><a>Registo</a></li>
             </ul>
         </div>
-    }
-    @else {
+    } @else {
         <div class="navbar-end flex gap-2">
             <div class="dropdown dropdown-end">
-              <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                <div class="w-10 rounded-full">
-                  <img
-                    alt="{{ authService.getUserInfo().username }}"
-                    src="/user-icon.jpg" />
+                <div
+                    tabindex="0"
+                    role="button"
+                    class="btn btn-ghost btn-circle avatar">
+                    <div class="w-10 rounded-full">
+                        <img
+                            alt="{{ authService.getUserInfo().username }}"
+                            src="/user-icon.jpg" />
+                    </div>
                 </div>
-              </div>
-              <div tabindex="0"
+                <div
+                    tabindex="0"
                     class="divide-y divide-gray-100 menu menu-sm dropdown-content bg-base-100 rounded-md z-1 mt-1 p-2 shadow-sm w-auto">
-                <div class="px-4 py-3 text-sm text-gray-900">
-                    <div>{{ authService.getUserInfo().username }}</div>
-                    <div class="font-medium truncate">{{ authService.getUserInfo().email }}</div>
+                    <div class="px-4 py-3 text-sm text-gray-900">
+                        <div>{{ authService.getUserInfo().username }}</div>
+                        <div class="font-medium truncate">
+                            {{ authService.getUserInfo().email }}
+                        </div>
+                    </div>
+                    <ul
+                        class="py-2 text-sm text-gray-700"
+                        aria-labelledby="dropdownInformationButton">
+                        <li>
+                            <a
+                                routerLink="/user-profile"
+                                class="block px-4 py-2 hover:bg-gray-100"
+                                >Profile</a
+                            >
+                        </li>
+                        <li>
+                            <button
+                                (click)="logout()"
+                                class="block px-4 py-2 hover:bg-gray-100">
+                                Logout
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-                <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownInformationButton">
-                    <li>
-                      <a routerLink="/user-profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
-                    </li>
-                    <li>
-                        <button (click)="logout()" class="block px-4 py-2 hover:bg-gray-100">Logout</button>
-                    </li>
-                </ul>
-              </div>
             </div>
-        </div>    
-    }        
+        </div>
+    }
 </div>

@@ -12,7 +12,6 @@ import { PopupLoaderService } from '../../services/popup-loader/popup-loader.ser
     styleUrl: './header.component.css',
     providers: [PopupLoaderService]
 })
-
 export class HeaderComponent {
     popupLoader = inject(PopupLoaderService)
     authService = inject(AuthService)
