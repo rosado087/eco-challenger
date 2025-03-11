@@ -55,15 +55,10 @@ namespace EcoChallenger.Utils
         /// </summary>
         /// <param name="user">User record to assign the token to</param>
         /// <returns>The created UserToken record</returns>
-        public static UserToken CreateUserToken(User user, bool isRecovery = false) {
+        public static UserToken CreateRecoveryUserToken(User user) {
             string newToken = Guid.NewGuid().ToString();
             var type = UserToken.TokenType.RECOVERY;
             
-            if(!isRecovery) {
-                type = UserToken.TokenType.AUTH;
-                newToken = GenerateJWT(user);
-            }
-
             return new UserToken {
                 User = user,
                 Token = newToken,
@@ -78,7 +73,7 @@ namespace EcoChallenger.Utils
         /// </summary>
         /// <param name="user">User record to build the token with</param>
         /// <returns>The created JWT token</returns>
-        private static string GenerateJWT(User user) {
+        public static string GenerateJWT(User user) {
             if(_jwtSettings == null)
                 throw new InvalidOperationException("JWT settings are missing in the configuration.");
 

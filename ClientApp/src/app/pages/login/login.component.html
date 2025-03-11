@@ -32,13 +32,13 @@
                         placeholder="Email"
                         required />
                 </div>
-                @if (getEmail()?.invalid && getEmail()?.touched) {
-                    @if (getEmail()?.errors?.['required']) {
+                @if (this.loginForm.get('email')?.invalid && this.loginForm.get('email')?.touched) {
+                    @if (this.loginForm.get('email')?.errors?.['required']) {
                         <p class="text-red-500 text-sm">
                             Este campo é obrigatório!
                         </p>
                     }
-                    @if (getEmail()?.errors?.['email']) {
+                    @if (this.loginForm.get('email')?.errors?.['email']) {
                         <p class="text-red-500 text-sm">
                             Introduza um email válido.
                         </p>
@@ -65,13 +65,13 @@
                         placeholder="Palavra-passe"
                         required />
                 </div>
-                @if (getPassword()?.invalid && getPassword()?.touched) {
-                    @if (getPassword()?.errors?.['required']) {
+                @if (this.loginForm.get('password')?.invalid && this.loginForm.get('password')?.touched) {
+                    @if (this.loginForm.get('password')?.errors?.['required']) {
                         <p class="text-red-500 text-sm">
                             Este campo é obrigatório.
                         </p>
                     }
-                    @if (getPassword()?.errors?.['minlength']) {
+                    @if (this.loginForm.get('password')?.errors?.['minlength']) {
                         <p class="text-red-500 text-sm">
                             A plavra-passe deve ter pelo menos 8 caracteres.
                         </p>
@@ -100,9 +100,7 @@
         <hr />
         <h3 class="text-center" style="margin-top: 10%">Com conta Google</h3>
 
-        <div style="align-content: center center">
-            <div id="google-btn"></div>
-        </div>
+        <div id="google-btn" class="flex flex-row justify-center"></div>
     </div>
 
     <!-- Footer Links -->

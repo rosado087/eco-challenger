@@ -88,34 +88,4 @@ public class LoginGoogleTest
         var successValue = (bool)successProperty.GetValue(result.Value);
         Assert.False(successValue);
     }
-
-
-    [Fact]
-    public async Task SignUpGoogle_Creates_New_User_And_Returns_Success()
-    {
-        // Arrange
-        _dbContext.Users.RemoveRange(_dbContext.Users); // Clear existing users
-        await _dbContext.SaveChangesAsync();
-
-        string[] values = { "TestUser", "test@example.com", "test-token" };
-
-        // Act
-        var result = await _controller.SignUpGoogle(values) as JsonResult;
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
-
-        var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty);
-
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        Assert.True(successValue);
-
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == "test@example.com");
-        Assert.NotNull(user);
-
-        Assert.Equal("TestUser", user.Username);
-        Assert.Equal("test-token", user.GoogleToken);
-    }
 }

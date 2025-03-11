@@ -32,15 +32,6 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
-        path: 'add-username',
-        loadComponent: () => {
-            return import('./pages/add-username/add-username.component').then(
-                (m) => m.AddUsernameComponent
-            )
-        },
-        canActivate: [authGuard]
-    },
-    {
         path: 'register',
         loadComponent: () => {
             return import('./pages/register/register.component').then(

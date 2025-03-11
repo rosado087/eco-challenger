@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { LogoComponent } from '../logo/logo.component'
 import { Router, RouterLink } from '@angular/router'
 import { AuthService } from '../../services/auth/auth.service'
@@ -21,15 +21,19 @@ export class HeaderComponent {
     logout() {
         this.popupLoader.showPopup(
             'Logout',
-            'Você saiu da sua conta com sucesso!',
+            'Tem a certeza que pretende fazer logout?',
             [
                 {
-                    type: 'ok',
-                    text: 'Okay',
+                    type: 'yes',
+                    text: 'Sim',
                     callback: () => {
                         this.authService.logout()
                         this.router.navigate(['/login'])
                     }
+                },
+                {
+                    type: 'cancel',
+                    text: 'Cancelar'
                 }
             ]
         )

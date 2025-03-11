@@ -1,7 +1,6 @@
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcoChallenger.Controllers
 {
@@ -30,22 +29,25 @@ namespace EcoChallenger.Controllers
         [HttpPost("SendRecoveryEmail")]
         public async Task<JsonResult> SendRecoveryEmail([FromBody] SendRecoveryEmailModel data)
         {
-            var users = await _ctx.Users.Where(u => u.Email == data.Email).ToListAsync();
+            var user = _ctx.Users.Where(u => u.Email == data.Email).First();
 
             // When no users where found we want the frontend to think that
             // an email was sent, otherwise the person sending the email would
             // get confirmation that the account exists which could exploited
             // to do something else.            
-            if(users.Count() == 0) return new JsonResult(new { success = true });
+            if(user == null) return new JsonResult(new { success = true });
+
+            // Same when checking if account was created with GAuth
+            if(!string.IsNullOrEmpty(user.GoogleToken)) return new JsonResult(new { success = true });
 
             // We want to generate a new recovery token and remove any old
             // ones the user might've had
             var userTokens = _ctx.UserTokens
-                .Where(ut => ut.Type == UserToken.TokenType.RECOVERY && ut.User == users.First())
+                .Where(ut => ut.Type == UserToken.TokenType.RECOVERY && ut.User == user)
                 .ToList();
             _ctx.UserTokens.RemoveRange(userTokens);
             
-            var userToken = TokenManager.CreateUserToken(users.First(), true);
+            var userToken = TokenManager.CreateRecoveryUserToken(user);
             _ctx.UserTokens.Add(userToken);
 
             await _ctx.SaveChangesAsync();

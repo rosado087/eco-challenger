@@ -12,12 +12,10 @@ import {
     Validators
 } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
-import { PopupButton } from '../../models/popup-button'
 import { AuthService } from '../../services/auth/auth.service'
 import { LoginResponseModel } from '../../models/login-response-model'
 import {
-    GAuthLoginModel,
-    GAuthLoginResponseModel
+    GAuthLoginModel
 } from '../../models/gauth-login'
 
 /*
@@ -76,28 +74,18 @@ export class LoginComponent implements OnInit {
         })
     }
 
-    getEmail() {
-        return this.loginForm.get('email')
-    }
-
-    getPassword() {
-        return this.loginForm.get('password')
-    }
-
     loginUser() {
         this.loginForm.markAllAsTouched()
 
-        if (!this.loginForm.valid) {
-            this.popupLoader.showPopup(
+        if (!this.loginForm.valid)
+            return this.popupLoader.showPopup(
                 'Erro',
                 'Por favor, preencha todos os campos corretamente.'
             )
-            return
-        }
 
         const params = {
-            Email: this.getEmail()?.value,
-            Password: this.getPassword()?.value
+            Email: this.loginForm.get('email')?.value,
+            Password: this.loginForm.get('password')?.value
         }
 
         this.disableSubmit = true
@@ -105,30 +93,18 @@ export class LoginComponent implements OnInit {
         this.netApi
             .post<LoginResponseModel>('Login', 'Login', params)
             .subscribe({
-                next: (response) => {
-                    const popupButton: PopupButton[] = [
-                        {
-                            type: 'ok',
-                            text: 'Okay',
-                            callback: () => this.router.navigate(['/'])
-                        }
-                    ]
-                    
+                next: (response) => {                    
                     if (response.success) {
                         // Init user auth service
-                        this.authService.login(response.user, response.token) 
-
-                        this.popupLoader.showPopup(
-                            'Login Bem-Sucedido',
-                            'Entrou na sua conta!',
-                            popupButton
-                        )
-                    } else {
-                        this.popupLoader.showPopup(
-                            'Erro ao fazer login',
-                            'Email ou senha incorretos.'
-                        )
+                        this.authService.login(response.user, response.token)
+                        this.router.navigate(['/'])
+                        return
                     }
+
+                    this.popupLoader.showPopup(
+                        'Erro ao fazer login',
+                        response.message || 'Ocorreu um erro ao tentar fazer login.'
+                    )
 
                     this.disableSubmit = false
                 },
@@ -143,40 +119,34 @@ export class LoginComponent implements OnInit {
     }
 
     handleLoginGoogle(response: any) {
-        if (response) {
-            const info = JSON.parse(atob(response.credential.split('.')[1]))
+        if (!response) return
+        const info = JSON.parse(atob(response.credential.split('.')[1]))
 
-            // Store user info in sessionStorage
-            sessionStorage.setItem('loggedInUser', JSON.stringify(info))
-
-            // Call API to authenticate Google user
-            this.netApi
-                .post<GAuthLoginResponseModel>('Login', 'AuthenticateGoogle', [
-                    info.sub,
-                    info.email
-                ])
-                .subscribe({
-                    next: (data) => {
-                        if (data.success) {
-                            // Update AuthService so the Header updates
-                            //const userInfo = new AuthUserInfo(
-                            //    data.name || info.email.split('@')[0],
-                            //    info.email
-                            //)
-
-                            //this.authService.login(userInfo, 'google-token') // Notify AuthService
-                            this.router.navigate(['/'])
-                        } else {
-                            this.router.navigate(['add-username'])
-                        }
-                    },
-                    error: () => {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            'Houve um problema ao autenticar com conta Google.'
-                        )
+        // Handle post GAuth, create user and get JWT
+        this.netApi
+            .post<LoginResponseModel>('Login', 'AuthenticateGoogle', {
+                GoogleToken: info.sub,
+                Email: info.email
+            })
+            .subscribe({
+                next: (data) => {
+                    if (data.success) {
+                        this.authService.login(data.user, data.token) 
+                        this.router.navigate(['/'])
+                        return
                     }
-                })
-        }
+
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        data.message || 'Houve um problema ao autenticar com conta Google.'
+                    )
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Houve um problema ao autenticar com conta Google.'
+                    )
+                }
+            })
     }
 }
