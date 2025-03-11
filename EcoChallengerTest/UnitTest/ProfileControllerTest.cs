@@ -6,6 +6,7 @@ using Moq;
 using Xunit;
 using EcoChallenger.Controllers;
 using EcoChallenger.Models;
+using EcoChallenger.Utils;
 
 namespace EcoChallengerTest.UnitTest
 {
