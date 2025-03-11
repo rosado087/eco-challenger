@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core'
-import { PopupLoaderService } from '../../services/popup-loader.service'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 import { NgIcon, provideIcons } from '@ng-icons/core'
 import { ButtonComponent } from '../../components/button/button.component'
 import { heroKey } from '@ng-icons/heroicons/outline'
@@ -13,7 +13,7 @@ import {
     ValidatorFn,
     Validators
 } from '@angular/forms'
-import { NetApiService } from '../../services/net-api.service'
+import { NetApiService } from '../../services/net-api/net-api.service'
 import { SuccessModel } from '../../models/success-model'
 import { PopupButton } from '../../models/popup-button'
 

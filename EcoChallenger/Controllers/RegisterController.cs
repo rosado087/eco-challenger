@@ -1,3 +1,5 @@
+using EcoChallenger.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,9 +21,9 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="data">Contains the user's username, email address and password</param>
         /// <returns>JSON result indicating success or failure. If returns failure also returns the error message</returns>
-
+        [AllowAnonymous]
         [HttpPost("RegisterAccount")]
-        public async Task<JsonResult> RegisterAccount([FromBody] User data)  {
+        public async Task<JsonResult> RegisterAccount([FromBody] User data) {
             try
             {
                 // Verifica se o email já existe

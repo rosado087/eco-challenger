@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250310200005_UserRoles")]
+    partial class UserRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,23 +58,6 @@ namespace EcoChallenger.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Eco-Warrior"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "NatureLover"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Green Guru"
-                        });
                 });
 
             modelBuilder.Entity("TagUsers", b =>
@@ -131,32 +117,6 @@ namespace EcoChallenger.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "tester1@gmail.com",
-                            Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
-                            Points = 0,
-                            Username = "Tester1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = "tester2@gmail.com",
-                            Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
-                            Points = 0,
-                            Username = "Tester2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Email = "tester3@gmail.com",
-                            Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
-                            Points = 0,
-                            Username = "Tester3"
-                        });
                 });
 
             modelBuilder.Entity("UserToken", b =>

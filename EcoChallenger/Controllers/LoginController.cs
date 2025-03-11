@@ -1,3 +1,5 @@
+using EcoChallenger.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,13 +9,16 @@ namespace EcoChallenger.Controllers
     {
         private readonly AppDbContext _ctx;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<LoginController> _logger;
 
-        public LoginController(AppDbContext context, IConfiguration configuration)
+        public LoginController(AppDbContext context, IConfiguration configuration, ILogger<LoginController> logger)
         {
             _ctx = context;
             _configuration = configuration;
+            _logger = logger;
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<JsonResult> Login([FromBody] LoginRequestModel data)
         {
@@ -21,33 +26,36 @@ namespace EcoChallenger.Controllers
             {
                 // Validate input
                 if (string.IsNullOrEmpty(data.Email) || string.IsNullOrEmpty(data.Password))
-                    return new JsonResult(new { success = false, message = "Email and password are required." });
+                    return new JsonResult(new { success = false, message = "Email e palavra-passe são obrigatórios." });
 
                 // Find the user by email
                 var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Email == data.Email);
                 if (user == null)
-                    return new JsonResult(new { success = false, message = "Invalid email or password." });
+                    return new JsonResult(new { success = false, message = "Email ou palavra-passe inválidos." });
 
                 // Verify the password
                 bool isPasswordValid = PasswordGenerator.ComparePasswordWithHash(data.Password, user.Password);
                 if (!isPasswordValid)
-                    return new JsonResult(new { success = false, message = "Invalid email or password." });
+                    return new JsonResult(new { success = false, message = "Email ou palavra-passe inválidos." });
+
+                // Make sure account isn't linked to Google, these have to user GAuth
+                if (!string.IsNullOrEmpty(user.GoogleToken))
+                    return new JsonResult(new { success = false, message = "Conta criada com GAuth, por favor use a opção de login correspondente." });
 
                 // Generate the token
-                var userToken = TokenManager.CreateUserToken(user);
-
-                // Save the token in the database
-                _ctx.UserTokens.Add(userToken);
-                await _ctx.SaveChangesAsync();
+                string token = TokenManager.GenerateJWT(user);
 
                 // Return the token in the response
                 return new JsonResult(new
                 {
                     success = true,
-                    message = "Login successful!",
-                    token = userToken.Token,
-                    user.Username,
-                    user.Email
+                    token,
+                    user = new {
+                        id = user.Id,
+                        username = user.Username,
+                        email = user.Email,
+                        isAdmin = user.IsAdmin
+                    }
                 });
             }
             catch (Exception ex)
@@ -56,56 +64,76 @@ namespace EcoChallenger.Controllers
                 Console.WriteLine($"Error during login: {ex.Message}");
 
                 // Return a generic error message
-                return new JsonResult(new { success = false, message = "An error occurred during login." });
+                return new JsonResult(new { success = false, message = "Ocorreu um erro ao fazer login." });
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetGoogleId")]
         public JsonResult GetGoogleId()
         {
             return new JsonResult(new { clientId = _configuration["GoogleClient:ClientId"] });
         }
 
+        [AllowAnonymous]
         [HttpPost("AuthenticateGoogle")]
-        public async Task<JsonResult> AuthenticateGoogle(string[] values)
+        public async Task<JsonResult> AuthenticateGoogle([FromBody] GAuthModel data)
         {
-            if (await _ctx.Users.AnyAsync())
-            {
-                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.GoogleToken == values[0] || u.Email == values[1]);
-                
+            try {
+
+                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Email == data.Email);
+                string token;
+
+                // User does not exist, so we create one using the
+                // email address name as the username
                 if (user == null)
                 {
-                    return new JsonResult(new { success = false });
-                }
-                else if (user.GoogleToken == null)
-                {
-                    user.GoogleToken =  values[0].ToString();
-                    _ctx.Users.Update(user);
+                    string username = data.Email.Split('@')[0];
+
+                    User newUser = new User {
+                        Username = username,
+                        Email = data.Email,
+                        GoogleToken = data.GoogleToken
+                    };
+                    await _ctx.Users.AddAsync(newUser);
                     await _ctx.SaveChangesAsync();
+
+                    token = TokenManager.GenerateJWT(newUser);
+                    
+                    return new JsonResult(new { success = true, token, user = new {
+                        id = newUser.Id,
+                        username = newUser.Username,
+                        email = newUser.Email,
+                        isAdmin = newUser.IsAdmin
+                    }});
                 }
-                return new JsonResult(new { success = true, name = user.Username });
+                
+                // If the user exists but has no token it means it was
+                // created through the register form, we don't want to
+                // authenticate him through here
+                if(string.IsNullOrEmpty(user.GoogleToken)) {
+                    return new JsonResult(new { success = false, message = "Esta conta não foi criada através do GAuth, por favor faça login pelo form."});
+                }
+
+                // Update user GToken
+                user.GoogleToken = data.GoogleToken;
+                _ctx.Users.Update(user);
+                await _ctx.SaveChangesAsync();
+
+                token = TokenManager.GenerateJWT(user);
+
+                return new JsonResult(new { success = true, token, user = new {
+                    id = user.Id,
+                    username = user.Username,
+                    email = user.Email,
+                    isAdmin = user.IsAdmin
+                }});
             }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
 
-            return new JsonResult(new { success = false });
-        }
-
-        [HttpPut("SignUpGoogle")]
-        public async Task<JsonResult> SignUpGoogle(string[] values)
-        {
-            if (await UserExists(values[0])) return new JsonResult(new { success = false });
-            var user = new User { Email = values[1], Username = values[0], GoogleToken = values[2] };
-            _ctx.Users.Add(user);
-            await _ctx.SaveChangesAsync();
-
-            return new JsonResult(new { success = true });
-        }
-
-        [HttpPost("UserExists")]
-        public async Task<bool> UserExists(string username = "")
-        {
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
-
-            return user != null || username == "";
+                return new JsonResult(new { success = false, message = "Ocorreu um erro ao efetuar o login com Google Authentication."});
+            }
         }
     }
 }

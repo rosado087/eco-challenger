@@ -1,10 +1,44 @@
+using System.Text;
+using EcoChallenger.Models;
+using EcoChallenger.Utils;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Set up JWT authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+if(jwtSettings == null)
+    throw new InvalidOperationException("JWT settings are missing in the configuration.");
 
-builder.Services.AddControllers();
+// Init TokenManager serivce with JWT config
+TokenManager.Initialize(jwtSettings);
+
+builder.Services.AddAuthentication(x => {
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => {
+    x.TokenValidationParameters = new TokenValidationParameters {
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true
+    };
+});
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddControllers(options =>
+{
+    // Make the controller authorized by default
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -18,6 +52,10 @@ builder.Services.AddDbContext<AppDbContext>(
 // Email Service DI
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// User Context initialization
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+UserContext.Initialize(builder.Services.BuildServiceProvider().GetRequiredService<IHttpContextAccessor>());
 
 
 var app = builder.Build();
@@ -39,6 +77,7 @@ using (var scope = app.Services.CreateScope())
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

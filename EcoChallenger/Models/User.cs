@@ -16,5 +16,7 @@ public class User {
 
     public string? GoogleToken { get; set; }
 
-    public int Points { get; set; }
+    public int Points { get; set; } = 0;
+
+    public bool IsAdmin { get; set; } = false;
 }

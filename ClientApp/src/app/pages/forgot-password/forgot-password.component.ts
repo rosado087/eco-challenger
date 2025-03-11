@@ -6,8 +6,8 @@ import {
     heroKey
 } from '@ng-icons/heroicons/outline'
 import { ButtonComponent } from '../../components/button/button.component'
-import { PopupLoaderService } from '../../services/popup-loader.service'
-import { NetApiService } from '../../services/net-api.service'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
+import { NetApiService } from '../../services/net-api/net-api.service'
 import { SuccessModel } from '../../models/success-model'
 import {
     FormControl,
