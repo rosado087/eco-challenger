@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import { provideIcons } from '@ng-icons/core';
 import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service';
 import { NetApiService } from '../../services/net-api/net-api.service';
 import { Router } from '@angular/router';
