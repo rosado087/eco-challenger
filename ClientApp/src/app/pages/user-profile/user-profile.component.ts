@@ -11,6 +11,14 @@ import {
     heroLockClosed,
     heroPencil
 } from '@ng-icons/heroicons/outline';
+import { UserModel } from '../../models/user-model';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms'
+import { ButtonComponent } from '../../components/button/button.component'
 
 export interface UserList {
     usernames: string[];
@@ -34,7 +42,7 @@ export interface FriendsResponse {
 @Component({
     selector: 'app-user-profile',
     standalone: true,
-    imports: [NgIcon, NgFor, NgIf, FormsModule],
+    imports: [NgIcon, NgFor, NgIf, ReactiveFormsModule, ButtonComponent, FormsModule],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],
     providers: [
@@ -53,15 +61,28 @@ export class UserProfileComponent implements OnInit {
     points: string = '';
     tag: string = '';
     friendsList: { username: string, email: string }[] = []; // Updated to match API response
-
-    availableTags: string[] = ['Eco-Warrior', 'Nature Lover', 'Green Guru'];
-
+    isEditing: boolean = false;
+    availableTags: string[] = [];
     userList: string[] = [];
     showAddFriendModal: boolean = false;
     showRemoveFriendModal: boolean = false;
     selectedFriendIndex: number | null = null;
     searchUsername: string = '';
     selectedUser: string = '';
+
+    editForm = new FormGroup({
+        userName: new FormControl('', [Validators.required]),
+        tag: new FormControl('')
+    })
+
+    getUserName() {
+        return this.editForm.get('userName')
+    }
+
+    getTag() {
+        return this.editForm.get('tag')
+    }
+
 
     ngOnInit(): void {
       this.authService.username$.subscribe(username => {
@@ -70,29 +91,67 @@ export class UserProfileComponent implements OnInit {
               this.loadFriendsList();
           }
       });
-  }
+
+      this.authService.email$.subscribe(email => {
+        if (email) {
+          this.email = email;
+          this.loadUserProfile();
+        }
+      })
+    }
 
 
     /**
      * Load user profile details from API.
      */
     loadUserProfile() {
+      this.netApi.get<UserModel>('Profile', 'GetUserInfo', this.email).subscribe({
+          next: (data) => {
+              if (data.success) {
+                this.username = data.username
+                this.email = data.email
+                this.points = data.points
+                this.tag = data.tag
+              } else {
+                this.popupLoader.showPopup(
+                  'Erro',
+                  data.message || 'Ocorreu um erro!'
+                )
+              }
+          },
+          error: () => {
+            this.popupLoader.showPopup(
+              'Erro',
+              'Não foi possível carregar os dados do perfil.'
+            )
+          }
+      })
+    }
+
+    editProfile(){
+      this.isEditing = true;
+      this.editForm.markAllAsTouched()
+        if (!this.editForm.valid) return
+    }
+
+    
+    loadUserFriends() {
       this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
         next: (data: FriendsResponse) => {
             if (data.success) {
-                this.friendsList = data.friends;
-                console.log('Lista de amigos carregada:', this.friendsList); // Debugging
+              this.friendsList = data.friends;
+              console.log('Lista de amigos carregada:', this.friendsList); // Debugging
             } else {
-                this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+              this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
             }
         },
         error: (err) => {
-            console.error('Erro ao buscar amigos:', err);
-            this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+          console.error('Erro ao buscar amigos:', err);
+          this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
         }
-    });
-
-  }
+      });
+    }
+    
 
 
     /**
@@ -226,26 +285,26 @@ export class UserProfileComponent implements OnInit {
           });
   }
 
-  /**
- * Atualiza o nome de utilizador no perfil do usuário.
- */
-updateUsername() {
-  if (!this.username || this.username.trim() === '') {
-      this.popupLoader.showPopup('Erro', 'O nome de utilizador não pode estar vazio.');
-      return;
-  }
+    /**
+   * Atualiza o nome de utilizador no perfil do usuário.
+   */
+    updateUsername() {
+      if (!this.username || this.username.trim() === '') {
+          this.popupLoader.showPopup('Erro', 'O nome de utilizador não pode estar vazio.');
+          return;
+      }
 
-  this.netApi
-      .post('Profile', 'UpdateUsername', { email: this.email, username: this.username })
-      .subscribe({
-          next: () => {
-              this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');
-          },
-          error: () => {
-              this.popupLoader.showPopup('Erro', 'Não foi possível atualizar o nome de utilizador.');
-          }
-      });
-}
+      this.netApi
+          .post('Profile', 'UpdateUsername', { email: this.email, username: this.username })
+          .subscribe({
+              next: () => {
+                  this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');
+              },
+              error: () => {
+                  this.popupLoader.showPopup('Erro', 'Não foi possível atualizar o nome de utilizador.');
+              }
+          });
+    }
 
 
 

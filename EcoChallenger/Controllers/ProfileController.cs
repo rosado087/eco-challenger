@@ -1,6 +1,7 @@
 using EcoChallenger.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenQA.Selenium.DevTools.V130.Animation;
 
 namespace EcoChallenger.Controllers
 {
@@ -38,6 +39,53 @@ namespace EcoChallenger.Controllers
                     .FirstOrDefaultAsync();
 
                 return new JsonResult(new { success = true, username = user.Username, email = user.Email, points = user.Points, tag = currentTag });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new { success = false, message = e.Message });
+            }
+        }
+
+        /// <summary>
+        /// Handles the action that gets the user information.
+        /// Gets the information of the logged user.
+        /// </summary>
+        /// <param name="email">Email of the logged-in account</param>
+        /// <returns>JSON result indicating success or failure.</returns>
+        [HttpPost("EditUserInfo")]
+        public async Task<JsonResult> EditUserInfo([FromBody] User data, string tagName)
+        {
+            try
+            {
+                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Email == data.Email);
+
+                if (user == null)
+                    return new JsonResult(new { success = false, message = "O utilizador não existe" });
+                else if (data.Username == null)
+                    return new JsonResult(new {sucess = false, message = "O nome de utilizador não pode ser nulo"});
+                
+                user.Username = data.Username;
+
+                var currentTag = await _ctx.TagUsers
+                    .Where(tg => tg.SelectedTag && tg.User.Id == user.Id)
+                    .FirstOrDefaultAsync();
+                
+                if (currentTag != null)
+                    currentTag.SelectedTag = false;
+
+                var newCurrentTag = await _ctx.TagUsers.Where(tg => tg.Tag.Name == tagName && tg.User.Id == user.Id).FirstOrDefaultAsync();
+                
+                if (newCurrentTag != null)
+                    newCurrentTag.SelectedTag = true;
+
+                await _ctx.SaveChangesAsync();
+
+                var currentTagName = await _ctx.TagUsers
+                    .Where(tg => tg.SelectedTag && tg.User.Id == user.Id)
+                    .Select(tg => tg.Tag.Name)
+                    .FirstOrDefaultAsync();
+
+                return new JsonResult(new { success = true, username = user.Username, email = user.Email, points = user.Points, tag = currentTagName });
             }
             catch (Exception e)
             {
@@ -140,26 +188,26 @@ namespace EcoChallenger.Controllers
         /// <param name="username">Username of the requested user.</param>
         /// <returns>JSON result with the list of friends.</returns>
         
-[HttpGet("GetFriends/{username}")]
-public async Task<IActionResult> GetFriends(string username)
-{
-    if (string.IsNullOrEmpty(username))
-        return BadRequest(new { success = false, message = "Nome de utilizador é obrigatório." });
+        [HttpGet("GetFriends/{username}")]
+        public async Task<IActionResult> GetFriends(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+                return BadRequest(new { success = false, message = "Nome de utilizador é obrigatório." });
 
-    var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
-    if (user == null)
-        return NotFound(new { success = false, message = "Usuário não encontrado." });
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null)
+                return NotFound(new { success = false, message = "Usuário não encontrado." });
 
-    var friends = await _ctx.Friendships
-        .Where(f => f.UserId == user.Id)
-        .Join(_ctx.Users, 
-              f => f.FriendId, 
-              u => u.Id, 
-              (f, u) => new { u.Username, u.Email })
-        .ToListAsync();
+            var friends = await _ctx.Friendships
+                .Where(f => f.UserId == user.Id)
+                .Join(_ctx.Users, 
+                    f => f.FriendId, 
+                    u => u.Id, 
+                    (f, u) => new { u.Username, u.Email })
+                .ToListAsync();
 
-    return Ok(new { success = true, friends });
-}
+            return Ok(new { success = true, friends });
+        }
 
 
     }
