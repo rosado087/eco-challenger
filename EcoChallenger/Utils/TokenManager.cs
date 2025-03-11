@@ -63,7 +63,7 @@ namespace EcoChallenger.Utils
                 User = user,
                 Token = newToken,
                 Type = type,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.UtcNow,
                 Duration = TimeSpan.FromHours(4) // Token lasts 4 hours
             };
         }

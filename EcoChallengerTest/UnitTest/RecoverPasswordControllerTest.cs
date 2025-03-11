@@ -70,7 +70,7 @@ namespace EcoChallengerTest.UnitTest
             var controller = new RecoverPasswordController(context, null, null, null);
 
             // Act
-            var result = controller.CheckToken(validToken.Token) as JsonResult;
+            var result = controller.CheckToken(validToken.Token);
             var successProperty = result.Value.GetType().GetProperty("success");
             var successValue = (bool)successProperty.GetValue(result.Value);
 
