@@ -42,93 +42,98 @@ export interface FriendsResponse {
     ]
 })
 export class UserProfileComponent implements OnInit {
-    netApi = inject(NetApiService)
-    popupLoader = inject(PopupLoaderService)
-    router = inject(Router)
-    authService = inject(AuthService)
 
-    username: string = ''
-    email: string = ''
-    points: string = ''
-    tag: string = ''
-    friendsList: { username: string; email: string }[] = [] // Updated to match API response
+    netApi = inject(NetApiService);
+    popupLoader = inject(PopupLoaderService);
+    router = inject(Router);
+    authService = inject(AuthService);
 
-    availableTags: string[] = ['Eco-Warrior', 'Nature Lover', 'Green Guru']
+    username: string = '';
+    email: string = '';
+    points: string = '';
+    tag: string = '';
+    friendsList: { username: string, email: string }[] = []; // Updated to match API response
 
-    userList: string[] = []
-    showAddFriendModal: boolean = false
-    showRemoveFriendModal: boolean = false
-    selectedFriendIndex: number | null = null
-    searchUsername: string = ''
-    selectedUser: string = ''
+    availableTags: string[] = ['Eco-Warrior', 'Nature Lover', 'Green Guru'];
+
+    userList: string[] = [];
+    showAddFriendModal: boolean = false;
+    showRemoveFriendModal: boolean = false;
+  editProfile: boolean = false;
+  editUsername: string = '';
+  editTag: string = '';
+  selectedFriendIndex: number | null = null;
+    searchUsername: string = '';
+    selectedUser: string = '';
+    
+
 
     ngOnInit(): void {
-        this.username = this.authService.getUserInfo().username
-    }
+
+      
+
+      this.email = this.authService.getUserInfo().email;
+        this.loadUserProfile();
+      
+
+      
+  }
+
 
     /**
      * Load user profile details from API.
      */
     loadUserProfile() {
-        this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', this.username)
-            .subscribe({
-                next: (data: FriendsResponse) => {
-                    if (data.success) {
-                        this.friendsList = data.friends
-                        console.log(
-                            'Lista de amigos carregada:',
-                            this.friendsList
-                        ) // Debugging
-                    } else {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            'Não foi possível carregar a lista de amigos.'
-                        )
-                    }
-                },
-                error: (err) => {
-                    console.error('Erro ao buscar amigos:', err)
-                    this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.')
-                }
-            })
-    }
+      this.netApi.get<UserProfileResponse>('Profile', 'GetUserInfo', this.email).subscribe({
+        next: (data) => {
+          if (data.success) {
+            this.username = data.username;
+            this.editUsername = data.username;
+            this.tag = data.tag;
+            this.editTag = data.tag;
+            this.points = data.points;
+            this.loadFriendsList();
+            } else {
+                this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+          }
+          
+        },
+        error: (err) => {
+            console.error('Erro ao buscar amigos:', err);
+            this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+        }
+    });
+
+  }
+
+
 
     /**
      * Load the list of friends for the logged-in user.
      */
     loadFriendsList() {
-        if (!this.username) {
-            this.popupLoader.showPopup(
-                'Erro',
-                'Nome de utilizador não encontrado.'
-            )
-            return
-        }
+      if (!this.username) {
+          this.popupLoader.showPopup('Erro', 'Nome de utilizador não encontrado.');
+          return;
+      }
 
-        this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', this.username)
-            .subscribe({
-                next: (data: FriendsResponse) => {
-                    if (data.success) {
-                        this.friendsList = data.friends
-                        console.log(
-                            'Lista de amigos carregada:',
-                            this.friendsList
-                        ) // Debugging
-                    } else {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            'Não foi possível carregar a lista de amigos.'
-                        )
-                    }
-                },
-                error: (err) => {
-                    console.error('Erro ao buscar amigos:', err)
-                    this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.')
-                }
-            })
-    }
+      
+
+      this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
+          next: (data: FriendsResponse) => {
+              if (data.success) {
+                  this.friendsList = data.friends;
+                  console.log('Lista de amigos carregada:', this.friendsList); // Debugging
+              } else {
+                  this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+              }
+          },
+          error: (err) => {
+              console.error('Erro ao buscar amigos:', err);
+              this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+          }
+      });
+  }
 
     /**
      * Search for users by username.
@@ -139,12 +144,14 @@ export class UserProfileComponent implements OnInit {
             (document.getElementById('InputAdd') as HTMLInputElement)?.value ||
             ''
 
+        const params = {
+          Username: this.username,
+          SearchedOrSelectedName: this.searchUsername
+        }
+
         if (this.searchUsername.trim() !== '') {
             this.netApi
-                .post<UserList>('Profile', 'UserList', [
-                    this.username,
-                    this.searchUsername
-                ])
+              .post<UserList>('Profile', 'UserList', params)
                 .subscribe({
                     next: (data) => {
                         this.userList = data.usernames
@@ -175,15 +182,16 @@ export class UserProfileComponent implements OnInit {
      */
     addFriend() {
         if (this.selectedUser.trim() === '') {
-            this.popupLoader.showPopup(
-                'Erro',
-                'Digite um nome de utilizador válido.'
-            )
-            return
-        }
+            this.popupLoader.showPopup('Erro', 'Digite um nome de utilizador válido.');
+            return;
+      }
+      const params = {
+        Username: this.username,
+        SearchedOrSelectedName: this.selectedUser
+      }
 
-        this.netApi
-            .post('Profile', 'AddFriend', [this.username, this.selectedUser])
+
+        this.netApi.post('Profile', 'AddFriend', params)
             .subscribe({
                 next: () => {
                     this.friendsList.push({
@@ -251,58 +259,40 @@ export class UserProfileComponent implements OnInit {
     /**
      * Salva a tag selecionada no perfil do usuário
      */
-    saveTag() {
-        this.netApi
-            .post('Profile', 'UpdateUserTag', {
-                email: this.email,
-                tag: this.tag
-            })
-            .subscribe({
-                next: () => {
-                    this.popupLoader.showPopup(
-                        'Sucesso',
-                        'Tag atualizada com sucesso.'
-                    )
-                },
-                error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Erro ao atualizar a tag.'
-                    )
-                }
-            })
-    }
 
-    /**
-     * Atualiza o nome de utilizador no perfil do usuário.
-     */
-    updateUsername() {
-        if (!this.username || this.username.trim() === '') {
-            this.popupLoader.showPopup(
-                'Erro',
-                'O nome de utilizador não pode estar vazio.'
-            )
-            return
-        }
+  saveTag() {
 
-        this.netApi
-            .post('Profile', 'UpdateUsername', {
-                email: this.email,
-                username: this.username
-            })
-            .subscribe({
-                next: () => {
-                    this.popupLoader.showPopup(
-                        'Sucesso',
-                        'Nome de utilizador atualizado com sucesso.'
-                    )
-                },
-                error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Não foi possível atualizar o nome de utilizador.'
-                    )
-                }
-            })
-    }
+      if(this.tag !== this.editTag && this.editTag != '')
+      this.netApi
+          .post('Profile', 'UpdateUserTag', { email: this.email, tag: this.editTag })
+          .subscribe({
+              next: () => {
+                  this.popupLoader.showPopup('Sucesso', 'Tag atualizada com sucesso.');
+              },
+              error: () => {
+                  this.popupLoader.showPopup('Erro', 'Erro ao atualizar a tag.');
+              }
+          });
+  }
+
+  /**
+ * Atualiza o nome de utilizador no perfil do usuário.
+ */
+updateUsername() {
+  if (!this.editUsername || this.editUsername.trim() === '') {
+      this.popupLoader.showPopup('Erro', 'O nome de utilizador não pode estar vazio.');
+      return;
+  }
+
+  if (this.editUsername !== this.username)
+    this.netApi.post('Profile', 'UpdateUsername', { email: this.email, username: this.editUsername })
+      .subscribe({
+          next: () => {
+              this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');
+          },
+          error: () => {
+              this.popupLoader.showPopup('Erro', 'Não foi possível atualizar o nome de utilizador.');
+          }
+      });
+ }
 }

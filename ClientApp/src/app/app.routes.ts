@@ -19,8 +19,10 @@ export const routes: Routes = [
             return import(
                 './pages/forgot-password/forgot-password.component'
             ).then((m) => m.ForgotPasswordComponent)
+
         },
         canActivate: [authGuard]
+
     },
     {
         path: 'reset-password/:token',
@@ -28,8 +30,10 @@ export const routes: Routes = [
             return import(
                 './pages/reset-password/reset-password.component'
             ).then((m) => m.ResetPasswordComponent)
+
         },
         canActivate: [authGuard]
+
     },
     {
         path: 'register',
@@ -37,8 +41,10 @@ export const routes: Routes = [
             return import('./pages/register/register.component').then(
                 (m) => m.RegisterComponent
             )
+
         },
         canActivate: [authGuard]
+
     },
     {
         path: 'login',
@@ -46,6 +52,7 @@ export const routes: Routes = [
             return import('./pages/login/login.component').then(
                 (m) => m.LoginComponent
             )
+
         },
         canActivate: [authGuard]
     },
@@ -55,9 +62,11 @@ export const routes: Routes = [
             return import('./pages/user-profile/user-profile.component').then(
                 (m) => m.UserProfileComponent
             )
+
         },
         canActivate: [authGuard]
     },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '/404', pathMatch: 'full' }
+
 ]

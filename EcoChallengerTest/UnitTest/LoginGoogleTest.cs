@@ -33,6 +33,7 @@ public class LoginGoogleTest
         _mockConfig.Setup(c => c["GoogleClient:ClientId"]).Returns("test-client-id");
 
         // Act
+
         var result = _controller.GetGoogleId();
 
         // Assert

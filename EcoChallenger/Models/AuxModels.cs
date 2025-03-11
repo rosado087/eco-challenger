@@ -22,6 +22,12 @@ public class LoginResponseModel
     public string Email { get; set; }
 }
 
+public class ProfileAddFriendModel
+{
+    public string Username { get; set; }
+    public string SearchedOrSelectedName { get; set; }
+}
+
 public class GAuthModel {
     public string GoogleToken { get; set; }
     public string Email { get; set; }

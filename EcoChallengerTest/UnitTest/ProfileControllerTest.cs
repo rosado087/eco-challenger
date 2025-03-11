@@ -51,9 +51,9 @@ namespace EcoChallengerTest.UnitTest
             _dbContext.Users.Add(testUser);
             _dbContext.Users.Add(testUser2);
             await _dbContext.SaveChangesAsync();
-
+            
             // Act
-            var result = await _controller.UserList([testUser.Username, testUser2.Username]);
+            var result = await _controller.UserList(new ProfileAddFriendModel{Username = testUser.Username, SearchedOrSelectedName = testUser2.Username});
             Assert.NotNull(result);
             Assert.NotNull(result.Value);
             var valueProperty = result.Value.GetType().GetProperty("usernames").GetValue(result.Value);
@@ -83,7 +83,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.AddFriend([testUser.Username, testUser2.Username]) as JsonResult;
+            var result = await _controller.AddFriend(new ProfileAddFriendModel { Username = testUser.Username, SearchedOrSelectedName = testUser2.Username }) as JsonResult;
 
             var valueProperty = result.Value.GetType().GetProperty("success");
             Assert.True((bool)valueProperty.GetValue(result.Value));
