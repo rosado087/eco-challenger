@@ -1,6 +1,14 @@
 <div class="min-h-screen bg-gray-50 flex flex-col items-center py-10">
-  <!-- Conteúdo -->
-  <div class="container mx-auto px-4 md:px-8 flex flex-col md:flex-row gap-8 mt-6">
+    <!-- Conteúdo -->
+    <div
+        class="container mx-auto px-4 md:px-8 flex flex-col md:flex-row gap-8 mt-6">
+        <!-- Seção Esquerda: Informações do Usuário -->
+        <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3">
+            <div class="text-center">
+                <h2 class="text-xl font-semibold text-gray-700">
+                    Perfil de Utilizador
+                </h2>
+            </div>
 
       <!-- User Info -->
       <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3">
@@ -76,117 +84,128 @@
           </form>
         </div>
 
-      <!-- Seção Direita: Lista de Amigos (Scrollável) -->
-      <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
-          <div class="flex items-center gap-2 mb-4">
-              <h2 class="text-xl font-semibold text-gray-700">Lista de amigos</h2>
-              <button
-                  (click)="showAddFriendModal = true"
-                  class="text-green-600 hover:text-green-800 text-lg font-bold">
-                  +
-              </button>
-          </div>
+            <!-- Lista de amigos dinâmica com Scroll -->
+            <div class="border rounded-lg max-h-60 overflow-y-auto">
+                <table class="w-full text-left">
+                    <tbody>
+                        <tr
+                            *ngFor="let friend of friendsList; let i = index"
+                            class="border-b">
+                            <td class="p-2">{{ friend.username }}</td>
+                            <td class="p-2">
+                                <button
+                                    (click)="viewProfile(friend.username)"
+                                    class="text-green-600 hover:text-green-800">
+                                    Ver perfil
+                                </button>
+                            </td>
+                            <td class="p-2">
+                                <button
+                                    (click)="
+                                        selectedFriendIndex = i;
+                                        showRemoveFriendModal = true
+                                    "
+                                    class="text-red-600 hover:text-red-800">
+                                    Remover
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="friendsList.length === 0">
+                            <td
+                                colspan="3"
+                                class="p-4 text-gray-500 text-center">
+                                Nenhum amigo encontrado.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-          <!-- Lista de amigos dinâmica com Scroll -->
-          <div class="border rounded-lg max-h-60 overflow-y-auto">
-              <table class="w-full text-left">
-                  <tbody>
-                      <tr *ngFor="let friend of friendsList; let i = index" class="border-b">
-                          <td class="p-2">{{ friend.username }}</td>
-                          <td class="p-2">
-                              <button
-                                  (click)="viewProfile(friend.username)"
-                                  class="text-green-600 hover:text-green-800">
-                                  Ver perfil
-                              </button>
-                          </td>
-                          <td class="p-2">
-                              <button
-                                  (click)="selectedFriendIndex = i; showRemoveFriendModal = true"
-                                  class="text-red-600 hover:text-red-800">
-                                  Remover
-                              </button>
-                          </td>
-                      </tr>
-                      <tr *ngIf="friendsList.length === 0">
-                          <td colspan="3" class="p-4 text-gray-500 text-center">
-                              Nenhum amigo encontrado.
-                          </td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
+    <!-- MODAL: ADICIONAR AMIGO -->
+    <div
+        *ngIf="showAddFriendModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 class="text-xl font-semibold text-gray-700 text-center">
+                Adicionar amigo
+            </h2>
 
-  <!-- MODAL: ADICIONAR AMIGO -->
-  <div *ngIf="showAddFriendModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-          <h2 class="text-xl font-semibold text-gray-700 text-center">Adicionar amigo</h2>
+            <!-- Campo de Nome -->
+            <div class="mt-4">
+                <label
+                    for="InputAdd"
+                    class="block text-gray-700 font-medium mb-1"
+                    >Nome de utilizador:</label
+                >
+                <input
+                    id="InputAdd"
+                    type="text"
+                    (input)="findUser()"
+                    class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
+            </div>
 
-          <!-- Campo de Nome -->
-          <div class="mt-4">
-              <label for="InputAdd" class="block text-gray-700 font-medium mb-1">Nome de utilizador:</label>
-              <input
-                  id="InputAdd"
-                  type="text"
-                  (input)="findUser()"
-                  class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
-          </div>
+            <!-- Lista de Utilizadores -->
+            <div
+                class="mt-4 border rounded-lg p-2 h-32 overflow-y-auto text-gray-600">
+                Lista de utilizadores
+                <table class="w-full text-left">
+                    <tbody>
+                        <tr
+                            *ngFor="let username of userList; let i = index"
+                            class="border-b">
+                            <td
+                                class="p-2 cursor-pointer"
+                                [class.bg-green-600]="username === selectedUser"
+                                [class.text-white]="username === selectedUser"
+                                (click)="selectUser(username)">
+                                {{ username }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-          <!-- Lista de Utilizadores -->
-          <div class="mt-4 border rounded-lg p-2 h-32 overflow-y-auto text-gray-600">
-              Lista de utilizadores
-              <table class="w-full text-left">
-                  <tbody>
-                      <tr *ngFor="let username of userList; let i = index" class="border-b">
-                          <td
-                              class="p-2 cursor-pointer"
-                              [class.bg-green-600]="username === selectedUser"
-                              [class.text-white]="username === selectedUser"
-                              (click)="selectUser(username)">
-                              {{ username }}
-                          </td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
+            <!-- Botões -->
+            <div class="flex justify-between mt-6">
+                <button
+                    (click)="addFriend()"
+                    class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                    Adicionar
+                </button>
+                <button
+                    (click)="showAddFriendModal = false"
+                    class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
 
-          <!-- Botões -->
-          <div class="flex justify-between mt-6">
-              <button
-                  (click)="addFriend()"
-                  class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                  Adicionar
-              </button>
-              <button
-                  (click)="showAddFriendModal = false"
-                  class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
-                  Cancelar
-              </button>
-          </div>
-      </div>
-  </div>
+    <!-- MODAL: REMOVER AMIGO -->
+    <div
+        *ngIf="showRemoveFriendModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 class="text-xl font-semibold text-gray-700 text-center">
+                Remover Amigo
+            </h2>
+            <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
 
-  <!-- MODAL: REMOVER AMIGO -->
-  <div *ngIf="showRemoveFriendModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-          <h2 class="text-xl font-semibold text-gray-700 text-center">Remover Amigo</h2>
-          <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
-
-          <!-- Botões -->
-          <div class="flex justify-between mt-6">
-              <button
-                  (click)="removeFriend(selectedFriendIndex)"
-                  class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                  Sim
-              </button>
-              <button
-                  (click)="showRemoveFriendModal = false"
-                  class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
-                  Não
-              </button>
-          </div>
-      </div>
-  </div>
+            <!-- Botões -->
+            <div class="flex justify-between mt-6">
+                <button
+                    (click)="removeFriend(selectedFriendIndex)"
+                    class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                    Sim
+                </button>
+                <button
+                    (click)="showRemoveFriendModal = false"
+                    class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
+                    Não
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

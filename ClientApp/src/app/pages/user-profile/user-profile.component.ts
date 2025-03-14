@@ -1,11 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { PopupLoaderService } from '../../services/popup-loader.service';
-import { NetApiService } from '../../services/net-api.service';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { FormsModule } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core'
+import { provideIcons } from '@ng-icons/core'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
+import { NetApiService } from '../../services/net-api/net-api.service'
+import { Router } from '@angular/router'
+import { AuthService } from '../../services/auth/auth.service'
+import { FormsModule } from '@angular/forms'
+import { NgFor, NgIf } from '@angular/common'
 import {
     heroUser,
     heroLockClosed,
@@ -21,23 +21,22 @@ import {
 import { ButtonComponent } from '../../components/button/button.component'
 
 export interface UserList {
-    usernames: string[];
+    usernames: string[]
 }
 
 export interface UserProfileResponse {
-  success: boolean;
-  username: string;
-  email: string;
-  points: string;
-  tag: string;
-  message: string;
+    success: boolean
+    username: string
+    email: string
+    points: string
+    tag: string
+    message: string
 }
 
 export interface FriendsResponse {
-  success: boolean;
-  friends: { username: string, email: string }[];
+    success: boolean
+    friends: { username: string; email: string }[]
 }
-
 
 @Component({
     selector: 'app-user-profile',
@@ -51,10 +50,10 @@ export interface FriendsResponse {
     ]
 })
 export class UserProfileComponent implements OnInit {
-    netApi = inject(NetApiService);
-    popupLoader = inject(PopupLoaderService);
-    router = inject(Router);
-    authService = inject(AuthService);
+    netApi = inject(NetApiService)
+    popupLoader = inject(PopupLoaderService)
+    router = inject(Router)
+    authService = inject(AuthService)
 
     username: string = '';
     email: string = '';
@@ -85,21 +84,9 @@ export class UserProfileComponent implements OnInit {
 
 
     ngOnInit(): void {
-      this.authService.username$.subscribe(username => {
-          if (username) {
-              this.username = username;
-              this.loadFriendsList();
-          }
-      });
-
-      this.authService.email$.subscribe(email => {
-        if (email) {
-          this.email = email;
-          this.loadUserProfile();
-        }
-      })
+        this.username = this.authService.getUserInfo().username
+        this.email = this.authService.getUserInfo().email
     }
-
 
     /**
      * Load user profile details from API.
@@ -231,20 +218,28 @@ export class UserProfileComponent implements OnInit {
      * Search for users by username.
      */
     findUser() {
-        this.userList = [];
-        this.searchUsername = (document.getElementById('InputAdd') as HTMLInputElement)?.value || '';
+        this.userList = []
+        this.searchUsername =
+            (document.getElementById('InputAdd') as HTMLInputElement)?.value ||
+            ''
 
         if (this.searchUsername.trim() !== '') {
             this.netApi
-                .post<UserList>('Profile', 'UserList', [this.username, this.searchUsername])
+                .post<UserList>('Profile', 'UserList', [
+                    this.username,
+                    this.searchUsername
+                ])
                 .subscribe({
                     next: (data) => {
-                        this.userList = data.usernames;
+                        this.userList = data.usernames
                     },
                     error: () => {
-                        this.popupLoader.showPopup('Erro', 'Erro ao buscar usuários.');
+                        this.popupLoader.showPopup(
+                            'Erro',
+                            'Erro ao buscar usuários.'
+                        )
                     }
-                });
+                })
         }
     }
 
@@ -253,7 +248,10 @@ export class UserProfileComponent implements OnInit {
      * @param username Selected username
      */
     selectUser(username: string) {
-        this.selectedUser = this.selectedUser.toLowerCase() === username.toLowerCase() ? '' : username;
+        this.selectedUser =
+            this.selectedUser.toLowerCase() === username.toLowerCase()
+                ? ''
+                : username
     }
 
     /**
@@ -261,24 +259,36 @@ export class UserProfileComponent implements OnInit {
      */
     addFriend() {
         if (this.selectedUser.trim() === '') {
-            this.popupLoader.showPopup('Erro', 'Digite um nome de utilizador válido.');
-            return;
+            this.popupLoader.showPopup(
+                'Erro',
+                'Digite um nome de utilizador válido.'
+            )
+            return
         }
 
         this.netApi
             .post('Profile', 'AddFriend', [this.username, this.selectedUser])
             .subscribe({
                 next: () => {
-                    this.friendsList.push({ username: this.selectedUser, email: '' }); // Email isn't provided by the API, so left empty
-                    this.selectedUser = '';
-                    this.userList = [];
-                    this.showAddFriendModal = false;
-                    this.popupLoader.showPopup('Sucesso', 'Amigo adicionado com sucesso.');
+                    this.friendsList.push({
+                        username: this.selectedUser,
+                        email: ''
+                    }) // Email isn't provided by the API, so left empty
+                    this.selectedUser = ''
+                    this.userList = []
+                    this.showAddFriendModal = false
+                    this.popupLoader.showPopup(
+                        'Sucesso',
+                        'Amigo adicionado com sucesso.'
+                    )
                 },
                 error: () => {
-                    this.popupLoader.showPopup('Erro', 'Não foi possível adicionar o amigo.');
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível adicionar o amigo.'
+                    )
                 }
-            });
+            })
     }
 
     /**
@@ -286,26 +296,32 @@ export class UserProfileComponent implements OnInit {
      */
     removeFriend(index: number | null) {
         if (index === null) {
-            this.popupLoader.showPopup('Erro', 'Nenhum amigo selecionado.');
-            return;
+            this.popupLoader.showPopup('Erro', 'Nenhum amigo selecionado.')
+            return
         }
 
-        const friendUsername = this.friendsList[index]?.username;
-        if (!friendUsername) return;
+        const friendUsername = this.friendsList[index]?.username
+        if (!friendUsername) return
 
         this.netApi
             .post('Friends', 'RemoveFriend', { username: friendUsername })
             .subscribe({
                 next: () => {
-                    this.friendsList.splice(index, 1);
-                    this.showRemoveFriendModal = false;
-                    this.selectedFriendIndex = null;
-                    this.popupLoader.showPopup('Sucesso', 'Amigo removido com sucesso.');
+                    this.friendsList.splice(index, 1)
+                    this.showRemoveFriendModal = false
+                    this.selectedFriendIndex = null
+                    this.popupLoader.showPopup(
+                        'Sucesso',
+                        'Amigo removido com sucesso.'
+                    )
                 },
                 error: () => {
-                    this.popupLoader.showPopup('Erro', 'Não foi possível remover o amigo.');
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível remover o amigo.'
+                    )
                 }
-            });
+            })
     }
 
     /**
@@ -313,7 +329,7 @@ export class UserProfileComponent implements OnInit {
      * @param username Friend's username
      */
     viewProfile(username: string) {
-        this.router.navigate(['/friend-profile', username]);
+        this.router.navigate(['/friend-profile', username])
     }
 
     /**
@@ -331,29 +347,36 @@ export class UserProfileComponent implements OnInit {
               }
           });
   }
-
     /**
-   * Atualiza o nome de utilizador no perfil do usuário.
-   */
+     * Atualiza o nome de utilizador no perfil do usuário.
+     */
     updateUsername() {
-      if (!this.username || this.username.trim() === '') {
-          this.popupLoader.showPopup('Erro', 'O nome de utilizador não pode estar vazio.');
-          return;
-      }
+        if (!this.username || this.username.trim() === '') {
+            this.popupLoader.showPopup(
+                'Erro',
+                'O nome de utilizador não pode estar vazio.'
+            )
+            return
+        }
 
-      this.netApi
-          .post('Profile', 'UpdateUsername', { email: this.email, username: this.username })
-          .subscribe({
-              next: () => {
-                  this.popupLoader.showPopup('Sucesso', 'Nome de utilizador atualizado com sucesso.');
-              },
-              error: () => {
-                  this.popupLoader.showPopup('Erro', 'Não foi possível atualizar o nome de utilizador.');
-              }
-          });
+        this.netApi
+            .post('Profile', 'UpdateUsername', {
+                email: this.email,
+                username: this.username
+            })
+            .subscribe({
+                next: () => {
+                    this.popupLoader.showPopup(
+                        'Sucesso',
+                        'Nome de utilizador atualizado com sucesso.'
+                    )
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível atualizar o nome de utilizador.'
+                    )
+                }
+            })
     }
-
-
-
-
 }

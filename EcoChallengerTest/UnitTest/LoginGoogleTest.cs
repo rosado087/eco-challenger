@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using EcoChallenger.Controllers;
+using Microsoft.Extensions.Logging;
 
 public class LoginGoogleTest
 {
@@ -12,6 +13,7 @@ public class LoginGoogleTest
 
     public LoginGoogleTest()
     {
+        var mockLogger = new Mock<ILogger<LoginController>>();
         _mockConfig = new Mock<IConfiguration>();
 
         // Setup in-memory database
@@ -21,17 +23,17 @@ public class LoginGoogleTest
         _dbContext = new AppDbContext(options);
 
         // Initialize the controller with dependencies
-        _controller = new LoginController(_dbContext, _mockConfig.Object);
+        _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
     }
 
     [Fact]
-    public async Task GetGoogleId_Returns_ClientId_From_Config()
+    public void GetGoogleId_Returns_ClientId_From_Config()
     {
         // Arrange
         _mockConfig.Setup(c => c["GoogleClient:ClientId"]).Returns("test-client-id");
 
         // Act
-        var result = await _controller.GetGoogleId() as JsonResult;
+        var result = _controller.GetGoogleId();
 
         // Assert
         Assert.NotNull(result);
@@ -53,10 +55,13 @@ public class LoginGoogleTest
         _dbContext.Users.Add(testUser);
         await _dbContext.SaveChangesAsync();
 
-        string[] values = { "test-token", "test@example.com" };
+        GAuthModel model = new GAuthModel {
+            GoogleToken = "test-token",
+            Email = "test@example.com"
+        };
 
         // Act
-        var result = await _controller.AuthenticateGoogle(values) as JsonResult;
+        var result = await _controller.AuthenticateGoogle(model);
 
         // Assert
         Assert.NotNull(result);
@@ -73,10 +78,13 @@ public class LoginGoogleTest
     public async Task AuthenticateGoogle_Returns_False_When_User_Does_Not_Exist()
     {
         // Arrange
-        string[] values = { "invalid-token", "nonexistent@example.com" };
+        GAuthModel model = new GAuthModel {
+            GoogleToken = "invalid-token",
+            Email = "nonexistent@example.com"
+        };
 
         // Act
-        var result = await _controller.AuthenticateGoogle(values) as JsonResult;
+        var result = await _controller.AuthenticateGoogle(model);
 
         // Assert
         Assert.NotNull(result);
@@ -87,35 +95,5 @@ public class LoginGoogleTest
 
         var successValue = (bool)successProperty.GetValue(result.Value);
         Assert.False(successValue);
-    }
-
-
-    [Fact]
-    public async Task SignUpGoogle_Creates_New_User_And_Returns_Success()
-    {
-        // Arrange
-        _dbContext.Users.RemoveRange(_dbContext.Users); // Clear existing users
-        await _dbContext.SaveChangesAsync();
-
-        string[] values = { "TestUser", "test@example.com", "test-token" };
-
-        // Act
-        var result = await _controller.SignUpGoogle(values) as JsonResult;
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
-
-        var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty);
-
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        Assert.True(successValue);
-
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == "test@example.com");
-        Assert.NotNull(user);
-
-        Assert.Equal("TestUser", user.Username);
-        Assert.Equal("test-token", user.GoogleToken);
     }
 }

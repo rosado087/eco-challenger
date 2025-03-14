@@ -45,3 +45,17 @@ This project uses https://app.brevo.com/ to send emails, to configure it set the
 ```
 
 The parameter "Sender" has to be configured as a authenticated sender in brevo, otherwise an error will be thrown.
+
+
+## JWT Configuration
+This project uses JWT for authentication, to configure it set the following in your appsettings.json:
+
+```
+"JwtSettings": {
+    "Issuer": "<which entity generates the token>",
+    "Audience": "<what is the token meant to give access to>",
+    "Key": "<A generated key to encond the token>"
+}
+```
+
+The "Key" parameter can be generated on a command line with the following `openssl rand -base64 32`.

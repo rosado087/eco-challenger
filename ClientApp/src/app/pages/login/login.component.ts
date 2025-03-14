@@ -3,8 +3,8 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { NgIcon, provideIcons } from '@ng-icons/core'
 import { heroUser, heroLockClosed } from '@ng-icons/heroicons/outline'
-import { PopupLoaderService } from '../../services/popup-loader.service'
-import { NetApiService } from '../../services/net-api.service'
+import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
+import { NetApiService } from '../../services/net-api/net-api.service'
 import {
     FormControl,
     FormGroup,
@@ -12,14 +12,9 @@ import {
     Validators
 } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
-import { PopupButton } from '../../models/popup-button'
-import { AuthService } from '../../services/auth.service'
+import { AuthService } from '../../services/auth/auth.service'
 import { LoginResponseModel } from '../../models/login-response-model'
-import {
-    GAuthLoginModel,
-    GAuthLoginResponseModel
-} from '../../models/gauth-login'
-import { AuthUserInfo } from '../../models/auth-user-info'
+import { GAuthLoginModel } from '../../models/gauth-login'
 
 /*
   This google variable is filled through a script tag that is placed
@@ -77,28 +72,18 @@ export class LoginComponent implements OnInit {
         })
     }
 
-    getEmail() {
-        return this.loginForm.get('email')
-    }
-
-    getPassword() {
-        return this.loginForm.get('password')
-    }
-
     loginUser() {
         this.loginForm.markAllAsTouched()
 
-        if (!this.loginForm.valid) {
-            this.popupLoader.showPopup(
+        if (!this.loginForm.valid)
+            return this.popupLoader.showPopup(
                 'Erro',
                 'Por favor, preencha todos os campos corretamente.'
             )
-            return
-        }
 
         const params = {
-            Email: this.getEmail()?.value,
-            Password: this.getPassword()?.value
+            Email: this.loginForm.get('email')?.value,
+            Password: this.loginForm.get('password')?.value
         }
 
         this.disableSubmit = true
@@ -107,31 +92,18 @@ export class LoginComponent implements OnInit {
             .post<LoginResponseModel>('Login', 'Login', params)
             .subscribe({
                 next: (response) => {
-                    const popupButton: PopupButton[] = [
-                        {
-                            type: 'ok',
-                            text: 'Okay',
-                            callback: () => this.router.navigate(['/'])
-                        }
-                    ]
                     if (response.success) {
-                        const userInfo = new AuthUserInfo(
-                            response.username,
-                            response.email
-                        )
-
-                        this.authService.login(userInfo, response.token) // Use AuthService
-                        this.popupLoader.showPopup(
-                            'Login Bem-Sucedido',
-                            'Entrou na sua conta!',
-                            popupButton
-                        )
-                    } else {
-                        this.popupLoader.showPopup(
-                            'Erro ao fazer login',
-                            'Email ou senha incorretos.'
-                        )
+                        // Init user auth service
+                        this.authService.login(response.user, response.token)
+                        this.router.navigate(['/'])
+                        return
                     }
+
+                    this.popupLoader.showPopup(
+                        'Erro ao fazer login',
+                        response.message ||
+                            'Ocorreu um erro ao tentar fazer login.'
+                    )
 
                     this.disableSubmit = false
                 },
@@ -146,40 +118,35 @@ export class LoginComponent implements OnInit {
     }
 
     handleLoginGoogle(response: any) {
-        if (response) {
-            const info = JSON.parse(atob(response.credential.split('.')[1]))
+        if (!response) return
+        const info = JSON.parse(atob(response.credential.split('.')[1]))
 
-            // Store user info in sessionStorage
-            sessionStorage.setItem('loggedInUser', JSON.stringify(info))
-
-            // Call API to authenticate Google user
-            this.netApi
-                .post<GAuthLoginResponseModel>('Login', 'AuthenticateGoogle', [
-                    info.sub,
-                    info.email
-                ])
-                .subscribe({
-                    next: (data) => {
-                        if (data.success) {
-                            // Update AuthService so the Header updates
-                            const userInfo = new AuthUserInfo(
-                                data.name || info.email.split('@')[0],
-                                info.email
-                            )
-
-                            this.authService.login(userInfo, 'google-token') // Notify AuthService
-                            this.router.navigate(['/'])
-                        } else {
-                            this.router.navigate(['add-username'])
-                        }
-                    },
-                    error: () => {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            'Houve um problema ao autenticar com conta Google.'
-                        )
+        // Handle post GAuth, create user and get JWT
+        this.netApi
+            .post<LoginResponseModel>('Login', 'AuthenticateGoogle', {
+                GoogleToken: info.sub,
+                Email: info.email
+            })
+            .subscribe({
+                next: (data) => {
+                    if (data.success) {
+                        this.authService.login(data.user, data.token)
+                        this.router.navigate(['/'])
+                        return
                     }
-                })
-        }
+
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        data.message ||
+                            'Houve um problema ao autenticar com conta Google.'
+                    )
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Houve um problema ao autenticar com conta Google.'
+                    )
+                }
+            })
     }
 }

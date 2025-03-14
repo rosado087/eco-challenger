@@ -8,12 +8,12 @@ public class SetNewPasswordModel {
 }
 
 public class LoginRequestModel
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+}
 
-    public class LoginResponseModel
+public class LoginResponseModel
 {
     public bool Success { get; set; }
     public string Message { get; set; }
@@ -22,9 +22,13 @@ public class LoginRequestModel
     public string Email { get; set; } 
 }
 
+public class ProfileEditModel{
+    public string Username  {get; set;}
+    public string Tag {get; set;}
+    public string Email {get; set;}
+}
 
-    public class ProfileEditModel{
-        public string Username  {get; set;}
-        public string Tag {get; set;}
-        public string Email {get; set;}
-    }
+public class GAuthModel {
+    public string GoogleToken { get; set; }
+    public string Email { get; set; }
+}
