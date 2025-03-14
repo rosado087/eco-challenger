@@ -10,21 +10,29 @@
                 </h2>
             </div>
 
+      <!-- User Info -->
+      <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3">
+          <div class="flex items-center justify-center gap-2">
+              <h2 class="text-xl font-semibold text-gray-700">Perfil de Utilizador</h2>
+              <ng-icon name="heroPencil" class="ml-5" (click) = "editProfile()"/>
+          </div>
+          <form [formGroup]="editForm" id="registerForm">
+
             <!-- Nome de Utilizador -->
             <div class="mt-4">
-                <span class="font-medium text-gray-700"
-                    >Nome de Utilizador:</span
-                >
+                <span class="font-medium text-gray-700">Nome de Utilizador:</span>
+                
                 <div class="flex items-center gap-2">
-                    <input
-                        type="text"
-                        [(ngModel)]="username"
-                        class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200" />
-                    <button
-                        (click)="updateUsername()"
-                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Guardar
-                    </button>
+                    @if (isEditing) {
+                      <input
+                      type="text"
+                      [(ngModel)]="username"
+                      formControlName="userName"
+                      class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200" />
+                    }@else {
+                      <p class="text-gray-600">{{ username }}</p>
+                    }
+                    
                 </div>
             </div>
 
@@ -34,25 +42,23 @@
                 <p class="text-gray-600">{{ email }}</p>
             </div>
 
-            <!-- Tags (Dropdown) -->
+            <!-- Tag -->
             <div class="mt-4">
-                <span class="font-medium text-gray-700">Tags:</span>
+              <span class="font-medium text-gray-700">Tag:</span>
+              @if (isEditing) {
                 <div class="flex items-center gap-2">
-                    <select
-                        [(ngModel)]="tag"
-                        class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200">
-                        <option
-                            *ngFor="let tagOption of availableTags"
-                            [value]="tagOption">
-                            {{ tagOption }}
-                        </option>
-                    </select>
-                    <button
-                        (click)="saveTag()"
-                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Guardar
-                    </button>
+                  <select
+                      [(ngModel)]="tag"
+                      formControlName="tag" 
+                      class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200">
+                      <option *ngFor="let tagOption of availableTags" [value]="tagOption">
+                          {{ tagOption }}
+                      </option>
+                  </select>
                 </div>
+              } @else {
+                <p class="text-gray-600">{{ tag }}</p>
+              }
             </div>
 
             <!-- Pontos -->
@@ -60,20 +66,23 @@
                 <span class="font-medium text-gray-700">Pontos:</span>
                 <p class="text-gray-600">{{ points }}</p>
             </div>
-        </div>
 
-        <!-- Seção Direita: Lista de Amigos (Scrollável) -->
-        <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
-            <div class="flex items-center gap-2 mb-4">
-                <h2 class="text-xl font-semibold text-gray-700">
-                    Lista de amigos
-                </h2>
-                <button
-                    (click)="showAddFriendModal = true"
-                    class="text-green-600 hover:text-green-800 text-lg font-bold">
-                    +
-                </button>
-            </div>
+            @if (isEditing) {
+              <div flex justify-around >
+                <app-button
+                class="ml-6"
+                text="Cancelar"
+                (btnClick)="cancelEdit()" />
+  
+                <app-button
+                class="ml-6"
+                text="Editar"
+                (btnClick)="confirmEdit()" />
+              </div>
+            }
+
+          </form>
+        </div>
 
             <!-- Lista de amigos dinâmica com Scroll -->
             <div class="border rounded-lg max-h-60 overflow-y-auto">

@@ -10,7 +10,15 @@ import {
     heroUser,
     heroLockClosed,
     heroPencil
-} from '@ng-icons/heroicons/outline'
+} from '@ng-icons/heroicons/outline';
+import { UserModel } from '../../models/user-model';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms'
+import { ButtonComponent } from '../../components/button/button.component'
 
 export interface UserList {
     usernames: string[]
@@ -33,7 +41,7 @@ export interface FriendsResponse {
 @Component({
     selector: 'app-user-profile',
     standalone: true,
-    imports: [NgFor, NgIf, FormsModule],
+    imports: [NgIcon, NgFor, NgIf, ReactiveFormsModule, ButtonComponent, FormsModule],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],
     providers: [
@@ -47,88 +55,164 @@ export class UserProfileComponent implements OnInit {
     router = inject(Router)
     authService = inject(AuthService)
 
-    username: string = ''
-    email: string = ''
-    points: string = ''
-    tag: string = ''
-    friendsList: { username: string; email: string }[] = [] // Updated to match API response
+    username: string = '';
+    email: string = '';
+    points: string = '';
+    tag: string = '';
+    friendsList: { username: string, email: string }[] = []; // Updated to match API response
+    isEditing: boolean = false;
+    availableTags: string[] = [];
+    userList: string[] = [];
+    showAddFriendModal: boolean = false;
+    showRemoveFriendModal: boolean = false;
+    selectedFriendIndex: number | null = null;
+    searchUsername: string = '';
+    selectedUser: string = '';
 
-    availableTags: string[] = ['Eco-Warrior', 'Nature Lover', 'Green Guru']
+    editForm = new FormGroup({
+        userName: new FormControl('', [Validators.required]),
+        tag: new FormControl('')
+    })
 
-    userList: string[] = []
-    showAddFriendModal: boolean = false
-    showRemoveFriendModal: boolean = false
-    selectedFriendIndex: number | null = null
-    searchUsername: string = ''
-    selectedUser: string = ''
+    getUserName() {
+        return this.editForm.get('userName')
+    }
+
+    getTag() {
+        return this.editForm.get('tag')
+    }
+
 
     ngOnInit(): void {
         this.username = this.authService.getUserInfo().username
+        this.email = this.authService.getUserInfo().email
     }
 
     /**
      * Load user profile details from API.
      */
     loadUserProfile() {
-        this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', this.username)
-            .subscribe({
-                next: (data: FriendsResponse) => {
-                    if (data.success) {
-                        this.friendsList = data.friends
-                        console.log(
-                            'Lista de amigos carregada:',
-                            this.friendsList
-                        ) // Debugging
-                    } else {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            'Não foi possível carregar a lista de amigos.'
-                        )
-                    }
-                },
-                error: (err) => {
-                    console.error('Erro ao buscar amigos:', err)
-                    this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.')
-                }
-            })
+      this.netApi.get<UserModel>('Profile', 'GetUserInfo', this.email).subscribe({
+          next: (data) => {
+              if (data.success) {
+                this.username = data.username
+                this.email = data.email
+                this.points = data.points
+                this.tag = data.tag
+              } else {
+                this.popupLoader.showPopup(
+                  'Erro',
+                  data.message || 'Ocorreu um erro!'
+                )
+              }
+          },
+          error: () => {
+            this.popupLoader.showPopup(
+              'Erro',
+              'Não foi possível carregar os dados do perfil.'
+            )
+          }
+      })
     }
+
+    editProfile(){
+      this.isEditing = true;
+      
+      this.netApi.get<UserModel>('Profile', 'GetTags', this.email).subscribe({
+        next: (data) => {
+            if (data.success) {
+              this.availableTags = data.list
+            } else {
+              this.popupLoader.showPopup(
+                'Erro',
+                data.message || 'Ocorreu um erro!'
+              )
+            }
+        },
+        error: () => {
+          this.popupLoader.showPopup(
+            'Erro',
+            'Não foi possível carregar as tags do perfil.'
+          )
+        }
+    })
+    }
+
+    confirmEdit(){
+        this.editForm.markAllAsTouched()
+          if (!this.editForm.valid) return
+
+          const payload = {
+            Username: this.getUserName()?.value,
+            Tag: this.getTag()?.value
+          }
+
+          this.netApi.get<FriendsResponse>('Profile', 'EditUserInfo', payload).subscribe({
+            next: (data: FriendsResponse) => {
+                if (data.success) {
+                  this.friendsList = data.friends;
+                } else {
+                  this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+                }
+            },
+            error: (err) => {
+              console.error('Erro ao buscar amigos:', err);
+              this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+            }
+          });
+
+
+          this.isEditing = false;
+    }
+
+    cancelEdit(){
+      this.isEditing = false;
+      this.loadUserProfile();
+    }
+
+    
+    loadUserFriends() {
+      this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
+        next: (data: FriendsResponse) => {
+            if (data.success) {
+              this.friendsList = data.friends;
+            } else {
+              this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+            }
+        },
+        error: (err) => {
+          console.error('Erro ao buscar amigos:', err);
+          this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+        }
+      });
+    }
+    
+
 
     /**
      * Load the list of friends for the logged-in user.
      */
     loadFriendsList() {
-        if (!this.username) {
-            this.popupLoader.showPopup(
-                'Erro',
-                'Nome de utilizador não encontrado.'
-            )
-            return
-        }
+      if (!this.username) {
+          this.popupLoader.showPopup('Erro', 'Nome de utilizador não encontrado.');
+          return;
+      }
 
-        this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', this.username)
-            .subscribe({
-                next: (data: FriendsResponse) => {
-                    if (data.success) {
-                        this.friendsList = data.friends
-                        console.log(
-                            'Lista de amigos carregada:',
-                            this.friendsList
-                        ) // Debugging
-                    } else {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            'Não foi possível carregar a lista de amigos.'
-                        )
-                    }
-                },
-                error: (err) => {
-                    console.error('Erro ao buscar amigos:', err)
-                    this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.')
-                }
-            })
-    }
+      this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
+          next: (data: FriendsResponse) => {
+              if (data.success) {
+                  this.friendsList = data.friends;
+              } else {
+                  this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+              }
+          },
+          error: (err) => {
+              console.error('Erro ao buscar amigos:', err);
+              this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+          }
+      });
+  }
+
 
     /**
      * Search for users by username.
@@ -252,27 +336,17 @@ export class UserProfileComponent implements OnInit {
      * Salva a tag selecionada no perfil do usuário
      */
     saveTag() {
-        this.netApi
-            .post('Profile', 'UpdateUserTag', {
-                email: this.email,
-                tag: this.tag
-            })
-            .subscribe({
-                next: () => {
-                    this.popupLoader.showPopup(
-                        'Sucesso',
-                        'Tag atualizada com sucesso.'
-                    )
-                },
-                error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Erro ao atualizar a tag.'
-                    )
-                }
-            })
-    }
-
+      this.netApi
+          .post('Profile', 'UpdateUserTag', { email: this.email, tag: this.tag })
+          .subscribe({
+              next: () => {
+                  this.popupLoader.showPopup('Sucesso', 'Tag atualizada com sucesso.');
+              },
+              error: () => {
+                  this.popupLoader.showPopup('Erro', 'Erro ao atualizar a tag.');
+              }
+          });
+  }
     /**
      * Atualiza o nome de utilizador no perfil do usuário.
      */

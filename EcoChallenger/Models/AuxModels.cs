@@ -19,7 +19,13 @@ public class LoginResponseModel
     public string Message { get; set; }
     public string Token { get; set; }
     public string Username { get; set; }
-    public string Email { get; set; }
+    public string Email { get; set; } 
+}
+
+public class ProfileEditModel{
+    public string Username  {get; set;}
+    public string Tag {get; set;}
+    public string Email {get; set;}
 }
 
 public class GAuthModel {
