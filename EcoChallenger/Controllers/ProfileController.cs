@@ -53,18 +53,18 @@ namespace EcoChallenger.Controllers
         /// <param name="email">Email of the logged-in account</param>
         /// <returns>JSON result indicating success or failure.</returns>
         [HttpPost("EditUserInfo")]
-        public async Task<JsonResult> EditUserInfo([FromBody] User data, string tagName)
+        public async Task<JsonResult> EditUserInfo([FromBody] ProfileEditModel profile)
         {
             try
             {
-                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Email == data.Email);
+                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Email == email);
 
                 if (user == null)
                     return new JsonResult(new { success = false, message = "O utilizador não existe" });
-                else if (data.Username == null)
+                else if (newUser == null)
                     return new JsonResult(new {sucess = false, message = "O nome de utilizador não pode ser nulo"});
                 
-                user.Username = data.Username;
+                user.Username = newUser;
 
                 var currentTag = await _ctx.TagUsers
                     .Where(tg => tg.SelectedTag && tg.User.Id == user.Id)

@@ -130,8 +130,57 @@ export class UserProfileComponent implements OnInit {
 
     editProfile(){
       this.isEditing = true;
-      this.editForm.markAllAsTouched()
-        if (!this.editForm.valid) return
+      
+      this.netApi.get<UserModel>('Profile', 'GetTags', this.email).subscribe({
+        next: (data) => {
+            if (data.success) {
+              this.availableTags = data.list
+            } else {
+              this.popupLoader.showPopup(
+                'Erro',
+                data.message || 'Ocorreu um erro!'
+              )
+            }
+        },
+        error: () => {
+          this.popupLoader.showPopup(
+            'Erro',
+            'Não foi possível carregar as tags do perfil.'
+          )
+        }
+    })
+    }
+
+    confirmEdit(){
+        this.editForm.markAllAsTouched()
+          if (!this.editForm.valid) return
+
+          const payload = {
+            Username: this.getUserName()?.value,
+            Tag: this.getTag()?.value
+          }
+
+          this.netApi.get<FriendsResponse>('Profile', 'EditUserInfo', payload).subscribe({
+            next: (data: FriendsResponse) => {
+                if (data.success) {
+                  this.friendsList = data.friends;
+                } else {
+                  this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+                }
+            },
+            error: (err) => {
+              console.error('Erro ao buscar amigos:', err);
+              this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+            }
+          });
+
+
+          this.isEditing = false;
+    }
+
+    cancelEdit(){
+      this.isEditing = false;
+      this.loadUserProfile();
     }
 
     
@@ -140,7 +189,6 @@ export class UserProfileComponent implements OnInit {
         next: (data: FriendsResponse) => {
             if (data.success) {
               this.friendsList = data.friends;
-              console.log('Lista de amigos carregada:', this.friendsList); // Debugging
             } else {
               this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
             }
@@ -167,7 +215,6 @@ export class UserProfileComponent implements OnInit {
           next: (data: FriendsResponse) => {
               if (data.success) {
                   this.friendsList = data.friends;
-                  console.log('Lista de amigos carregada:', this.friendsList); // Debugging
               } else {
                   this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
               }

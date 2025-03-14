@@ -9,6 +9,7 @@
               <ng-icon name="heroPencil" class="ml-5" (click) = "editProfile()"/>
           </div>
           <form [formGroup]="editForm" id="registerForm">
+
             <!-- Nome de Utilizador -->
             <div class="mt-4">
                 <span class="font-medium text-gray-700">Nome de Utilizador:</span>
@@ -18,6 +19,7 @@
                       <input
                       type="text"
                       [(ngModel)]="username"
+                      formControlName="userName"
                       class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200" />
                     }@else {
                       <p class="text-gray-600">{{ username }}</p>
@@ -39,6 +41,7 @@
                 <div class="flex items-center gap-2">
                   <select
                       [(ngModel)]="tag"
+                      formControlName="tag" 
                       class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200">
                       <option *ngFor="let tagOption of availableTags" [value]="tagOption">
                           {{ tagOption }}
@@ -57,19 +60,19 @@
             </div>
 
             @if (isEditing) {
-              <div flex justify-around>
+              <div flex justify-around >
                 <app-button
                 class="ml-6"
                 text="Cancelar"
-                (btnClick)="editProfile()" />
+                (btnClick)="cancelEdit()" />
   
                 <app-button
                 class="ml-6"
                 text="Editar"
-                (btnClick)="editProfile()" />
+                (btnClick)="confirmEdit()" />
               </div>
             }
-            
+
           </form>
         </div>
 
