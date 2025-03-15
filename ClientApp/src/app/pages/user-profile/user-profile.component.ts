@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core'
-import { provideIcons } from '@ng-icons/core'
+import { NgIcon, provideIcons } from '@ng-icons/core'
 import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 import { NetApiService } from '../../services/net-api/net-api.service'
 import { Router } from '@angular/router'
@@ -11,6 +11,15 @@ import {
     heroLockClosed,
     heroPencil
 } from '@ng-icons/heroicons/outline'
+import { UserModel } from '../../models/user-model'
+import {
+    FormControl,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators
+} from '@angular/forms'
+import { ButtonComponent } from '../../components/button/button.component'
+import { LoginResponseModel } from '../../models/login-response-model'
 
 export interface UserList {
     usernames: string[]
@@ -33,7 +42,14 @@ export interface FriendsResponse {
 @Component({
     selector: 'app-user-profile',
     standalone: true,
-    imports: [NgFor, NgIf, FormsModule],
+    imports: [
+        NgIcon,
+        NgFor,
+        NgIf,
+        ReactiveFormsModule,
+        ButtonComponent,
+        FormsModule
+    ],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],
     providers: [
@@ -49,12 +65,12 @@ export class UserProfileComponent implements OnInit {
 
     username: string = ''
     email: string = ''
+    id: number = 0
     points: string = ''
     tag: string = ''
     friendsList: { username: string; email: string }[] = [] // Updated to match API response
-
-    availableTags: string[] = ['Eco-Warrior', 'Nature Lover', 'Green Guru']
-
+    isEditing: boolean = false
+    availableTags: string[] = []
     userList: string[] = []
     showAddFriendModal: boolean = false
     showRemoveFriendModal: boolean = false
@@ -62,8 +78,24 @@ export class UserProfileComponent implements OnInit {
     searchUsername: string = ''
     selectedUser: string = ''
 
+    editForm = new FormGroup({
+        editUserName: new FormControl('', [Validators.required]),
+        tag: new FormControl('')
+    })
+
+    getUserName() {
+        return this.editForm.get('editUserName')
+    }
+
+    getTag() {
+        return this.editForm.get('tag')
+    }
+
     ngOnInit(): void {
         this.username = this.authService.getUserInfo().username
+        this.id = this.authService.getUserInfo().id
+        this.loadUserProfile()
+        this.loadUserFriends()
     }
 
     /**
@@ -71,51 +103,130 @@ export class UserProfileComponent implements OnInit {
      */
     loadUserProfile() {
         this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', this.username)
+            .get<UserModel>('Profile', 'GetUserInfo', this.id.toString())
             .subscribe({
-                next: (data: FriendsResponse) => {
+                next: (data) => {
                     if (data.success) {
-                        this.friendsList = data.friends
-                        console.log(
-                            'Lista de amigos carregada:',
-                            this.friendsList
-                        ) // Debugging
+                        this.username = data.username
+                        this.email = data.email
+                        this.points = data.points
+                        this.tag = data.tag
                     } else {
                         this.popupLoader.showPopup(
                             'Erro',
-                            'Não foi possível carregar a lista de amigos.'
+                            data.message || 'Ocorreu um erro!'
                         )
                     }
                 },
-                error: (err) => {
-                    console.error('Erro ao buscar amigos:', err)
-                    this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.')
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível carregar os dados do perfil.'
+                    )
                 }
             })
     }
 
-    /**
-     * Load the list of friends for the logged-in user.
-     */
-    loadFriendsList() {
-        if (!this.username) {
-            this.popupLoader.showPopup(
-                'Erro',
-                'Nome de utilizador não encontrado.'
-            )
-            return
+    editProfile() {
+        this.isEditing = true
+
+        this.netApi
+            .get<UserModel>('Profile', 'GetTags', this.id.toString())
+            .subscribe({
+                next: (data) => {
+                    if (data.success) {
+                        this.availableTags = data.list
+                    } else {
+                        this.popupLoader.showPopup(
+                            'Erro',
+                            data.message || 'Ocorreu um erro!'
+                        )
+                    }
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível carregar as tags do perfil.'
+                    )
+                }
+            })
+    }
+
+    confirmEdit() {
+        this.editForm.markAllAsTouched()
+        if (!this.editForm.valid) return
+
+        const params = {
+            Id: this.authService.getUserInfo().id,
+            Username: this.getUserName()?.value || '',
+            Tag: this.getTag()?.value || ''
         }
 
         this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', this.username)
+            .post<UserModel>('Profile', 'EditUserInfo', params)
+            .subscribe({
+                next: (data: UserModel) => {
+                    if (data.success) {
+                        this.username = data.username
+                        this.email = data.email
+                        this.points = data.points
+                        this.tag = data.tag
+                        this.popupLoader.showPopup(
+                            'Alteração dos dados',
+                            'Os dados foram alterados com sucesso.'
+                        )
+                        this.editTokenDetails()
+                    } else {
+                        this.popupLoader.showPopup(
+                            'Alteração dos dados',
+                            'Não foi possível editar os seus dados.'
+                        )
+                    }
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Alteração dos dados',
+                        'Erro ao editar os seus dados.'
+                    )
+                }
+            })
+
+        this.isEditing = false
+    }
+
+    editTokenDetails() {
+        this.netApi
+            .get<LoginResponseModel>('Profile', 'GenerateToken')
+            .subscribe({
+                next: (data: LoginResponseModel) => {
+                    if (data.success) {
+                        this.authService.updateToken(data.user, data.token)
+                        this.loadUserProfile()
+                    } else {
+                        this.popupLoader.showPopup(
+                            'Alteração dos dados',
+                            'Não.'
+                        )
+                    }
+                },
+                error: () => {
+                    this.popupLoader.showPopup('Alteração dos dados', 'Erro.')
+                }
+            })
+    }
+
+    cancelEdit() {
+        this.isEditing = false
+        this.loadUserProfile()
+    }
+
+    loadUserFriends() {
+        this.netApi
+            .get<FriendsResponse>('Profile', 'GetFriends', this.id.toString())
             .subscribe({
                 next: (data: FriendsResponse) => {
                     if (data.success) {
                         this.friendsList = data.friends
-                        console.log(
-                            'Lista de amigos carregada:',
-                            this.friendsList
-                        ) // Debugging
                     } else {
                         this.popupLoader.showPopup(
                             'Erro',
@@ -272,7 +383,6 @@ export class UserProfileComponent implements OnInit {
                 }
             })
     }
-
     /**
      * Atualiza o nome de utilizador no perfil do usuário.
      */

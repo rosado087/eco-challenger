@@ -19,7 +19,19 @@ public class LoginResponseModel
     public string Message { get; set; }
     public string Token { get; set; }
     public string Username { get; set; }
-    public string Email { get; set; }
+    public string Email { get; set; } 
+}
+
+public class ProfileEditModel{
+    public int Id { get; set; }
+    public string Username  {get; set; }
+    public string Tag {get; set;}
+
+    public void Validate(){
+        if(string.IsNullOrEmpty(Username))
+            throw new ArgumentException("Username é inválido");
+
+    }
 }
 
 public class GAuthModel {

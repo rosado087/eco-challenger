@@ -2,64 +2,104 @@
     <!-- Conteúdo -->
     <div
         class="container mx-auto px-4 md:px-8 flex flex-col md:flex-row gap-8 mt-6">
-        <!-- Seção Esquerda: Informações do Usuário -->
+        <!-- Seção Esquerda: Informações do Utilizador -->
         <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3">
-            <div class="text-center">
+            <div class="flex items-center justify-center gap-2">
                 <h2 class="text-xl font-semibold text-gray-700">
                     Perfil de Utilizador
                 </h2>
+                <ng-icon
+                    name="heroPencil"
+                    class="ml-5"
+                    (click)="editProfile()" />
             </div>
 
-            <!-- Nome de Utilizador -->
-            <div class="mt-4">
-                <span class="font-medium text-gray-700"
-                    >Nome de Utilizador:</span
-                >
-                <div class="flex items-center gap-2">
-                    <input
-                        type="text"
-                        [(ngModel)]="username"
-                        class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200" />
-                    <button
-                        (click)="updateUsername()"
-                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Guardar
-                    </button>
+            <form [formGroup]="editForm" id="editForm">
+                <!-- Nome de Utilizador -->
+                <div class="mt-4">
+                    <span class="font-medium text-gray-700"
+                        >Nome de Utilizador:</span
+                    >
+
+                    <div class="flex items-center gap-2">
+                        @if (isEditing) {
+                            <input
+                                type="text"
+                                [(ngModel)]="username"
+                                formControlName="editUserName"
+                                class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator" />
+                            @if (
+                                getUserName()?.invalid &&
+                                (getUserName()?.dirty || getUserName()?.touched)
+                            ) {
+                                @if (getUserName()?.hasError('required')) {
+                                    <div class="validator-hint text-red-500">
+                                        Este campo é obrigatório!
+                                    </div>
+                                } @else if (
+                                    getUserName()?.value ===
+                                    authService.getUserInfo().username
+                                ) {
+                                    <div class="validator-hint text-red-500">
+                                        O nome tem que ser diferente!
+                                    </div>
+                                }
+                            }
+                        } @else {
+                            <p class="text-gray-600">{{ username }}</p>
+                        }
+                    </div>
                 </div>
-            </div>
 
-            <!-- Email -->
-            <div class="mt-4">
-                <span class="font-medium text-gray-700">Email:</span>
-                <p class="text-gray-600">{{ email }}</p>
-            </div>
-
-            <!-- Tags (Dropdown) -->
-            <div class="mt-4">
-                <span class="font-medium text-gray-700">Tags:</span>
-                <div class="flex items-center gap-2">
-                    <select
-                        [(ngModel)]="tag"
-                        class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200">
-                        <option
-                            *ngFor="let tagOption of availableTags"
-                            [value]="tagOption">
-                            {{ tagOption }}
-                        </option>
-                    </select>
-                    <button
-                        (click)="saveTag()"
-                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Guardar
-                    </button>
+                <!-- Email -->
+                <div class="mt-4">
+                    <span class="font-medium text-gray-700">Email:</span>
+                    <p class="text-gray-600">{{ email }}</p>
                 </div>
-            </div>
 
-            <!-- Pontos -->
-            <div class="mt-4">
-                <span class="font-medium text-gray-700">Pontos:</span>
-                <p class="text-gray-600">{{ points }}</p>
-            </div>
+                <!-- Tag -->
+                <div class="mt-4">
+                    <span class="font-medium text-gray-700">Tag:</span>
+                    @if (isEditing) {
+                        <div class="flex items-center gap-2">
+                            <select
+                                [(ngModel)]="tag"
+                                formControlName="tag"
+                                class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator">
+                                <option
+                                    *ngFor="let tagOption of availableTags"
+                                    [value]="tagOption">
+                                    {{ tagOption }}
+                                </option>
+                            </select>
+                        </div>
+                    } @else {
+                        <p class="text-gray-600">{{ tag }}</p>
+                    }
+                </div>
+
+                <!-- Pontos -->
+                <div class="mt-4">
+                    <span class="font-medium text-gray-700">Pontos:</span>
+                    <p class="text-gray-600">{{ points }}</p>
+                </div>
+
+                <!-- Botões -->
+
+                @if (isEditing) {
+                    <div flex justify-around>
+                        <app-button
+                            class="ml-6"
+                            text="Cancelar"
+                            (btnClick)="cancelEdit()" />
+
+                        <app-button
+                            class="ml-6"
+                            text="Editar"
+                            (btnClick)="confirmEdit()" />
+                    </div>
+                }
+            </form>
         </div>
 
         <!-- Seção Direita: Lista de Amigos (Scrollável) -->
@@ -112,90 +152,94 @@
                 </table>
             </div>
         </div>
-    </div>
 
-    <!-- MODAL: ADICIONAR AMIGO -->
-    <div
-        *ngIf="showAddFriendModal"
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 class="text-xl font-semibold text-gray-700 text-center">
-                Adicionar amigo
-            </h2>
+        <!-- MODAL: ADICIONAR AMIGO -->
+        <div
+            *ngIf="showAddFriendModal"
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-xl font-semibold text-gray-700 text-center">
+                    Adicionar amigo
+                </h2>
 
-            <!-- Campo de Nome -->
-            <div class="mt-4">
-                <label
-                    for="InputAdd"
-                    class="block text-gray-700 font-medium mb-1"
-                    >Nome de utilizador:</label
-                >
-                <input
-                    id="InputAdd"
-                    type="text"
-                    (input)="findUser()"
-                    class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
-            </div>
+                <!-- Campo de Nome -->
+                <div class="mt-4">
+                    <label
+                        for="InputAdd"
+                        class="block text-gray-700 font-medium mb-1"
+                        >Nome de utilizador:</label
+                    >
+                    <input
+                        id="InputAdd"
+                        type="text"
+                        (input)="findUser()"
+                        class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
+                </div>
 
-            <!-- Lista de Utilizadores -->
-            <div
-                class="mt-4 border rounded-lg p-2 h-32 overflow-y-auto text-gray-600">
-                Lista de utilizadores
-                <table class="w-full text-left">
-                    <tbody>
-                        <tr
-                            *ngFor="let username of userList; let i = index"
-                            class="border-b">
-                            <td
-                                class="p-2 cursor-pointer"
-                                [class.bg-green-600]="username === selectedUser"
-                                [class.text-white]="username === selectedUser"
-                                (click)="selectUser(username)">
-                                {{ username }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <!-- Lista de Utilizadores -->
+                <div
+                    class="mt-4 border rounded-lg p-2 h-32 overflow-y-auto text-gray-600">
+                    Lista de utilizadores
+                    <table class="w-full text-left">
+                        <tbody>
+                            <tr
+                                *ngFor="let username of userList; let i = index"
+                                class="border-b">
+                                <td
+                                    class="p-2 cursor-pointer"
+                                    [class.bg-green-600]="
+                                        username === selectedUser
+                                    "
+                                    [class.text-white]="
+                                        username === selectedUser
+                                    "
+                                    (click)="selectUser(username)">
+                                    {{ username }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Botões -->
-            <div class="flex justify-between mt-6">
-                <button
-                    (click)="addFriend()"
-                    class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                    Adicionar
-                </button>
-                <button
-                    (click)="showAddFriendModal = false"
-                    class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
-                    Cancelar
-                </button>
+                <!-- Botões -->
+                <div class="flex justify-between mt-6">
+                    <button
+                        (click)="addFriend()"
+                        class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Adicionar
+                    </button>
+                    <button
+                        (click)="showAddFriendModal = false"
+                        class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
+                        Cancelar
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- MODAL: REMOVER AMIGO -->
-    <div
-        *ngIf="showRemoveFriendModal"
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 class="text-xl font-semibold text-gray-700 text-center">
-                Remover Amigo
-            </h2>
-            <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
+        <!-- MODAL: REMOVER AMIGO -->
+        <div
+            *ngIf="showRemoveFriendModal"
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-xl font-semibold text-gray-700 text-center">
+                    Remover Amigo
+                </h2>
+                <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
 
-            <!-- Botões -->
-            <div class="flex justify-between mt-6">
-                <button
-                    (click)="removeFriend(selectedFriendIndex)"
-                    class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                    Sim
-                </button>
-                <button
-                    (click)="showRemoveFriendModal = false"
-                    class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
-                    Não
-                </button>
+                <!-- Botões -->
+                <div class="flex justify-between mt-6">
+                    <button
+                        (click)="removeFriend(selectedFriendIndex)"
+                        class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Sim
+                    </button>
+                    <button
+                        (click)="showRemoveFriendModal = false"
+                        class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
+                        Não
+                    </button>
+                </div>
             </div>
         </div>
     </div>
