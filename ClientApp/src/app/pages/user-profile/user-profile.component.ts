@@ -19,7 +19,6 @@ import {
   Validators
 } from '@angular/forms'
 import { ButtonComponent } from '../../components/button/button.component'
-import { AuthUserInfo } from '../../models/auth-user-info'
 import { LoginResponseModel } from '../../models/login-response-model'
 
 export interface UserList {
@@ -73,12 +72,12 @@ export class UserProfileComponent implements OnInit {
     selectedUser: string = '';
 
     editForm = new FormGroup({
-        userName: new FormControl('', [Validators.required]),
+        editUserName: new FormControl('', [Validators.required]),
         tag: new FormControl('')
     })
 
     getUserName() {
-        return this.editForm.get('userName')
+        return this.editForm.get('editUserName')
     }
 
     getTag() {

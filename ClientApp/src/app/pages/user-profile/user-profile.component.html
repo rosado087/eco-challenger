@@ -20,7 +20,7 @@
                       <input
                       type="text"
                       [(ngModel)]="username"
-                      formControlName="userName"
+                      formControlName="editUserName"
                       class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator" />
                       @if (
                         getUserName()?.invalid && 
@@ -31,9 +31,9 @@
                             Este campo é obrigatório!
                           </div>
                         }
-                        @else if (getUserName()?.value == authService.getUserInfo().username) {
+                        @else if (getUserName()?.value === authService.getUserInfo().username) {
                           <div class="validator-hint text-red-500">
-                            O nome tem que ser diferent!
+                            O nome tem que ser diferente!
                           </div>
                         }
                       }
