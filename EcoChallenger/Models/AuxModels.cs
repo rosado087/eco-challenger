@@ -31,9 +31,6 @@ public class ProfileEditModel{
         if(string.IsNullOrEmpty(Username))
             throw new ArgumentException("Username é inválido");
 
-        if(string.IsNullOrEmpty(Tag))
-            throw new ArgumentException("Tag é inválida");
-
     }
 }
 

@@ -23,7 +23,7 @@ namespace EcoChallenger.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-
+        
         [HttpGet("GenerateToken")]
         public async Task<JsonResult> GenerateToken(){
             var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == UserContext.Id);
@@ -45,7 +45,7 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="email">Email of the logged-in account</param>
         /// <returns>JSON result indicating success or failure.</returns>
-        [AllowAnonymous]
+        
         [HttpGet("GetUserInfo/{id}")]
         public async Task<JsonResult> GetUserInfo(int id)
         {
@@ -76,7 +76,7 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="email">Email of the logged-in account</param>
         /// <returns>JSON result indicating success or failure.</returns>
-        [AllowAnonymous]
+        
         [HttpPost("EditUserInfo")]
         public async Task<JsonResult> EditUserInfo([FromBody] ProfileEditModel profile)
         {
@@ -87,8 +87,6 @@ namespace EcoChallenger.Controllers
 
                 if (user == null)
                     return new JsonResult(new { success = false, message = "O utilizador não existe" });
-                
-
                 
                 user.Username = profile.Username;
 
@@ -111,7 +109,7 @@ namespace EcoChallenger.Controllers
                     .Select(tg => tg.Tag.Name)
                     .FirstOrDefaultAsync();
 
-                //GenerateToken()
+                await GenerateToken();
 
                 return new JsonResult(new { success = true, username = user.Username, email = user.Email, points = user.Points, tag = currentTagName });
             }
@@ -130,7 +128,7 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="email">Email of the logged-in user</param>
         /// <returns>JSON result containing a list of tags.</returns>
-        [AllowAnonymous]
+        
         [HttpGet("GetTags/{id}")]
         public async Task<JsonResult> GetTags(int id)
         {
@@ -160,6 +158,7 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="values">Array containing the username of the requesting user and the search term.</param>
         /// <returns>JSON result with a list of usernames.</returns>
+        
         [HttpPost("UserList")]
         public async Task<JsonResult> UserList(string[] values)
         {
@@ -216,20 +215,17 @@ namespace EcoChallenger.Controllers
         /// <summary>
         /// Retrieves a list of a user's friends.
         /// </summary>
-        /// <param name="username">Username of the requested user.</param>
+        /// <param name="id">Id of the requested user.</param>
         /// <returns>JSON result with the list of friends.</returns>
-        [AllowAnonymous]
-        [HttpGet("GetFriends/{username}")]
-        public async Task<IActionResult> GetFriends(string username)
+        
+        [HttpGet("GetFriends/{id}")]
+        public async Task<IActionResult> GetFriends(int id )
         {
-            if (string.IsNullOrEmpty(username))
-                return BadRequest(new { success = false, message = "Nome de utilizador é obrigatório." });
-
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
-                return NotFound(new { success = false, message = "Usuário não encontrado." });
+                return new JsonResult(new { success = false, message = "Utilizador não encontrado." });
 
-            var friends = await _ctx.Friendships
+            var friendList = await _ctx.Friendships
                 .Where(f => f.UserId == user.Id)
                 .Join(_ctx.Users, 
                     f => f.FriendId, 
@@ -237,7 +233,7 @@ namespace EcoChallenger.Controllers
                     (f, u) => new { u.Username, u.Email })
                 .ToListAsync();
 
-            return Ok(new { success = true, friends });
+            return new JsonResult(new { success = true, friends = friendList });
         }
 
 

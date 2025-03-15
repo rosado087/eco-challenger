@@ -91,7 +91,6 @@ export class UserProfileComponent implements OnInit {
         this.id = this.authService.getUserInfo().id;
         this.loadUserProfile();
         this.loadUserFriends();
-        //this.loadFriendsList();
     }
 
     /**
@@ -163,7 +162,6 @@ export class UserProfileComponent implements OnInit {
                     this.tag = data.tag
                     this.popupLoader.showPopup('Alteração dos dados', 'Os dados foram alterados com sucesso.')
                     this.editTokenDetails()
-                    //this.loadUserProfile()
                 } else {
                   this.popupLoader.showPopup('Alteração dos dados', 'Não foi possível editar os seus dados.')
                 }
@@ -181,13 +179,13 @@ export class UserProfileComponent implements OnInit {
             next: (data: LoginResponseModel) => {
                 if (data.success) {
                     this.authService.updateToken(data.user, data.token)
-                    //this.loadUserProfile()
+                    this.loadUserProfile()
                 } else {
-                  this.popupLoader.showPopup('Alteração dos dados', 'Não foi possível editar os seus dados.');
+                  this.popupLoader.showPopup('Alteração dos dados', 'Não.');
                 }
             },
             error: () => {
-              this.popupLoader.showPopup('Alteração dos dados', 'Erro ao editar os seus dados.');
+              this.popupLoader.showPopup('Alteração dos dados', 'Erro.');
             }
           });
     }
@@ -199,7 +197,7 @@ export class UserProfileComponent implements OnInit {
 
     
     loadUserFriends() {
-      this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
+      this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.id.toString()).subscribe({
         next: (data: FriendsResponse) => {
             if (data.success) {
               this.friendsList = data.friends;
@@ -213,32 +211,7 @@ export class UserProfileComponent implements OnInit {
         }
       });
     }
-    
 
-
-    /**
-     * Load the list of friends for the logged-in user.
-     */
-    loadFriendsList() {
-      if (!this.username) {
-          this.popupLoader.showPopup('Erro', 'Nome de utilizador não encontrado.');
-          return;
-      }
-
-      this.netApi.get<FriendsResponse>('Profile', 'GetFriends', this.username).subscribe({
-          next: (data: FriendsResponse) => {
-              if (data.success) {
-                  this.friendsList = data.friends;
-              } else {
-                  this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
-              }
-          },
-          error: (err) => {
-              console.error('Erro ao buscar amigos:', err);
-              this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
-          }
-      });
-  }
 
 
     /**
