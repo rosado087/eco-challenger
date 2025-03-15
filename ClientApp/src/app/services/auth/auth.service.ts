@@ -45,8 +45,8 @@ export class AuthService {
         return this.cookieService.get('auth_token')
     }
 
-    updateToken(userInfo: AuthUserInfo, token: string){
-        this.logout();
-        this.login(userInfo, token);
+    updateToken(userInfo: AuthUserInfo, token: string) {
+        this.logout()
+        this.login(userInfo, token)
     }
 }
