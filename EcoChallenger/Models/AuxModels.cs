@@ -23,9 +23,18 @@ public class LoginResponseModel
 }
 
 public class ProfileEditModel{
-    public string Username  {get; set;}
+    public int Id { get; set; }
+    public string Username  {get; set; }
     public string Tag {get; set;}
-    public string Email {get; set;}
+
+    public void Validate(){
+        if(string.IsNullOrEmpty(Username))
+            throw new ArgumentException("Username é inválido");
+
+        if(string.IsNullOrEmpty(Tag))
+            throw new ArgumentException("Tag é inválida");
+
+    }
 }
 
 public class GAuthModel {

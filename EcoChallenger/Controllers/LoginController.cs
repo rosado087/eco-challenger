@@ -131,7 +131,6 @@ namespace EcoChallenger.Controllers
             }
             catch(Exception e) {
                 _logger.LogError(e.Message, e.StackTrace);
-
                 return new JsonResult(new { success = false, message = "Ocorreu um erro ao efetuar o login com Google Authentication."});
             }
         }

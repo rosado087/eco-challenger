@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core'
-import { provideIcons } from '@ng-icons/core'
+import { NgIcon, provideIcons } from '@ng-icons/core'
 import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 import { NetApiService } from '../../services/net-api/net-api.service'
 import { Router } from '@angular/router'
@@ -19,6 +19,8 @@ import {
   Validators
 } from '@angular/forms'
 import { ButtonComponent } from '../../components/button/button.component'
+import { AuthUserInfo } from '../../models/auth-user-info'
+import { LoginResponseModel } from '../../models/login-response-model'
 
 export interface UserList {
     usernames: string[]
@@ -57,6 +59,7 @@ export class UserProfileComponent implements OnInit {
 
     username: string = '';
     email: string = '';
+    id: number = 0
     points: string = '';
     tag: string = '';
     friendsList: { username: string, email: string }[] = []; // Updated to match API response
@@ -84,15 +87,18 @@ export class UserProfileComponent implements OnInit {
 
 
     ngOnInit(): void {
-        this.username = this.authService.getUserInfo().username
-        this.email = this.authService.getUserInfo().email
+        this.username = this.authService.getUserInfo().username;
+        this.id = this.authService.getUserInfo().id;
+        this.loadUserProfile();
+        this.loadUserFriends();
+        //this.loadFriendsList();
     }
 
     /**
      * Load user profile details from API.
      */
     loadUserProfile() {
-      this.netApi.get<UserModel>('Profile', 'GetUserInfo', this.email).subscribe({
+      this.netApi.get<UserModel>('Profile', 'GetUserInfo', this.id.toString()).subscribe({
           next: (data) => {
               if (data.success) {
                 this.username = data.username
@@ -118,7 +124,7 @@ export class UserProfileComponent implements OnInit {
     editProfile(){
       this.isEditing = true;
       
-      this.netApi.get<UserModel>('Profile', 'GetTags', this.email).subscribe({
+      this.netApi.get<UserModel>('Profile', 'GetTags', this.id.toString()).subscribe({
         next: (data) => {
             if (data.success) {
               this.availableTags = data.list
@@ -142,27 +148,48 @@ export class UserProfileComponent implements OnInit {
         this.editForm.markAllAsTouched()
           if (!this.editForm.valid) return
 
-          const payload = {
-            Username: this.getUserName()?.value,
-            Tag: this.getTag()?.value
+          const params = {
+            Id: this.authService.getUserInfo().id,
+            Username: this.getUserName()?.value || '' ,
+            Tag: this.getTag()?.value || '',
           }
 
-          this.netApi.get<FriendsResponse>('Profile', 'EditUserInfo', payload).subscribe({
-            next: (data: FriendsResponse) => {
+          this.netApi.post<UserModel>('Profile', 'EditUserInfo', params).subscribe({
+            next: (data: UserModel) => {
                 if (data.success) {
-                  this.friendsList = data.friends;
+                    this.username = data.username
+                    this.email = data.email
+                    this.points = data.points
+                    this.tag = data.tag
+                    this.popupLoader.showPopup('Alteração dos dados', 'Os dados foram alterados com sucesso.')
+                    this.editTokenDetails()
+                    //this.loadUserProfile()
                 } else {
-                  this.popupLoader.showPopup('Erro', 'Não foi possível carregar a lista de amigos.');
+                  this.popupLoader.showPopup('Alteração dos dados', 'Não foi possível editar os seus dados.')
                 }
             },
-            error: (err) => {
-              console.error('Erro ao buscar amigos:', err);
-              this.popupLoader.showPopup('Erro', 'Erro ao buscar amigos.');
+            error: () => {
+              this.popupLoader.showPopup('Alteração dos dados', 'Erro ao editar os seus dados.')
             }
           });
 
-
           this.isEditing = false;
+    }
+
+    editTokenDetails(){
+        this.netApi.get<LoginResponseModel>('Profile', 'GenerateToken').subscribe({
+            next: (data: LoginResponseModel) => {
+                if (data.success) {
+                    this.authService.updateToken(data.user, data.token)
+                    //this.loadUserProfile()
+                } else {
+                  this.popupLoader.showPopup('Alteração dos dados', 'Não foi possível editar os seus dados.');
+                }
+            },
+            error: () => {
+              this.popupLoader.showPopup('Alteração dos dados', 'Erro ao editar os seus dados.');
+            }
+          });
     }
 
     cancelEdit(){
