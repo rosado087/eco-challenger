@@ -52,13 +52,15 @@
                         }
                     </div>
                 </div>
-
-                <!-- Email -->
-                <div class="mt-4">
-                    <span class="font-medium text-gray-700">Email:</span>
-                    <p class="text-gray-600">{{ email }}</p>
-                </div>
-
+                
+                @if (userId === this.id){
+                    <!-- Email -->
+                    <div class="mt-4">
+                        <span class="font-medium text-gray-700">Email:</span>
+                        <p class="text-gray-600">{{ email }}</p>
+                    </div>
+                }
+                
                 <!-- Tag -->
                 <div class="mt-4">
                     <span class="font-medium text-gray-700">Tag:</span>
