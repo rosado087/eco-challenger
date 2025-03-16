@@ -52,7 +52,7 @@
                         }
                     </div>
                 </div>
-                
+
                 @if (userId === this.id){
                     <!-- Email -->
                     <div class="mt-4">
@@ -91,17 +91,18 @@
                 <!-- Botões -->
 
                 @if (isEditing) {
-                    <div flex justify-around>
-                        <app-button
-                            class="ml-6"
-                            text="Cancelar"
-                            (btnClick)="cancelEdit()" />
-
-                        <app-button
-                            class="ml-6"
+                    <div class="mt-4 flex justify-evenly">                        
+                        <button 
+                            class="btn btn-outline btn-error" 
+                            (click)="cancelEdit()">
+                            Cancelar
+                        </button>
+                    
+                        <app-button 
                             text="Editar"
                             (btnClick)="confirmEdit()" />
                     </div>
+                    
                 }
             </form>
         </div>
