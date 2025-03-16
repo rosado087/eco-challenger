@@ -20,9 +20,9 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Generates a new JWT token with the users information.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns a new token and user</returns>
         
         [HttpGet("GenerateToken")]
         public async Task<JsonResult> GenerateToken(){
@@ -40,11 +40,36 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// Handles the action that gets the user information.
-        /// Gets the information of the logged user.
+        /// Gets the id of the user which the username corresponds.
         /// </summary>
-        /// <param name="email">Email of the logged-in account</param>
-        /// <returns>JSON result indicating success or failure.</returns>
+        /// <param name="username">Username of the user</param>
+        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns the id of the user.</returns>
+        
+        [HttpGet("GetUserId/{username}")]
+        public async Task<JsonResult> GetUserId(string username)
+        {
+            try
+            {
+                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Username == username);
+
+                if (user == null)
+                    return new JsonResult(new { success = false, message = "O utilizador não existe" });
+
+                return new JsonResult(new { success = true, id = user.Id });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, e.StackTrace);
+                return new JsonResult(new { success = false, message = e.Message });
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the information of the user which the id corresponds.
+        /// </summary>
+        /// <param name="id">Id of the user</param>
+        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns the user information.</returns>
         
         [HttpGet("GetUserInfo/{id}")]
         public async Task<JsonResult> GetUserInfo(int id)
@@ -71,11 +96,11 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// Handles the action that gets the user information.
-        /// Gets the information of the logged user.
+        /// Edits the user data.
+        /// Generates a new JWT token with the users data updated.
         /// </summary>
-        /// <param name="email">Email of the logged-in account</param>
-        /// <returns>JSON result indicating success or failure.</returns>
+        /// <param name="profile">Profile contains the id, the new name and the new tag values</param>
+        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns the users data</returns>
         
         [HttpPost("EditUserInfo")]
         public async Task<JsonResult> EditUserInfo([FromBody] ProfileEditModel profile)
@@ -126,7 +151,7 @@ namespace EcoChallenger.Controllers
         /// <summary>
         /// Gets all tags that the user owns.
         /// </summary>
-        /// <param name="email">Email of the logged-in user</param>
+        /// <param name="id">Id of the user</param>
         /// <returns>JSON result containing a list of tags.</returns>
         
         [HttpGet("GetTags/{id}")]
@@ -168,7 +193,7 @@ namespace EcoChallenger.Controllers
             var currentUser = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
 
             if (currentUser == null)
-                return new JsonResult(new { success = false, message = "Usuário não encontrado" });
+                return new JsonResult(new { success = false, message = "Utilizador não encontrado" });
 
             var friends = await _ctx.Friendships
                 .Where(f => f.UserId == currentUser.Id)
@@ -219,7 +244,7 @@ namespace EcoChallenger.Controllers
         /// <returns>JSON result with the list of friends.</returns>
         
         [HttpGet("GetFriends/{id}")]
-        public async Task<IActionResult> GetFriends(int id )
+        public async Task<JsonResult> GetFriends(int id )
         {
             var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
@@ -230,7 +255,7 @@ namespace EcoChallenger.Controllers
                 .Join(_ctx.Users, 
                     f => f.FriendId, 
                     u => u.Id, 
-                    (f, u) => new { u.Username, u.Email })
+                    (f, u) => new { u.Username, u.Id })
                 .ToListAsync();
 
             return new JsonResult(new { success = true, friends = friendList });

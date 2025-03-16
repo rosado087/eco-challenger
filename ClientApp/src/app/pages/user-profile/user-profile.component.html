@@ -8,10 +8,12 @@
                 <h2 class="text-xl font-semibold text-gray-700">
                     Perfil de Utilizador
                 </h2>
-                <ng-icon
+                @if (userId === this.id) {
+                    <ng-icon
                     name="heroPencil"
                     class="ml-5"
                     (click)="editProfile()" />
+                }
             </div>
 
             <form [formGroup]="editForm" id="editForm">
@@ -102,20 +104,22 @@
             </form>
         </div>
 
-        <!-- Seção Direita: Lista de Amigos (Scrollável) -->
+        <!-- Seção Lista de Amigos -->
         <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
             <div class="flex items-center gap-2 mb-4">
                 <h2 class="text-xl font-semibold text-gray-700">
                     Lista de amigos
                 </h2>
-                <button
+                @if (userId === this.authService.getUserInfo().id){
+                    <button
                     (click)="showAddFriendModal = true"
                     class="text-green-600 hover:text-green-800 text-lg font-bold">
                     +
                 </button>
+                }
             </div>
 
-            <!-- Lista de amigos dinâmica com Scroll -->
+            <!-- Lista de amigos -->
             <div class="border rounded-lg max-h-60 overflow-y-auto">
                 <table class="w-full text-left">
                     <tbody>
@@ -125,21 +129,23 @@
                             <td class="p-2">{{ friend.username }}</td>
                             <td class="p-2">
                                 <button
-                                    (click)="viewProfile(friend.username)"
+                                    (click)="viewProfile(friend.id)"
                                     class="text-green-600 hover:text-green-800">
                                     Ver perfil
                                 </button>
                             </td>
-                            <td class="p-2">
-                                <button
-                                    (click)="
-                                        selectedFriendIndex = i;
-                                        showRemoveFriendModal = true
-                                    "
-                                    class="text-red-600 hover:text-red-800">
-                                    Remover
-                                </button>
-                            </td>
+                            @if (userId === this.authService.getUserInfo().id) {
+                                <td class="p-2">
+                                    <button
+                                        (click)="
+                                            selectedFriendIndex = i;
+                                            showRemoveFriendModal = true
+                                        "
+                                        class="text-red-600 hover:text-red-800">
+                                        Remover
+                                    </button>
+                                </td>
+                            }
                         </tr>
                         <tr *ngIf="friendsList.length === 0">
                             <td
