@@ -291,30 +291,26 @@ export class UserProfileComponent implements OnInit {
             friendUsername: this.selectedUser
         };
     
-        try {
-            this.netApi
-                .post<AddFriendResponse>('Profile', 'AddFriend', params)
-                .subscribe({
-                    next: (response) => {
-                        if (response.success && response.friendId) {
-                            this.friendsList.push({ username: this.selectedUser, id: response.friendId });
-                            
-                            this.selectedUser = '';
-                            this.userList = []
-                            this.showAddFriendModal = false;
-    
-                            this.popupLoader.showPopup('Sucesso', response.message || 'Amigo adicionado com sucesso.');
-                        } else {
-                            this.popupLoader.showPopup('Erro', response.message || 'Não foi possível adicionar o amigo.');
-                        }
-                    },
-                    error: () => {
-                        this.popupLoader.showPopup('Erro', 'Erro ao tentar adicionar o amigo.');
+        this.netApi
+            .post<AddFriendResponse>('Profile', 'AddFriend', params)
+            .subscribe({
+                next: (response) => {
+                    if (response.success && response.friendId) {
+                        this.friendsList.push({ username: this.selectedUser, id: response.friendId });
+                        
+                        this.selectedUser = '';
+                        this.userList = []
+                        this.showAddFriendModal = false;
+
+                        this.popupLoader.showPopup('Sucesso', response.message || 'Amigo adicionado com sucesso.');
+                    } else {
+                        this.popupLoader.showPopup('Erro', response.message || 'Não foi possível adicionar o amigo.');
                     }
-                });
-        } catch (error) {
-            this.popupLoader.showPopup('Erro', 'Ocorreu um erro inesperado.');
-        }
+                },
+                error: () => {
+                    this.popupLoader.showPopup('Erro', 'Erro ao tentar adicionar o amigo.');
+                }
+            });
     }
 
     /**
