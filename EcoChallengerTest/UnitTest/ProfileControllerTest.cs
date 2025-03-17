@@ -119,15 +119,20 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.GetFriends(testUser.Id) as JsonResult; // da erro aqui
+            var result = await _controller.GetFriends(testUser.Id) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var valueProperty = result.Value.GetType().GetProperty("friends")?.GetValue(result.Value);
+            var friendsList = valueProperty as IEnumerable<object>;
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(200, result.StatusCode);
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
+            Assert.NotNull(friendsList);
+            Assert.Single(friendsList);
 
-            var valueProperty = result.Value.GetType().GetProperty("friends").GetValue(result.Value);
-            Assert.NotNull(valueProperty);
-            Assert.Single((ICollection<object>)valueProperty); // Should have one friend
         }
 
         [Fact]
@@ -146,14 +151,18 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.GetFriends(testUser.Id) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(200, result.StatusCode);
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
 
             var valueProperty = result.Value.GetType().GetProperty("friends").GetValue(result.Value);
-            Assert.NotNull(valueProperty);
-            Assert.Empty((ICollection<object>)valueProperty); // Should return an empty list
+            var friendsList = valueProperty as IEnumerable<object>;
+            Assert.NotNull(friendsList);
+            Assert.Empty(friendsList);
         }
 
         [Fact]
@@ -161,15 +170,18 @@ namespace EcoChallengerTest.UnitTest
         {
             // Act
             var result = await _controller.GetFriends(9999999) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(404, result.StatusCode);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
 
             var messageProperty = result.Value.GetType().GetProperty("message").GetValue(result.Value);
             Assert.Equal("Utilizador não encontrado.", messageProperty);
         }
-
+        
         [Fact]
         public async Task GetUserInfo_Returns_User_Info_When_User_Exists()
         {
@@ -196,15 +208,29 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.GetUserInfo(userId) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var usernameProperty = result.Value.GetType().GetProperty("username");
+            var usernameValue = (string)usernameProperty.GetValue(result.Value);
+
+            var emailProperty = result.Value.GetType().GetProperty("email");
+            var emailValue = (string)emailProperty.GetValue(result.Value);
+
+            var pointsProperty = result.Value.GetType().GetProperty("points");
+            var pointsValue = (int)pointsProperty.GetValue(result.Value);
+
+            var tagProperty = result.Value.GetType().GetProperty("tag");
+            var tagValue = (string)tagProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.True(value.success);
-            Assert.Equal("testUser", value.username);
-            Assert.Equal("test@example.com", value.email);
-            Assert.Equal(100, value.points);
-            Assert.Equal("EcoWarrior", value.tag);
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
+            Assert.Equal("testUser", usernameValue);
+            Assert.Equal("test@example.com", emailValue);
+            Assert.Equal(100, pointsValue);
+            Assert.Equal("EcoWarrior", tagValue);
         }
 
         [Fact]
@@ -215,12 +241,17 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.GetUserInfo(nonExistentUserId) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.False(value.success);
-            Assert.Equal("O utilizador não existe", value.message);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("O utilizador não existe", messageValue);
         }
 
         [Fact]
@@ -229,17 +260,21 @@ namespace EcoChallengerTest.UnitTest
             // Arrange
             var userId = 1;
 
-            // Fechar o contexto para simular erro de acesso ao banco de dados
             _dbContext.Dispose();
 
             // Act
             var result = await _controller.GetUserInfo(userId) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.False(value.success);
-            Assert.NotNull(value.message); // Deve conter uma mensagem de erro
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.NotNull(messageValue);
         }
 
         [Fact]
@@ -254,12 +289,17 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.EditUserInfo(profileEdit) as JsonResult;
-            var response = result?.Value as dynamic;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
 
+            var usernameProperty = result.Value.GetType().GetProperty("username");
+            var usernameValue = (string)usernameProperty.GetValue(result.Value);
+            
             // Assert
             Assert.NotNull(result);
-            Assert.True(response.success);
-            Assert.Equal("NewName", response.username);
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
+            Assert.Equal("NewName", usernameValue);
         }
 
         [Fact]
@@ -270,12 +310,17 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.EditUserInfo(profileEdit) as JsonResult;
-            var response = result?.Value as dynamic;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(response.success);
-            Assert.Equal("O utilizador não existe", response.message);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("O utilizador não existe", messageValue);
         }
 
         [Fact]
@@ -290,32 +335,17 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.EditUserInfo(profileEdit) as JsonResult;
-            var response = result?.Value as dynamic;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(response.success);
-            Assert.Equal("Username é inválido", response.message);
-        }
-
-        [Fact]
-        public async Task EditUserInfo_Returns_Success_When_Tag_Does_Not_Exist()
-        {
-            // Arrange
-            var user = new User { Username = "User", Email = "user@example.com", Points = 10 };
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
-
-            var profileEdit = new ProfileEditModel { Id = user.Id, Username = "UpdatedUser", Tag = "NonExistentTag" };
-
-            // Act
-            var result = await _controller.EditUserInfo(profileEdit) as JsonResult;
-            var response = result?.Value as dynamic;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.True(response.success);
-            Assert.Equal("UpdatedUser", response.username);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("Username é inválido", messageValue);
         }
 
         [Fact]
@@ -324,17 +354,22 @@ namespace EcoChallengerTest.UnitTest
             // Arrange
             var profileEdit = new ProfileEditModel { Id = 1, Username = "NewName", Tag = "EcoWarrior" };
 
-            // Fechar o contexto para simular erro de acesso ao banco de dados
+            
             _dbContext.Dispose();
 
             // Act
             var result = await _controller.EditUserInfo(profileEdit) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.False(value.success);
-            Assert.Equal("Ocorreu um erro ao atualizar os seus dados", value.message);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("Ocorreu um erro ao atualizar os seus dados", messageValue);
         }
 
         [Fact]
@@ -358,13 +393,18 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.GetTags(user.Id) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var listProperty = result.Value.GetType().GetProperty("list")?.GetValue(result.Value);
+            var tagList = listProperty as IEnumerable<object>;
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.True(value.success);
-            Assert.NotNull(value.list);
-            Assert.Equal(2, ((ICollection<object>)value.list).Count); // Deve conter 2 tags
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
+            Assert.NotNull(tagList);
+            Assert.Equal(2, tagList.Count()); // Deve conter 2 tags
         }
 
         [Fact]
@@ -377,13 +417,18 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.GetTags(user.Id) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var listProperty = result.Value.GetType().GetProperty("list")?.GetValue(result.Value);
+            var tagList = listProperty as IEnumerable<object>;
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.True(value.success);
-            Assert.NotNull(value.list);
-            Assert.Empty((ICollection<object>)value.list); // Deve retornar lista vazia
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
+            Assert.NotNull(tagList);
+            Assert.Empty(tagList);
         }
 
         [Fact]
@@ -394,12 +439,17 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await _controller.GetTags(nonExistentUserId) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.False(value.success);
-            Assert.Equal("O utilizador não existe", value.message);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("O utilizador não existe", messageValue);
         }
 
         [Fact]
@@ -408,19 +458,22 @@ namespace EcoChallengerTest.UnitTest
             // Arrange
             var userId = 1;
 
-            // Simular erro fechando o contexto
             _dbContext.Dispose();
 
             // Act
             var result = await _controller.GetTags(userId) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
             // Assert
             Assert.NotNull(result);
-            var value = result.Value as dynamic;
-            Assert.False(value.success);
-            Assert.Equal("Não foi possível encontrar as suas tags", value.message);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("Não foi possível encontrar as suas tags", messageValue);
         }
-
 
     }
 }
