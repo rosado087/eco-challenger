@@ -34,20 +34,7 @@ public class ProfileEditModel{
     }
 }
 
-public class ProfileAddFriendModel
-{
-    public int UserId { get; set; }
-    public string SearchedOrSelectedName { get; set; }
-}
-
-//for now it has to be here
-public class AddFriendRequest 
-{
-    public string Username {get; set; }
-    public string FriendUsername {get; set; }
-}
-
-public class ProfileRemoveFriendModel 
+public class ProfileFriendModel 
 {
     public int Id {get; set; }
     public string FriendUsername {get; set; }

@@ -59,7 +59,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UserList(new ProfileAddFriendModel{ UserId = testUser.Id, SearchedOrSelectedName = testUser2.Username});
+            var result = await _controller.UserList(new ProfileFriendModel { Id = testUser.Id, FriendUsername = testUser2.Username});
             Assert.NotNull(result);
             Assert.NotNull(result.Value);
             var valueProperty = result.Value.GetType().GetProperty("usernames").GetValue(result.Value);
@@ -89,7 +89,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.AddFriend(new ProfileAddFriendModel { UserId = testUser.Id, SearchedOrSelectedName = testUser2.Username }) as JsonResult;
+            var result = await _controller.AddFriend(new ProfileFriendModel { Id = testUser.Id, FriendUsername = testUser2.Username }) as JsonResult;
 
             var valueProperty = result.Value.GetType().GetProperty("success");
             Assert.True((bool)valueProperty.GetValue(result.Value));
@@ -189,10 +189,8 @@ namespace EcoChallengerTest.UnitTest
         public async Task GetUserInfo_Returns_User_Info_When_User_Exists()
         {
             // Arrange
-            var userId = 1;
             var testUser = new User
             {
-                Id = userId,
                 Username = "testUser",
                 Email = "test@example.com",
                 Points = 100
@@ -210,7 +208,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.GetUserInfo(userId) as JsonResult;
+            var result = await _controller.GetUserInfo(testUser.Id) as JsonResult;
             var successProperty = result.Value.GetType().GetProperty("success");
             var successValue = (bool)successProperty.GetValue(result.Value);
 
@@ -284,11 +282,18 @@ namespace EcoChallengerTest.UnitTest
         public async Task EditUserInfo_Successfully_Updates_User()
         {
             // Arrange
-            var user = new User { Username = "OldName", Email = "user@example.com", Points = 10 };
+            var user = new User {Username = "OldName", Email = "user@example.com", Points = 10 };
             _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
 
-            var profileEdit = new ProfileEditModel { Id = user.Id, Username = "NewName", Tag = "EcoWarrior" };
+            var tag = new Tag {Name = "Eco-Warrior"};
+            _dbContext.Tags.Add(tag);
+            
+            var tu = new TagUsers {User = user, Tag = tag, SelectedTag = false};
+            _dbContext.TagUsers.Add(tu);
+
+            await _dbContext.SaveChangesAsync();
+            
+            var profileEdit = new ProfileEditModel { Id = user.Id, Username = "NewName", Tag = "Eco-Warrior" };
 
             // Act
             var result = await _controller.EditUserInfo(profileEdit) as JsonResult;
@@ -355,7 +360,7 @@ namespace EcoChallengerTest.UnitTest
         public async Task EditUserInfo_Returns_Error_On_Exception()
         {
             // Arrange
-            var profileEdit = new ProfileEditModel { Id = 1, Username = "NewName", Tag = "EcoWarrior" };
+            var profileEdit = new ProfileEditModel { Username = "NewName", Tag = "EcoWarrior" };
 
             
             _dbContext.Dispose();
