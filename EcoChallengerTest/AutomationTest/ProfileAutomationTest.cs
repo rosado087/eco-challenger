@@ -54,7 +54,7 @@ namespace EcoChallengerTest.AutomationTest
             Thread.Sleep(1000);
             
             // Navigate to the profile page
-            driver.Navigate().GoToUrl("http://localhost:4200/user-profile");
+            driver.Navigate().GoToUrl("http://localhost:4200/user-profile/1");
 
             Thread.Sleep(500);
         }
