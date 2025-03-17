@@ -20,7 +20,7 @@ import {
 } from '@angular/forms'
 import { ButtonComponent } from '../../components/button/button.component'
 import { LoginResponseModel } from '../../models/login-response-model'
-import { FriendsResponse, UserList, AddFriendRequest, AddFriendResponse, RemoveFriendResponse } from '../../models/user-profile-model'
+import { FriendsResponse, UserList, AddFriendResponse, RemoveFriendResponse } from '../../models/user-profile-model'
 
 @Component({
     selector: 'app-user-profile',
