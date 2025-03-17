@@ -337,6 +337,90 @@ namespace EcoChallengerTest.UnitTest
             Assert.Equal("Ocorreu um erro ao atualizar os seus dados", value.message);
         }
 
+        [Fact]
+        public async Task GetTags_Returns_List_When_User_Has_Tags()
+        {
+            // Arrange
+            var user = new User { Username = "UserWithTags", Email = "user@tags.com" };
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            var tag1 = new Tag { Name = "EcoWarrior" };
+            var tag2 = new Tag { Name = "Recycler" };
+            _dbContext.Tags.AddRange(tag1, tag2);
+            await _dbContext.SaveChangesAsync();
+
+            _dbContext.TagUsers.AddRange(
+                new TagUsers { User = user, Tag = tag1 },
+                new TagUsers { User = user, Tag = tag2 }
+            );
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _controller.GetTags(user.Id) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var value = result.Value as dynamic;
+            Assert.True(value.success);
+            Assert.NotNull(value.list);
+            Assert.Equal(2, ((ICollection<object>)value.list).Count); // Deve conter 2 tags
+        }
+
+        [Fact]
+        public async Task GetTags_Returns_Empty_List_When_User_Has_No_Tags()
+        {
+            // Arrange
+            var user = new User { Username = "UserNoTags", Email = "usernotags@tags.com" };
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _controller.GetTags(user.Id) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var value = result.Value as dynamic;
+            Assert.True(value.success);
+            Assert.NotNull(value.list);
+            Assert.Empty((ICollection<object>)value.list); // Deve retornar lista vazia
+        }
+
+        [Fact]
+        public async Task GetTags_Returns_Error_When_User_Not_Found()
+        {
+            // Arrange
+            var nonExistentUserId = 999;
+
+            // Act
+            var result = await _controller.GetTags(nonExistentUserId) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var value = result.Value as dynamic;
+            Assert.False(value.success);
+            Assert.Equal("O utilizador não existe", value.message);
+        }
+
+        [Fact]
+        public async Task GetTags_Returns_Error_On_Exception()
+        {
+            // Arrange
+            var userId = 1;
+
+            // Simular erro fechando o contexto
+            _dbContext.Dispose();
+
+            // Act
+            var result = await _controller.GetTags(userId) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var value = result.Value as dynamic;
+            Assert.False(value.success);
+            Assert.Equal("Não foi possível encontrar as suas tags", value.message);
+        }
+
 
     }
 }
