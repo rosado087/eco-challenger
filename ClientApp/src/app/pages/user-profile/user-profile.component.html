@@ -238,17 +238,17 @@
                 <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
 
                 <!-- Botões -->
-                <div class="flex justify-between mt-6">
-                    <button id="confirm-rem"
-                        (click)="removeFriend(selectedFriendIndex)"
-                        class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                        Sim
-                    </button>
-                    <button
-                        (click)="showRemoveFriendModal = false"
-                        class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
+                <!-- Botões -->
+                <div class="mt-4 flex justify-evenly">  
+                    <app-button id="confirm-rem"
+                        text="Sim"
+                        (click)="removeFriend(selectedFriendIndex)" />
+
+                    <button id="rem-cancel"
+                        class="btn btn-outline btn-error" 
+                        (click)="showRemoveFriendModal = false">
                         Não
-                    </button>
+                    </button>                        
                 </div>
             </div>
         </div>

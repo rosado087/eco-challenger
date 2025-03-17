@@ -40,6 +40,18 @@ public class ProfileAddFriendModel
     public string SearchedOrSelectedName { get; set; }
 }
 
+//for now it has to be here
+public class AddFriendRequest 
+{
+    public string Username {get; set; }
+    public string FriendUsername {get; set; }
+}
+
+public class ProfileRemoveFriendModel 
+{
+    public int Id {get; set; }
+    public string FriendUsername {get; set; }
+}
 public class GAuthModel {
     public string GoogleToken { get; set; }
     public string Email { get; set; }
