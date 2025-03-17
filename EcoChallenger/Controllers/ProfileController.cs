@@ -39,31 +39,6 @@ namespace EcoChallenger.Controllers
             }});
         }
 
-        /// <summary>
-        /// Gets the id of the user which the username corresponds.
-        /// </summary>
-        /// <param name="username">Username of the user</param>
-        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns the id of the user.</returns>
-        
-        [HttpGet("GetUserId/{username}")]
-        public async Task<JsonResult> GetUserId(string username)
-        {
-            try
-            {
-                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Username == username);
-
-                if (user == null)
-                    return new JsonResult(new { success = false, message = "O utilizador não existe" });
-
-                return new JsonResult(new { success = true, id = user.Id });
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message, e.StackTrace);
-                return new JsonResult(new { success = false, message = e.Message });
-            }
-        }
-
 
         /// <summary>
         /// Gets the information of the user which the id corresponds.
