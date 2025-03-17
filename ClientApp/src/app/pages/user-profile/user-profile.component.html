@@ -9,7 +9,7 @@
                     Perfil de Utilizador
                 </h2>
                 @if (userId === this.id) {
-                    <ng-icon
+                    <ng-icon id="edit-info"
                     name="heroPencil"
                     class="ml-5"
                     (click)="editProfile()" />
@@ -25,7 +25,7 @@
 
                     <div class="flex items-center gap-2">
                         @if (isEditing) {
-                            <input
+                            <input id="edit-username"
                                 type="text"
                                 [(ngModel)]="username"
                                 formControlName="editUserName"
@@ -66,11 +66,11 @@
                     <span class="font-medium text-gray-700">Tag:</span>
                     @if (isEditing) {
                         <div class="flex items-center gap-2">
-                            <select
+                            <select id="edit-tag"
                                 [(ngModel)]="tag"
                                 formControlName="tag"
                                 class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator">
-                                <option
+                                <option id="option-{{tagOption}}"
                                     *ngFor="let tagOption of availableTags"
                                     [value]="tagOption">
                                     {{ tagOption }}
@@ -91,14 +91,15 @@
                 <!-- Botões -->
 
                 @if (isEditing) {
+
                     <div class="mt-4 flex justify-evenly">                        
-                        <button 
+                        <button id="edit-cancel"
                             class="btn btn-outline btn-error" 
                             (click)="cancelEdit()">
                             Cancelar
                         </button>
                     
-                        <app-button 
+                        <app-button id="edit-save"
                             text="Editar"
                             (btnClick)="confirmEdit()" />
                     </div>
@@ -114,7 +115,7 @@
                     Lista de amigos
                 </h2>
                 @if (userId === this.authService.getUserInfo().id){
-                    <button
+                    <button id="add-friend-modal"
                     (click)="showAddFriendModal = true"
                     class="text-green-600 hover:text-green-800 text-lg font-bold">
                     +
@@ -131,7 +132,7 @@
                             class="border-b">
                             <td class="p-2">{{ friend.username }}</td>
                             <td class="p-2">
-                                <button
+                                <button id="view-{{friend.username}}"
                                     (click)="viewProfile(friend.id)"
                                     class="text-green-600 hover:text-green-800">
                                     Ver perfil
@@ -139,7 +140,7 @@
                             </td>
                             @if (userId === this.authService.getUserInfo().id) {
                                 <td class="p-2">
-                                    <button
+                                    <button id="rem-{{friend.username}}"
                                         (click)="
                                             selectedFriendIndex = i;
                                             showRemoveFriendModal = true
@@ -163,7 +164,7 @@
         </div>
 
         <!-- MODAL: ADICIONAR AMIGO -->
-        <div
+        <div id="add-div"
             *ngIf="showAddFriendModal"
             class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -174,12 +175,12 @@
                 <!-- Campo de Nome -->
                 <div class="mt-4">
                     <label
-                        for="InputAdd"
+                        for="input-add"
                         class="block text-gray-700 font-medium mb-1"
                         >Nome de utilizador:</label
                     >
-                    <input
-                        id="InputAdd"
+                    <input 
+                        id="input-add"
                         type="text"
                         (input)="findUser()"
                         class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
@@ -194,7 +195,7 @@
                             <tr
                                 *ngFor="let username of userList; let i = index"
                                 class="border-b">
-                                <td
+                                <td id="pos-{{username}}"
                                     class="p-2 cursor-pointer"
                                     [class.bg-green-600]="
                                         username === selectedUser
@@ -212,7 +213,7 @@
 
                 <!-- Botões -->
                 <div class="flex justify-between mt-6">
-                    <button
+                    <button id="add-friend-modal"
                         (click)="addFriend()"
                         class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
                         Adicionar
@@ -238,7 +239,7 @@
 
                 <!-- Botões -->
                 <div class="flex justify-between mt-6">
-                    <button
+                    <button id="confirm-rem"
                         (click)="removeFriend(selectedFriendIndex)"
                         class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
                         Sim

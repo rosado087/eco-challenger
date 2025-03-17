@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250301172238_Inital")]
-    partial class Inital
+    [Migration("20250317000027_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,23 @@ namespace EcoChallenger.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Eco-Warrior"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "NatureLover"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Green Guru"
+                        });
                 });
 
             modelBuilder.Entity("TagUsers", b =>
@@ -101,6 +118,9 @@ namespace EcoChallenger.Migrations
                     b.Property<string>("GoogleToken")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -114,6 +134,35 @@ namespace EcoChallenger.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "tester1@gmail.com",
+                            IsAdmin = false,
+                            Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+                            Points = 0,
+                            Username = "Tester1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "tester2@gmail.com",
+                            IsAdmin = false,
+                            Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+                            Points = 0,
+                            Username = "Tester2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "tester3@gmail.com",
+                            IsAdmin = false,
+                            Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+                            Points = 0,
+                            Username = "Tester3"
+                        });
                 });
 
             modelBuilder.Entity("UserToken", b =>

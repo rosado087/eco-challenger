@@ -34,6 +34,12 @@ public class ProfileEditModel{
     }
 }
 
+public class ProfileAddFriendModel
+{
+    public int UserId { get; set; }
+    public string SearchedOrSelectedName { get; set; }
+}
+
 public class GAuthModel {
     public string GoogleToken { get; set; }
     public string Email { get; set; }

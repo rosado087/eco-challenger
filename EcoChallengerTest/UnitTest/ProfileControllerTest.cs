@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +8,8 @@ using EcoChallenger.Controllers;
 using EcoChallenger.Models;
 using EcoChallenger.Utils;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -31,6 +33,7 @@ namespace EcoChallengerTest.UnitTest
             _mockLogger = new Mock<ILogger<ProfileController>>();
 
             _controller = new ProfileController(_dbContext, _mockLogger.Object);
+
         }
 
         [Fact]
@@ -56,7 +59,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UserList([testUser.Username, testUser2.Username]);
+            var result = await _controller.UserList(new ProfileAddFriendModel{ UserId = testUser.Id, SearchedOrSelectedName = testUser2.Username});
             Assert.NotNull(result);
             Assert.NotNull(result.Value);
             var valueProperty = result.Value.GetType().GetProperty("usernames").GetValue(result.Value);
@@ -86,7 +89,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.AddFriend([testUser.Username, testUser2.Username]) as JsonResult;
+            var result = await _controller.AddFriend(new ProfileAddFriendModel { UserId = testUser.Id, SearchedOrSelectedName = testUser2.Username }) as JsonResult;
 
             var valueProperty = result.Value.GetType().GetProperty("success");
             Assert.True((bool)valueProperty.GetValue(result.Value));
