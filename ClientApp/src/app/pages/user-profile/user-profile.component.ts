@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core'
 import { NgIcon, provideIcons } from '@ng-icons/core'
 import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 import { NetApiService } from '../../services/net-api/net-api.service'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { AuthService } from '../../services/auth/auth.service'
 import { FormsModule } from '@angular/forms'
 import { NgFor, NgIf } from '@angular/common'
@@ -20,24 +20,7 @@ import {
 } from '@angular/forms'
 import { ButtonComponent } from '../../components/button/button.component'
 import { LoginResponseModel } from '../../models/login-response-model'
-
-export interface UserList {
-    usernames: string[]
-}
-
-export interface UserProfileResponse {
-    success: boolean
-    username: string
-    email: string
-    points: string
-    tag: string
-    message: string
-}
-
-export interface FriendsResponse {
-    success: boolean
-    friends: { username: string; email: string }[]
-}
+import { FriendsResponse, UserList } from '../../models/user-profile-model'
 
 @Component({
     selector: 'app-user-profile',
@@ -61,14 +44,16 @@ export class UserProfileComponent implements OnInit {
     netApi = inject(NetApiService)
     popupLoader = inject(PopupLoaderService)
     router = inject(Router)
+    route = inject(ActivatedRoute)
     authService = inject(AuthService)
-
+    userId: number = 0
     username: string = ''
+    friendId: number = 0
     email: string = ''
     id: number = 0
     points: string = ''
     tag: string = ''
-    friendsList: { username: string; email: string }[] = [] // Updated to match API response
+    friendsList: { username: string; id: number }[] = []
     isEditing: boolean = false
     availableTags: string[] = []
     userList: string[] = []
@@ -91,19 +76,29 @@ export class UserProfileComponent implements OnInit {
         return this.editForm.get('tag')
     }
 
-    ngOnInit(): void {
-        this.username = this.authService.getUserInfo().username
+    /*ngOnInit(): void {
+        this.userId = Number(this.route.snapshot.paramMap.get('id'))
         this.id = this.authService.getUserInfo().id
-        this.loadUserProfile()
-        this.loadUserFriends()
+        this.loadUserProfile(this.userId)
+        this.loadUserFriends(this.userId)
+    }*/
+
+    ngOnInit(): void {
+        this.route.paramMap.subscribe(params => {
+            this.userId = Number(params.get('id'));
+            this.id = this.authService.getUserInfo().id;
+            this.loadUserProfile(this.userId);
+            this.loadUserFriends(this.userId);
+        });
     }
+    
 
     /**
      * Load user profile details from API.
      */
-    loadUserProfile() {
+    loadUserProfile(id: number) {
         this.netApi
-            .get<UserModel>('Profile', 'GetUserInfo', this.id.toString())
+            .get<UserModel>('Profile', 'GetUserInfo', id.toString())
             .subscribe({
                 next: (data) => {
                     if (data.success) {
@@ -201,7 +196,7 @@ export class UserProfileComponent implements OnInit {
                 next: (data: LoginResponseModel) => {
                     if (data.success) {
                         this.authService.updateToken(data.user, data.token)
-                        this.loadUserProfile()
+                        this.loadUserProfile(this.userId)
                     } else {
                         this.popupLoader.showPopup(
                             'Alteração dos dados',
@@ -217,12 +212,12 @@ export class UserProfileComponent implements OnInit {
 
     cancelEdit() {
         this.isEditing = false
-        this.loadUserProfile()
+        this.loadUserProfile(this.userId)
     }
 
-    loadUserFriends() {
+    loadUserFriends(id: number) {
         this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', this.id.toString())
+            .get<FriendsResponse>('Profile', 'GetFriends', id.toString())
             .subscribe({
                 next: (data: FriendsResponse) => {
                     if (data.success) {
@@ -306,8 +301,8 @@ export class UserProfileComponent implements OnInit {
                 next: () => {
                     this.friendsList.push({
                         username: this.selectedUser,
-                        email: ''
-                    }) // Email isn't provided by the API, so left empty
+                        id: this.getFriendId(this.username)
+                    }) 
                     this.selectedUser = ''
                     this.userList = []
                     this.showAddFriendModal = false
@@ -323,6 +318,30 @@ export class UserProfileComponent implements OnInit {
                     )
                 }
             })
+    }
+
+    getFriendId(username: string): number{
+        this.netApi
+            .get<UserModel>('Profile', 'GetUserInfo', username)
+            .subscribe({
+                next: (data) => {
+                    if (data.success) {
+                        this.friendId = data.id
+                    } else {
+                        this.popupLoader.showPopup(
+                            'Erro',
+                            data.message || 'Ocorreu um erro!'
+                        )
+                    }
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Não foi possível encontrar o id do amigo.'
+                    )
+                }
+            })
+        return this.friendId
     }
 
     /**
@@ -358,68 +377,7 @@ export class UserProfileComponent implements OnInit {
             })
     }
 
-    /**
-     * View the profile of a selected friend.
-     * @param username Friend's username
-     */
-    viewProfile(username: string) {
-        this.router.navigate(['/friend-profile', username])
-    }
-
-    /**
-     * Salva a tag selecionada no perfil do usuário
-     */
-    saveTag() {
-        this.netApi
-            .post('Profile', 'UpdateUserTag', {
-                email: this.email,
-                tag: this.tag
-            })
-            .subscribe({
-                next: () => {
-                    this.popupLoader.showPopup(
-                        'Sucesso',
-                        'Tag atualizada com sucesso.'
-                    )
-                },
-                error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Erro ao atualizar a tag.'
-                    )
-                }
-            })
-    }
-    /**
-     * Atualiza o nome de utilizador no perfil do usuário.
-     */
-    updateUsername() {
-        if (!this.username || this.username.trim() === '') {
-            this.popupLoader.showPopup(
-                'Erro',
-                'O nome de utilizador não pode estar vazio.'
-            )
-            return
-        }
-
-        this.netApi
-            .post('Profile', 'UpdateUsername', {
-                email: this.email,
-                username: this.username
-            })
-            .subscribe({
-                next: () => {
-                    this.popupLoader.showPopup(
-                        'Sucesso',
-                        'Nome de utilizador atualizado com sucesso.'
-                    )
-                },
-                error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Não foi possível atualizar o nome de utilizador.'
-                    )
-                }
-            })
+    viewProfile(id: number) {
+        this.router.navigate(['/user-profile/' + id,])
     }
 }

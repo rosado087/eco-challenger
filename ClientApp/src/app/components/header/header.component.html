@@ -57,7 +57,7 @@
                         aria-labelledby="dropdownInformationButton">
                         <li>
                             <a id="profile"
-                                routerLink="/user-profile"
+                                routerLink="/user-profile/{{this.authService.getUserInfo().id}}"
                                 class="block px-4 py-2 hover:bg-gray-100"
                                 >Profile</a
                             >
