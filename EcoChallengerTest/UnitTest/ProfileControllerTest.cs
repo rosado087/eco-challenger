@@ -7,6 +7,8 @@ using Xunit;
 using EcoChallenger.Controllers;
 using EcoChallenger.Models;
 using EcoChallenger.Utils;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -26,8 +28,8 @@ namespace EcoChallengerTest.UnitTest
                 .Options;
             _dbContext = new AppDbContext(options);
             _config = new Mock<IConfiguration>();
-
-            _controller = new ProfileController(_dbContext);
+            var mockLogger = new Mock<ILogger<ProfileController>>();
+            _controller = new ProfileController(_dbContext, mockLogger.Object);
         }
 
         [Fact]
@@ -53,7 +55,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UserList([testUser.Username, testUser2.Username]);
+            var result = await _controller.UserList(new ProfileAddFriendModel{ UserId = testUser.Id, SearchedOrSelectedName = testUser2.Username});
             Assert.NotNull(result);
             Assert.NotNull(result.Value);
             var valueProperty = result.Value.GetType().GetProperty("usernames").GetValue(result.Value);
@@ -83,7 +85,7 @@ namespace EcoChallengerTest.UnitTest
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _controller.AddFriend([testUser.Username, testUser2.Username]) as JsonResult;
+            var result = await _controller.AddFriend(new ProfileAddFriendModel { UserId = testUser.Id, SearchedOrSelectedName = testUser2.Username }) as JsonResult;
 
             var valueProperty = result.Value.GetType().GetProperty("success");
             Assert.True((bool)valueProperty.GetValue(result.Value));
@@ -116,15 +118,15 @@ public async Task GetFriends_Returns_List_Of_Friends()
     await _dbContext.SaveChangesAsync();
 
     // Act
-    var result = await _controller.GetFriends(testUser.Username) as OkObjectResult;
+    var result = await _controller.GetFriends(testUser.Id) as JsonResult;
 
     // Assert
     Assert.NotNull(result);
-    Assert.Equal(200, result.StatusCode);
-
+    Assert.NotNull(result.Value);
+    
     var valueProperty = result.Value.GetType().GetProperty("friends").GetValue(result.Value);
     Assert.NotNull(valueProperty);
-    Assert.Single((ICollection<object>)valueProperty); // Should have one friend
+    Assert.Single((IEnumerable<object>)valueProperty); // Should have one friend
 }
 
 [Fact]
@@ -142,29 +144,29 @@ public async Task GetFriends_Returns_Empty_List_When_No_Friends()
     await _dbContext.SaveChangesAsync();
 
     // Act
-    var result = await _controller.GetFriends(testUser.Username) as OkObjectResult;
+    var result = await _controller.GetFriends(testUser.Id) as JsonResult;
 
     // Assert
     Assert.NotNull(result);
-    Assert.Equal(200, result.StatusCode);
-
+    Assert.NotNull(result.Value);
+    
     var valueProperty = result.Value.GetType().GetProperty("friends").GetValue(result.Value);
     Assert.NotNull(valueProperty);
-    Assert.Empty((ICollection<object>)valueProperty); // Should return an empty list
+            Assert.Empty((IEnumerable <object>)valueProperty); // Should return an empty list
 }
 
 [Fact]
 public async Task GetFriends_Returns_NotFound_For_Nonexistent_User()
 {
     // Act
-    var result = await _controller.GetFriends("nonexistentUser") as NotFoundObjectResult;
+    var result = await _controller.GetFriends(-1) as JsonResult;
 
     // Assert
     Assert.NotNull(result);
-    Assert.Equal(404, result.StatusCode);
-
+    Assert.NotNull(result.Value);
+    
     var messageProperty = result.Value.GetType().GetProperty("message").GetValue(result.Value);
-    Assert.Equal("Usuário não encontrado.", messageProperty);
+    Assert.Equal("Utilizador não encontrado.", messageProperty);
 }
 
 

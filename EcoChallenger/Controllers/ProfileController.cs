@@ -113,7 +113,12 @@ namespace EcoChallenger.Controllers
                 if (user == null)
                     return new JsonResult(new { success = false, message = "O utilizador não existe" });
                 
-                user.Username = profile.Username;
+                var userExists = await _ctx.Users.FirstOrDefaultAsync(x => x.Username == profile.Username);
+                if(user.Username != profile.Username){
+                    if(user != null) return new JsonResult(new { success = false, message = "Um utilizador com esse nome já existe!" });
+
+                    user.Username = profile.Username;
+                }
 
                 var currentTag = await _ctx.TagUsers
                     .Where(tg => tg.SelectedTag && tg.User.Id == user.Id)
@@ -185,12 +190,10 @@ namespace EcoChallenger.Controllers
         /// <returns>JSON result with a list of usernames.</returns>
         
         [HttpPost("UserList")]
-        public async Task<JsonResult> UserList(string[] values)
+        public async Task<JsonResult> UserList([FromBody] ProfileAddFriendModel data)
         {
-            if (values.Length < 2)
-                return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
-
-            var currentUser = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
+            
+            var currentUser = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == data.UserId);
 
             if (currentUser == null)
                 return new JsonResult(new { success = false, message = "Utilizador não encontrado" });
@@ -201,7 +204,7 @@ namespace EcoChallenger.Controllers
                 .ToListAsync();
 
             var users = await _ctx.Users
-                .Where(u => u.Username.Contains(values[1]) && !u.Username.Equals(values[0]) && !friends.Contains(u.Id))
+                .Where(u => u.Username.Contains(data.SearchedOrSelectedName) && !u.Username.Equals(data.UserId) && !friends.Contains(u.Id))
                 .Select(u => u.Username)
                 .ToListAsync();
 
@@ -214,22 +217,20 @@ namespace EcoChallenger.Controllers
         /// <param name="values">Array containing the username of the requester and the friend’s username.</param>
         /// <returns>JSON result indicating success or failure.</returns>
         [HttpPost("AddFriend")]
-        public async Task<JsonResult> AddFriend(string[] values)
+        public async Task<JsonResult> AddFriend([FromBody] ProfileAddFriendModel data)
         {
-            if (values.Length < 2)
-                return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
-
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[0]);
-            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == values[1]);
+            
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == data.UserId);
+            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == data.SearchedOrSelectedName);
 
             if (user == null || friend == null)
-                return new JsonResult(new { success = false, message = "Usuário ou amigo não encontrado" });
+                return new JsonResult(new { success = false, message = "Utilizador não encontrado" });
 
             var friendshipExists = await _ctx.Friendships
                 .AnyAsync(f => f.UserId == user.Id && f.FriendId == friend.Id);
 
             if (friendshipExists)
-                return new JsonResult(new { success = false, message = "Usuário já é amigo" });
+                return new JsonResult(new { success = false, message = "Utilizador já é amigo" });
 
             _ctx.Friendships.Add(new Friend { UserId = user.Id, FriendId = friend.Id });
             await _ctx.SaveChangesAsync();
