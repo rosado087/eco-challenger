@@ -247,15 +247,16 @@ export class UserProfileComponent implements OnInit {
     findUser() {
         this.userList = []
         this.searchUsername =
-            (document.getElementById('InputAdd') as HTMLInputElement)?.value ||
-            ''
+            (document.getElementById('input-add') as HTMLInputElement)?.value || ''
+
+      const params = {
+        UserId: this.id,
+        SearchedOrSelectedName: this.searchUsername
+      }
 
         if (this.searchUsername.trim() !== '') {
             this.netApi
-                .post<UserList>('Profile', 'UserList', [
-                    this.username,
-                    this.searchUsername
-                ])
+                .post<UserList>('Profile', 'UserList', params)
                 .subscribe({
                     next: (data) => {
                         this.userList = data.usernames
@@ -291,10 +292,16 @@ export class UserProfileComponent implements OnInit {
                 'Digite um nome de utilizador válido.'
             )
             return
-        }
+      }
+
+      const params = {
+        UserId: this.id,
+        SearchedOrSelectedName: this.selectedUser
+      }
+
 
         this.netApi
-            .post('Profile', 'AddFriend', [this.username, this.selectedUser])
+            .post('Profile', 'AddFriend', params)
             .subscribe({
                 next: () => {
                     this.friendsList.push({
