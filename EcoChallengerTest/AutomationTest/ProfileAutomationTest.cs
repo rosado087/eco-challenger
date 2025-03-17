@@ -51,7 +51,7 @@ namespace EcoChallengerTest.AutomationTest
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             
             // Navigate to the profile page
             driver.Navigate().GoToUrl("http://localhost:4200/user-profile/1");
@@ -160,24 +160,15 @@ namespace EcoChallengerTest.AutomationTest
             var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
             editButton.Click();
 
-            
-
             var saveButton = wait.Until(d => d.FindElement(By.Id("edit-save")));
             saveButton.Click();
 
-            
-        }
 
-        
+            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
+            Thread.Sleep(500);
+            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
 
-        [Test]
-        public void View_Friend_Profile_Success()
-        {
-            //View Friend Profile
-            var removeButton = wait.Until(d => d.FindElement(By.Id("view-Tester3")));
-            removeButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/user-profile"));
+            okayButton.Click();
         }
 
         [Test]
@@ -197,6 +188,17 @@ namespace EcoChallengerTest.AutomationTest
 
             var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
             okayButton.Click();
+        }
+
+
+        [Test]
+        public void View_Friend_Profile_Success()
+        {
+            //View Friend Profile
+            var removeButton = wait.Until(d => d.FindElement(By.Id("view-Tester3")));
+            removeButton.Click();
+
+            wait.Until(d => d.Url.Contains("http://localhost:4200/user-profile"));
         }
 
         /*[TearDown]

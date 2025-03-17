@@ -245,8 +245,8 @@ export class UserProfileComponent implements OnInit {
             (document.getElementById('input-add') as HTMLInputElement)?.value || ''
 
       const params = {
-        UserId: this.id,
-        SearchedOrSelectedName: this.searchUsername
+        Id: this.id,
+        FriendUsername: this.searchUsername
       }
 
         if (this.searchUsername.trim() !== '') {
@@ -286,9 +286,9 @@ export class UserProfileComponent implements OnInit {
             return;
         }
     
-        const params: AddFriendRequest = {
-            username: this.username,
-            friendUsername: this.selectedUser
+        const params = {
+          Id: this.id,
+          FriendUsername: this.selectedUser
         };
     
         this.netApi
