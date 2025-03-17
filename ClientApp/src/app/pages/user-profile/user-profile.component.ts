@@ -20,7 +20,7 @@ import {
 } from '@angular/forms'
 import { ButtonComponent } from '../../components/button/button.component'
 import { LoginResponseModel } from '../../models/login-response-model'
-import { FriendsResponse, UserList } from '../../models/user-profile-model'
+import { FriendsResponse, UserList, AddFriendRequest, AddFriendResponse, RemoveFriendResponse } from '../../models/user-profile-model'
 
 @Component({
     selector: 'app-user-profile',
@@ -282,66 +282,35 @@ export class UserProfileComponent implements OnInit {
      */
     addFriend() {
         if (this.selectedUser.trim() === '') {
-            this.popupLoader.showPopup(
-                'Erro',
-                'Digite um nome de utilizador válido.'
-            )
-            return
-      }
-
-      const params = {
-        UserId: this.id,
-        SearchedOrSelectedName: this.selectedUser
-      }
-
-
+            this.popupLoader.showPopup('Erro', 'Digite um nome de utilizador válido.');
+            return;
+        }
+    
+        const params: AddFriendRequest = {
+            username: this.username,
+            friendUsername: this.selectedUser
+        };
+    
         this.netApi
-            .post('Profile', 'AddFriend', params)
+            .post<AddFriendResponse>('Profile', 'AddFriend', params)
             .subscribe({
-                next: () => {
-                    this.friendsList.push({
-                        username: this.selectedUser,
-                        id: this.getFriendId(this.username)
-                    }) 
-                    this.selectedUser = ''
-                    this.userList = []
-                    this.showAddFriendModal = false
-                    this.popupLoader.showPopup(
-                        'Sucesso',
-                        'Amigo adicionado com sucesso.'
-                    )
-                },
-                error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Não foi possível adicionar o amigo.'
-                    )
-                }
-            })
-    }
+                next: (response) => {
+                    if (response.success && response.friendId) {
+                        this.friendsList.push({ username: this.selectedUser, id: response.friendId });
+                        
+                        this.selectedUser = '';
+                        this.userList = []
+                        this.showAddFriendModal = false;
 
-    getFriendId(username: string): number{
-        this.netApi
-            .get<UserModel>('Profile', 'GetUserInfo', username)
-            .subscribe({
-                next: (data) => {
-                    if (data.success) {
-                        this.friendId = data.id
+                        this.popupLoader.showPopup('Sucesso', response.message || 'Amigo adicionado com sucesso.');
                     } else {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            data.message || 'Ocorreu um erro!'
-                        )
+                        this.popupLoader.showPopup('Erro', response.message || 'Não foi possível adicionar o amigo.');
                     }
                 },
                 error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Não foi possível encontrar o id do amigo.'
-                    )
+                    this.popupLoader.showPopup('Erro', 'Erro ao tentar adicionar o amigo.');
                 }
-            })
-        return this.friendId
+            });
     }
 
     /**
@@ -349,35 +318,40 @@ export class UserProfileComponent implements OnInit {
      */
     removeFriend(index: number | null) {
         if (index === null) {
-            this.popupLoader.showPopup('Erro', 'Nenhum amigo selecionado.')
-            return
+            this.popupLoader.showPopup('Erro', 'Nenhum amigo selecionado.');
+            return;
         }
-
-        const friendUsername = this.friendsList[index]?.username
-        if (!friendUsername) return
-
+    
+        const friendUsername = this.friendsList[index]?.username;
+        if (!friendUsername) return;
+    
+        const params = {
+            Id: this.id, 
+            FriendUsername: friendUsername
+        };
+    
         this.netApi
-            .post('Friends', 'RemoveFriend', { username: friendUsername })
+            .post<RemoveFriendResponse>('Profile', 'RemoveFriend', params)
             .subscribe({
-                next: () => {
-                    this.friendsList.splice(index, 1)
-                    this.showRemoveFriendModal = false
-                    this.selectedFriendIndex = null
-                    this.popupLoader.showPopup(
-                        'Sucesso',
-                        'Amigo removido com sucesso.'
-                    )
+                next: (response) => {
+                    if (response.success) {
+                        this.friendsList.splice(index, 1);
+                        this.showRemoveFriendModal = false;
+                        this.selectedFriendIndex = null;
+                        this.popupLoader.showPopup('Sucesso', response.message || 'Amigo removido com sucesso.');
+                    } else {
+                        this.popupLoader.showPopup('Erro', response.message || 'Não foi possível remover o amigo.');
+                    }
                 },
                 error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Não foi possível remover o amigo.'
-                    )
+                    this.popupLoader.showPopup('Erro', 'Erro ao tentar remover o amigo.');
                 }
-            })
+            });
     }
+    
 
     viewProfile(id: number) {
+        this.isEditing = false;
         this.router.navigate(['/user-profile/' + id,])
     }
 }

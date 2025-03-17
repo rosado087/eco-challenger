@@ -169,6 +169,7 @@ namespace EcoChallenger.Controllers
         {
             
             var currentUser = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == data.UserId);
+            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == data.SearchedOrSelectedName);
 
             if (currentUser == null)
                 return new JsonResult(new { success = false, message = "Utilizador não encontrado" });
@@ -183,6 +184,9 @@ namespace EcoChallenger.Controllers
                 .Select(u => u.Username)
                 .ToListAsync();
 
+            if (currentUser == friend)
+                return new JsonResult(new { success = true, message = "Não se pode adiconar a si próprio"});
+
             return new JsonResult(new { success = true, usernames = users });
         }
 
@@ -191,27 +195,43 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="values">Array containing the username of the requester and the friend’s username.</param>
         /// <returns>JSON result indicating success or failure.</returns>
+        
         [HttpPost("AddFriend")]
-        public async Task<JsonResult> AddFriend([FromBody] ProfileAddFriendModel data)
+        public async Task<JsonResult> AddFriend([FromBody] AddFriendRequest request)
         {
-            
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == data.UserId);
-            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == data.SearchedOrSelectedName);
+            try
+            {
+                if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.FriendUsername))
+                    return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
 
-            if (user == null || friend == null)
-                return new JsonResult(new { success = false, message = "Utilizador não encontrado" });
+                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+                var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == request.FriendUsername);
 
-            var friendshipExists = await _ctx.Friendships
-                .AnyAsync(f => f.UserId == user.Id && f.FriendId == friend.Id);
+                if (user == null || friend == null)
+                    return new JsonResult(new { success = false, message = "Utilizador ou amigo não encontrado" });
 
-            if (friendshipExists)
-                return new JsonResult(new { success = false, message = "Utilizador já é amigo" });
+                var friendshipExists = await _ctx.Friendships
+                    .AnyAsync(f => f.UserId == user.Id && f.FriendId == friend.Id);
 
-            _ctx.Friendships.Add(new Friend { UserId = user.Id, FriendId = friend.Id });
-            await _ctx.SaveChangesAsync();
+                if (friendshipExists)
+                    return new JsonResult(new { success = false, message = "Utilizador já é amigo" });
 
-            return new JsonResult(new { success = true });
+                if (user.Username == friend.Username)
+                return new JsonResult (new { success = false, message = "Não se pode adicionar a si próprio"});
+
+                var friendship = new Friend { UserId = user.Id, FriendId = friend.Id };
+                _ctx.Friendships.Add(friendship);
+                await _ctx.SaveChangesAsync();
+
+                return new JsonResult(new { success = true, friendId = friend.Id, message = "Amigo adicionado com sucesso!" });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, e.StackTrace);
+                return new JsonResult(new { success = false, message = "Ocorreu um erro ao adicionar o amigo. Tente novamente mais tarde." });
+            }
         }
+
 
         /// <summary>
         /// Retrieves a list of a user's friends.
@@ -237,6 +257,28 @@ namespace EcoChallenger.Controllers
             return new JsonResult(new { success = true, friends = friendList });
         }
 
+        [HttpPost("RemoveFriend")]
+        public async Task<JsonResult> RemoveFriend([FromBody] ProfileRemoveFriendModel remove)
+        {
+            if (remove.Id <=0 || string.IsNullOrEmpty(remove.FriendUsername))
+                return new JsonResult(new { success = false, message = "Parâmetros inválidos" });
 
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == remove.Id);
+            var friend = await _ctx.Users.FirstOrDefaultAsync(u => u.Username == remove.FriendUsername);
+
+            if (user == null || friend == null)
+                return new JsonResult(new { success = false, message = "Utilizador ou amigo não encontrado" });
+
+            var friendship = await _ctx.Friendships
+                .FirstOrDefaultAsync(f => f.UserId == user.Id && f.FriendId == friend.Id);
+
+            if (friendship == null)
+                return new JsonResult(new { success = false, message = "Não são amigos" });
+
+            _ctx.Friendships.Remove(friendship);
+            await _ctx.SaveChangesAsync();
+
+            return new JsonResult(new { success = true, message = "Amizade removida com sucesso" });
+        }
     }
 }
