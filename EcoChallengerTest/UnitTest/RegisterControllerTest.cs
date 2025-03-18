@@ -2,6 +2,7 @@ using EcoChallenger.Controllers;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 namespace EcoChallengerTest.UnitTest
 {
     public class RegisterControllerTest

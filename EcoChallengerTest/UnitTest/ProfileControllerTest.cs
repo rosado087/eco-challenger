@@ -9,6 +9,7 @@ using EcoChallenger.Models;
 using EcoChallenger.Utils;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 
 namespace EcoChallengerTest.UnitTest
@@ -16,8 +17,6 @@ namespace EcoChallengerTest.UnitTest
 
     public class ProfileControllerTest
     {
-
-
         private readonly ProfileController _controller;
         private readonly AppDbContext _dbContext;
         private readonly Mock<IConfiguration> _config;
@@ -33,7 +32,6 @@ namespace EcoChallengerTest.UnitTest
             _mockLogger = new Mock<ILogger<ProfileController>>();
 
             _controller = new ProfileController(_dbContext, _mockLogger.Object);
-
         }
 
         [Fact]
@@ -483,5 +481,103 @@ namespace EcoChallengerTest.UnitTest
             Assert.Equal("Não foi possível encontrar as suas tags", messageValue);
         }
 
+        [Fact]
+        public async Task RemoveFriend_InvalidParameters_ReturnsError()
+        {
+            // Arrange
+            var request = new ProfileFriendModel { Id = 0, FriendUsername = "" };
+
+            // Act
+            var result = await _controller.RemoveFriend(request) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            Assert.False(successValue);
+            Assert.Equal("Parâmetros inválidos", messageValue);
+        }
+
+        [Fact]
+        public async Task RemoveFriend_UserOrFriendNotFound_ReturnsError()
+        {
+            // Arrange
+            var request = new ProfileFriendModel { Id = 99, FriendUsername = "NonExistentUser" };
+
+            // Act
+            var result = await _controller.RemoveFriend(request) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            Assert.False(successValue);
+            Assert.Equal("Utilizador ou amigo não encontrado", messageValue);
+        }
+
+        [Fact]
+        public async Task RemoveFriend_FriendshipNotFound_ReturnsError()
+        {
+            // Arrange
+            var user = new User { Id = 1, Username = "User1", Email = "user1@example.com" };
+            var friend = new User { Id = 2, Username = "User2", Email = "user2@example.com" };
+
+            _dbContext.Users.Add(user);
+            _dbContext.Users.Add(friend);
+            await _dbContext.SaveChangesAsync();
+
+            var request = new ProfileFriendModel { Id = user.Id, FriendUsername = friend.Username };
+
+            // Act
+            var result = await _controller.RemoveFriend(request) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            Assert.False(successValue);
+            Assert.Equal("Não são amigos", messageValue);
+        }
+        [Fact]
+        public async Task RemoveFriend_SuccessfullyRemovesFriendship()
+        {
+            // Arrange
+            var user = new User { Id = 1, Username = "User1", Email = "user1@example.com" };
+            var friend = new User { Id = 2, Username = "User2", Email = "user2@example.com" };
+            var friendship = new Friend { UserId = user.Id, FriendId = friend.Id };
+
+            _dbContext.Users.Add(user);
+            _dbContext.Users.Add(friend);
+            _dbContext.Friendships.Add(friendship);
+            await _dbContext.SaveChangesAsync();
+
+            var request = new ProfileFriendModel { Id = user.Id, FriendUsername = friend.Username };
+
+            // Act
+            var result = await _controller.RemoveFriend(request) as JsonResult;
+
+            // Assert
+            Assert.NotNull(result);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            Assert.True(successValue);
+            Assert.Equal("Amizade removida com sucesso", messageValue);
+        }
     }
 }

@@ -6,150 +6,153 @@ using EcoChallenger.Controllers;
 using Microsoft.Extensions.Logging;
 using EcoChallenger.Utils;
 
-public class LoginControllerTest
+namespace EcoChallengerTest.UnitTest
 {
-    private readonly LoginController _controller;
-    private readonly AppDbContext _dbContext;
-    private readonly Mock<IConfiguration> _mockConfig;
-
-    public LoginControllerTest()
+    public class LoginControllerTest
     {
-        var mockLogger = new Mock<ILogger<LoginController>>();
+        private readonly LoginController _controller;
+        private readonly AppDbContext _dbContext;
+        private readonly Mock<IConfiguration> _mockConfig;
 
-        // Set up in-memory database
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
+        public LoginControllerTest()
+        {
+            var mockLogger = new Mock<ILogger<LoginController>>();
 
-        _dbContext = new AppDbContext(options);
-        _mockConfig = new Mock<IConfiguration>();
+            // Set up in-memory database
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
 
-        _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
-    }
+            _dbContext = new AppDbContext(options);
+            _mockConfig = new Mock<IConfiguration>();
 
-    [Fact]
-    public async Task Login_Returns_Token_When_Credentials_Are_Correct()
-    {
-        // Arrange
-        var testUser = new User { 
-            Email = "test@example.com",
-            Username = "TestUser",
-            Password = PasswordGenerator.GeneratePasswordHash("validPassword") 
-        };
+            _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
+        }
 
-        _dbContext.Users.Add(testUser);
-        await _dbContext.SaveChangesAsync();
+        [Fact]
+        public async Task Login_Returns_Token_When_Credentials_Are_Correct()
+        {
+            // Arrange
+            var testUser = new User { 
+                Email = "test@example.com",
+                Username = "TestUser",
+                Password = PasswordGenerator.GeneratePasswordHash("validPassword") 
+            };
 
-        var loginRequest = new LoginRequestModel { Email = "test@example.com", Password = "validPassword" };
+            _dbContext.Users.Add(testUser);
+            await _dbContext.SaveChangesAsync();
 
-        // Act
-        var result = await _controller.Login(loginRequest) as JsonResult;
+            var loginRequest = new LoginRequestModel { Email = "test@example.com", Password = "validPassword" };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
+            // Act
+            var result = await _controller.Login(loginRequest) as JsonResult;
 
-        var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty);
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Value);
 
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        Assert.True(successValue);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            Assert.NotNull(successProperty);
 
-        var tokenProperty = result.Value.GetType().GetProperty("token");
-        Assert.NotNull(tokenProperty);
-        Assert.NotNull(tokenProperty.GetValue(result.Value));
-    }
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            Assert.True(successValue);
 
-    [Fact]
-    public async Task Login_Fails_When_Email_Does_Not_Exist()
-    {
-        // Arrange
-        var loginRequest = new LoginRequestModel { 
-            Email = "nonexistent@example.com",
-            Password = "password" 
-        };
+            var tokenProperty = result.Value.GetType().GetProperty("token");
+            Assert.NotNull(tokenProperty);
+            Assert.NotNull(tokenProperty.GetValue(result.Value));
+        }
 
-        // Act
-        var result = await _controller.Login(loginRequest) as JsonResult;
+        [Fact]
+        public async Task Login_Fails_When_Email_Does_Not_Exist()
+        {
+            // Arrange
+            var loginRequest = new LoginRequestModel { 
+                Email = "nonexistent@example.com",
+                Password = "password" 
+            };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
+            // Act
+            var result = await _controller.Login(loginRequest) as JsonResult;
 
-        var successProperty = result.Value.GetType().GetProperty("success");
-        var messageProperty = result.Value.GetType().GetProperty("message");
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Value);
 
-        Assert.NotNull(successProperty);
-        Assert.NotNull(messageProperty);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var messageProperty = result.Value.GetType().GetProperty("message");
 
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        var messageValue = (string)messageProperty.GetValue(result.Value);
+            Assert.NotNull(successProperty);
+            Assert.NotNull(messageProperty);
 
-        Assert.False(successValue);
-        Assert.Equal("Invalid email or password.", messageValue);
-    }
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
-    [Fact]
-    public async Task Login_Fails_When_Password_Is_Incorrect()
-    {
-        // Arrange
-        var testUser = new User {
-            Email = "test@example.com", 
-            Username = "test",
-            Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
-        };
+            Assert.False(successValue);
+            Assert.Equal("Invalid email or password.", messageValue);
+        }
 
-        _dbContext.Users.Add(testUser);
-        await _dbContext.SaveChangesAsync();
+        [Fact]
+        public async Task Login_Fails_When_Password_Is_Incorrect()
+        {
+            // Arrange
+            var testUser = new User {
+                Email = "test@example.com", 
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+            };
 
-        var loginRequest = new LoginRequestModel {
-            Email = "test@example.com", 
-            Password = "wrongPassword" 
-        };
+            _dbContext.Users.Add(testUser);
+            await _dbContext.SaveChangesAsync();
 
-        // Act
-        var result = await _controller.Login(loginRequest) as JsonResult;
+            var loginRequest = new LoginRequestModel {
+                Email = "test@example.com", 
+                Password = "wrongPassword" 
+            };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
+            // Act
+            var result = await _controller.Login(loginRequest) as JsonResult;
 
-        var successProperty = result.Value.GetType().GetProperty("success");
-        var messageProperty = result.Value.GetType().GetProperty("message");
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Value);
 
-        Assert.NotNull(successProperty);
-        Assert.NotNull(messageProperty);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var messageProperty = result.Value.GetType().GetProperty("message");
 
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        var messageValue = (string)messageProperty.GetValue(result.Value);
+            Assert.NotNull(successProperty);
+            Assert.NotNull(messageProperty);
 
-        Assert.False(successValue);
-        Assert.Equal("Invalid email or password.", messageValue);
-    }
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageValue = (string)messageProperty.GetValue(result.Value);
 
-    [Fact]
-    public async Task Login_Fails_When_Email_Or_Password_Is_Missing()
-    {
-        // Arrange
-        var loginRequest = new LoginRequestModel { Email = "", Password = "" };
+            Assert.False(successValue);
+            Assert.Equal("Invalid email or password.", messageValue);
+        }
 
-        // Act
-        var result = await _controller.Login(loginRequest) as JsonResult;
+        [Fact]
+        public async Task Login_Fails_When_Email_Or_Password_Is_Missing()
+        {
+            // Arrange
+            var loginRequest = new LoginRequestModel { Email = "", Password = "" };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
+            // Act
+            var result = await _controller.Login(loginRequest) as JsonResult;
 
-        var successProperty = result.Value.GetType().GetProperty("success");
-        var messageProperty = result.Value.GetType().GetProperty("message");
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Value);
 
-        Assert.NotNull(successProperty);
-        Assert.NotNull(messageProperty);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var messageProperty = result.Value.GetType().GetProperty("message");
 
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        var messageValue = (string)messageProperty.GetValue(result.Value);
+            Assert.NotNull(successProperty);
+            Assert.NotNull(messageProperty);
 
-        Assert.False(successValue);
-        Assert.Equal("Email and password are required.", messageValue);
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            Assert.False(successValue);
+            Assert.Equal("Email and password are required.", messageValue);
+        }
     }
 }

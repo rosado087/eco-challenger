@@ -212,17 +212,16 @@
                 </div>
 
                 <!-- Botões -->
-                <div class="flex justify-between mt-6">
-                    <button id="add-friend-modal"
-                        (click)="addFriend()"
-                        class="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                        Adicionar
-                    </button>
-                    <button
-                        (click)="showAddFriendModal = false"
-                        class="w-1/2 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
+                <div class="mt-4 flex justify-evenly">  
+                    <app-button id="add-friend-modal"
+                        text="Adicionar"
+                        (btnClick)="addFriend()" />
+
+                    <button id="add-cancel"
+                        class="btn btn-outline btn-error" 
+                        (click)="showAddFriendModal = false">
                         Cancelar
-                    </button>
+                    </button>                        
                 </div>
             </div>
         </div>

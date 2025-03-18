@@ -255,6 +255,16 @@ namespace EcoChallenger.Controllers
             return new JsonResult(new { success = true, friends = friendList });
         }
 
+        /// <summary>
+        /// Removes a user from the friend list.
+        /// </summary>
+        /// <param name="remove">ProfileFriendModel containing the ID of the requester and the friend's username.</param>
+        /// <returns>
+        /// JSON result indicating success or failure. 
+        /// If failure, returns an error message. 
+        /// If success, confirms the removal of the friendship.
+        /// </returns>
+
         [HttpPost("RemoveFriend")]
         public async Task<JsonResult> RemoveFriend([FromBody] ProfileFriendModel remove)
         {
