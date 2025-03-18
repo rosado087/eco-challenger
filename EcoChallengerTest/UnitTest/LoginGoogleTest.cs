@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using EcoChallenger.Controllers;
 using Microsoft.Extensions.Logging;
+using EcoChallenger.Models;
+using EcoChallenger.Utils;
 
 namespace EcoChallengerTest.UnitTest 
 {
@@ -26,6 +28,17 @@ namespace EcoChallengerTest.UnitTest
 
             // Initialize the controller with dependencies
             _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
+
+            //Setup JWT Settings
+            var jwtSettings = new JwtSettings
+            {
+                Key = "ScretForTestingOnlyScretForTestingOnly",
+                Issuer = "https://ecochallenger.duckdns.org",
+                Audience = "https://ecochallenger.duckdns.org",
+                TokenLifetime = 8
+            };
+
+            TokenManager.Initialize(jwtSettings);
         }
 
         [Fact]
@@ -41,7 +54,7 @@ namespace EcoChallengerTest.UnitTest
             Assert.NotNull(result);
             Assert.NotNull(result.Value);
 
-            var successProperty = result.Value.GetType().GetProperty("success");
+            var successProperty = result.Value.GetType().GetProperty("clientId");
             Assert.NotNull(successProperty);
 
             var successValue = successProperty.GetValue(result.Value) as string;

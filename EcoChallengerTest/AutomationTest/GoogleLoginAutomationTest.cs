@@ -22,8 +22,7 @@ namespace EcoChallengerTest.AutomationTest
         {
 
 
-            // Initialize the Firefox driver
-            driver = new FirefoxDriver();
+            driver = GenericFunctions.SetupSeleniumInstance();
 
             // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));

@@ -527,8 +527,8 @@ namespace EcoChallengerTest.UnitTest
         public async Task RemoveFriend_FriendshipNotFound_ReturnsError()
         {
             // Arrange
-            var user = new User { Id = 1, Username = "User1", Email = "user1@example.com" };
-            var friend = new User { Id = 2, Username = "User2", Email = "user2@example.com" };
+            var user = new User { Username = "User1", Email = "user1@example.com" };
+            var friend = new User { Username = "User2", Email = "user2@example.com" };
 
             _dbContext.Users.Add(user);
             _dbContext.Users.Add(friend);
@@ -554,8 +554,8 @@ namespace EcoChallengerTest.UnitTest
         public async Task RemoveFriend_SuccessfullyRemovesFriendship()
         {
             // Arrange
-            var user = new User { Id = 1, Username = "User1", Email = "user1@example.com" };
-            var friend = new User { Id = 2, Username = "User2", Email = "user2@example.com" };
+            var user = new User { Username = "User1", Email = "user1@example.com" };
+            var friend = new User { Username = "User2", Email = "user2@example.com" };
             var friendship = new Friend { UserId = user.Id, FriendId = friend.Id };
 
             _dbContext.Users.Add(user);

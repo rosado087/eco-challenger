@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Routing;
+﻿using EcoChallengerTest.Utils;
+using Microsoft.AspNetCore.Routing;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -14,7 +15,7 @@ namespace EcoChallengerTest.AutomationTest
         [SetUp]
         public void Setup()
         {
-            driver = new FirefoxDriver();
+            driver = GenericFunctions.SetupSeleniumInstance();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
             driver.Navigate().GoToUrl("http://localhost:4200/register");

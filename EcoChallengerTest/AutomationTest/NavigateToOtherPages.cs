@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using EcoChallengerTest.Utils;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
@@ -18,8 +19,7 @@ namespace EcoChallengerTest.AutomationTest
         [SetUp]
         public void Setup()
         {
-            // Initialize the Firefox driver
-            driver = new FirefoxDriver();
+            driver = GenericFunctions.SetupSeleniumInstance();
 
             // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));

@@ -4,6 +4,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using EcoChallengerTest.Utils;
 
 namespace EcoChallengerTest.AutomationTest 
 {
@@ -18,7 +19,7 @@ namespace EcoChallengerTest.AutomationTest
         [SetUp]
         public void Setup()
         {
-            driver = new FirefoxDriver();
+            driver = GenericFunctions.SetupSeleniumInstance();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
 
             // Load configuration from appsettings.json
