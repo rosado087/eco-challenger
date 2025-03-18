@@ -43,10 +43,16 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Setup DBContext
-builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
-);
+if (builder.Environment.IsEnvironment("Test"))
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("TestDatabase"));
+}
+else
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+}
 
 
 // Email Service DI
@@ -71,7 +77,12 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+
+    // Run Migrations only if using SQL Server
+    if (db.Database.IsRelational())
+    {
+        db.Database.Migrate();
+    }
 }
 
 //app.UseHttpsRedirection();
@@ -88,3 +99,4 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.Run();
+public partial class Program { } 
