@@ -78,7 +78,8 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // Run Migrations only if using SQL Server
+    // This check is used to make sure data is not migrated
+    // when running tests in an InMemory DB
     if (db.Database.IsRelational())
     {
         db.Database.Migrate();

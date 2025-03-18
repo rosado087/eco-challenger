@@ -14,184 +14,187 @@ using System.Text;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using EcoChallenger.Utils;
 
-public class ProfileControllerTests : IClassFixture<CustomWebApplicationFactory>
+namespace EcoChallengerTest.IntegrationTest 
 {
-    private readonly HttpClient _client;
-    private readonly CustomWebApplicationFactory _factory;
-
-    public ProfileControllerTests(CustomWebApplicationFactory factory)
+    public class ProfileControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
+        private readonly HttpClient _client;
+        private readonly CustomWebApplicationFactory _factory;
 
-    [Fact]
-    public async Task GenerateToken_UserExists_ReturnsToken()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        public ProfileControllerTests(CustomWebApplicationFactory factory)
+        {
+            _factory = factory;
+            _client = factory.CreateClient();
+        }
 
-        context.Users.RemoveRange(context.Users);
-        await context.SaveChangesAsync();
+        [Fact]
+        public async Task GenerateToken_UserExists_ReturnsToken()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var user = new User { Username = "testuser", Email = "test@example.com", IsAdmin = false };
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+            context.Users.RemoveRange(context.Users);
+            await context.SaveChangesAsync();
 
-        var token = TokenManager.GenerateJWT(user);
-        Assert.NotNull(token);
+            var user = new User { Username = "testuser", Email = "test@example.com", IsAdmin = false };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
 
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var token = TokenManager.GenerateJWT(user);
+            Assert.NotNull(token);
 
-        var response = await _client.GetAsync("/api/Profile/GenerateToken");
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        Assert.NotNull(response);
-        Assert.True(response.IsSuccessStatusCode, $"API call failed: {response.StatusCode}");
+            var response = await _client.GetAsync("/api/Profile/GenerateToken");
 
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.False(string.IsNullOrEmpty(content), "Response body is empty");
+            Assert.NotNull(response);
+            Assert.True(response.IsSuccessStatusCode, $"API call failed: {response.StatusCode}");
 
-        var result = JsonConvert.DeserializeObject<dynamic>(content);
-        Assert.NotNull(result);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.False(string.IsNullOrEmpty(content), "Response body is empty");
 
-        Assert.True((bool)result.success, $"API returned failure: {content}");
-        Assert.NotNull(result.token);
-    }
+            var result = JsonConvert.DeserializeObject<dynamic>(content);
+            Assert.NotNull(result);
 
-    [Fact]
-    public async Task GetUserInfo_UserExists_ReturnsUserInfo()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            Assert.True((bool)result.success, $"API returned failure: {content}");
+            Assert.NotNull(result.token);
+        }
 
-        context.Users.RemoveRange(context.Users);
-        await context.SaveChangesAsync();
+        [Fact]
+        public async Task GetUserInfo_UserExists_ReturnsUserInfo()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var user = new User { Username = "testuser2", Email = "test2@example.com" };
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+            context.Users.RemoveRange(context.Users);
+            await context.SaveChangesAsync();
 
-        var savedUser = await context.Users.FirstOrDefaultAsync(u => u.Username == "testuser2");
-        Assert.NotNull(savedUser);
-        Assert.True(savedUser.Id > 0, "User ID was not assigned");
+            var user = new User { Username = "testuser2", Email = "test2@example.com" };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
 
-        var token = TokenManager.GenerateJWT(savedUser);
-        Assert.NotNull(token);
+            var savedUser = await context.Users.FirstOrDefaultAsync(u => u.Username == "testuser2");
+            Assert.NotNull(savedUser);
+            Assert.True(savedUser.Id > 0, "User ID was not assigned");
 
-        _client.DefaultRequestHeaders.Authorization = 
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var token = TokenManager.GenerateJWT(savedUser);
+            Assert.NotNull(token);
 
-        var response = await _client.GetAsync($"/api/Profile/GetUserInfo/{savedUser.Id}");
-        
-        Assert.NotNull(response);
-        Assert.True(response.IsSuccessStatusCode, $"API call failed: {response.StatusCode}");
+            _client.DefaultRequestHeaders.Authorization = 
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.False(string.IsNullOrEmpty(content), "Response body is empty");
+            var response = await _client.GetAsync($"/api/Profile/GetUserInfo/{savedUser.Id}");
+            
+            Assert.NotNull(response);
+            Assert.True(response.IsSuccessStatusCode, $"API call failed: {response.StatusCode}");
 
-        var result = JsonConvert.DeserializeObject<dynamic>(content);
-        Assert.NotNull(result);
-        Assert.True((bool)result.success, $"API returned failure: {content}");
-        Assert.Equal("testuser2", (string)result.username);
-    }
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.False(string.IsNullOrEmpty(content), "Response body is empty");
 
-    [Fact]
-    public async Task EditUserInfo_ValidRequest_UpdatesUser()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var result = JsonConvert.DeserializeObject<dynamic>(content);
+            Assert.NotNull(result);
+            Assert.True((bool)result.success, $"API returned failure: {content}");
+            Assert.Equal("testuser2", (string)result.username);
+        }
 
-        var user = new User { Username = "olduser", Email = "old@example.com" };
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        [Fact]
+        public async Task EditUserInfo_ValidRequest_UpdatesUser()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var token = TokenManager.GenerateJWT(user);
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var user = new User { Username = "olduser", Email = "old@example.com" };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
 
-        var updateProfile = new { Id = user.Id, Username = "newuser", Tag = "Eco" };
-        var content = new StringContent(JsonConvert.SerializeObject(updateProfile), Encoding.UTF8, "application/json");
-        
-        var response = await _client.PostAsync("/api/Profile/EditUserInfo", content);
-        var responseBody = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<dynamic>(responseBody);
-        
-        Assert.NotNull(result);
-        Assert.True((bool)result.success, $"API returned failure: {responseBody}");
-        Assert.Equal("newuser", (string)result.username);
-    }
+            var token = TokenManager.GenerateJWT(user);
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-    [Fact]
-    public async Task GetTags_UserHasTags_ReturnsTags()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var updateProfile = new { Id = user.Id, Username = "newuser", Tag = "Eco" };
+            var content = new StringContent(JsonConvert.SerializeObject(updateProfile), Encoding.UTF8, "application/json");
+            
+            var response = await _client.PostAsync("/api/Profile/EditUserInfo", content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic>(responseBody);
+            
+            Assert.NotNull(result);
+            Assert.True((bool)result.success, $"API returned failure: {responseBody}");
+            Assert.Equal("newuser", (string)result.username);
+        }
 
-        var user = new User { Username = "taggeduser", Email = "taggeduser@example.com" };
-        context.Users.Add(user);
-        context.TagUsers.Add(new TagUsers { User = user, Tag = new Tag { Name = "EcoWarrior" }, SelectedTag = true });
-        await context.SaveChangesAsync();
+        [Fact]
+        public async Task GetTags_UserHasTags_ReturnsTags()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var token = TokenManager.GenerateJWT(user);
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var user = new User { Username = "taggeduser", Email = "taggeduser@example.com" };
+            context.Users.Add(user);
+            context.TagUsers.Add(new TagUsers { User = user, Tag = new Tag { Name = "EcoWarrior" }, SelectedTag = true });
+            await context.SaveChangesAsync();
 
-        var response = await _client.GetAsync($"/api/Profile/GetTags/{user.Id}");
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<dynamic>(content);
+            var token = TokenManager.GenerateJWT(user);
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        Assert.NotNull(result);
-        Assert.True((bool)result.success, $"API returned failure: {content}");
-        Assert.Contains("EcoWarrior", result.list.ToObject<List<string>>());
-    }
+            var response = await _client.GetAsync($"/api/Profile/GetTags/{user.Id}");
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic>(content);
 
-    [Fact]
-    public async Task AddFriend_ValidRequest_AddsFriend()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            Assert.NotNull(result);
+            Assert.True((bool)result.success, $"API returned failure: {content}");
+            Assert.Contains("EcoWarrior", result.list.ToObject<List<string>>());
+        }
 
-        var user = new User { Username = "friend1", Email = "friend1@example.com" };
-        var friend = new User { Username = "friend2", Email = "friend2@example.com" };
-        context.Users.AddRange(user, friend);
-        await context.SaveChangesAsync();
+        [Fact]
+        public async Task AddFriend_ValidRequest_AddsFriend()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var token = TokenManager.GenerateJWT(user);
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var user = new User { Username = "friend1", Email = "friend1@example.com" };
+            var friend = new User { Username = "friend2", Email = "friend2@example.com" };
+            context.Users.AddRange(user, friend);
+            await context.SaveChangesAsync();
 
-        var friendRequest = new { Id = user.Id, FriendUsername = "friend2" };
-        var content = new StringContent(JsonConvert.SerializeObject(friendRequest), Encoding.UTF8, "application/json");
-        
-        var response = await _client.PostAsync("/api/Profile/AddFriend", content);
-        var responseBody = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<dynamic>(responseBody);
-        
-        Assert.NotNull(result);
-        Assert.True((bool)result.success, $"API returned failure: {responseBody}");
-        Assert.Equal("Amigo adicionado com sucesso!", (string)result.message);
-    }
-    [Fact]
-    public async Task RemoveFriend_ValidRequest_RemovesFriend()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var token = TokenManager.GenerateJWT(user);
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        var user = new User { Username = "friend1", Email = "friend1@example.com" };
-        var friend = new User { Username = "friend2", Email = "friend2@example.com" };
-        context.Users.AddRange(user, friend);
-        context.Friendships.Add(new Friend { UserId = user.Id, FriendId = friend.Id });
-        await context.SaveChangesAsync();
+            var friendRequest = new { Id = user.Id, FriendUsername = "friend2" };
+            var content = new StringContent(JsonConvert.SerializeObject(friendRequest), Encoding.UTF8, "application/json");
+            
+            var response = await _client.PostAsync("/api/Profile/AddFriend", content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic>(responseBody);
+            
+            Assert.NotNull(result);
+            Assert.True((bool)result.success, $"API returned failure: {responseBody}");
+            Assert.Equal("Amigo adicionado com sucesso!", (string)result.message);
+        }
+        [Fact]
+        public async Task RemoveFriend_ValidRequest_RemovesFriend()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var token = TokenManager.GenerateJWT(user);
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var user = new User { Username = "friend1", Email = "friend1@example.com" };
+            var friend = new User { Username = "friend2", Email = "friend2@example.com" };
+            context.Users.AddRange(user, friend);
+            context.Friendships.Add(new Friend { UserId = user.Id, FriendId = friend.Id });
+            await context.SaveChangesAsync();
 
-        var removeRequest = new { Id = user.Id, FriendUsername = "friend2" };
-        var content = new StringContent(JsonConvert.SerializeObject(removeRequest), Encoding.UTF8, "application/json");
-        
-        var response = await _client.PostAsync("/api/Profile/RemoveFriend", content);
-        var responseBody = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<dynamic>(responseBody);
-        
-        Assert.NotNull(result);
-        Assert.True((bool)result.success, $"API returned failure: {responseBody}");
-        Assert.Equal("Amizade removida com sucesso", (string)result.message);
+            var token = TokenManager.GenerateJWT(user);
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var removeRequest = new { Id = user.Id, FriendUsername = "friend2" };
+            var content = new StringContent(JsonConvert.SerializeObject(removeRequest), Encoding.UTF8, "application/json");
+            
+            var response = await _client.PostAsync("/api/Profile/RemoveFriend", content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic>(responseBody);
+            
+            Assert.NotNull(result);
+            Assert.True((bool)result.success, $"API returned failure: {responseBody}");
+            Assert.Equal("Amizade removida com sucesso", (string)result.message);
+        }
     }
 }
