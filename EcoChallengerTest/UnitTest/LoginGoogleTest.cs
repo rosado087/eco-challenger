@@ -5,95 +5,98 @@ using Microsoft.Extensions.Configuration;
 using EcoChallenger.Controllers;
 using Microsoft.Extensions.Logging;
 
-public class LoginGoogleTest
+namespace EcoChallengerTest.UnitTest 
 {
-    private readonly LoginController _controller;
-    private readonly Mock<IConfiguration> _mockConfig;
-    private readonly AppDbContext _dbContext;
-
-    public LoginGoogleTest()
+    public class LoginGoogleTest
     {
-        var mockLogger = new Mock<ILogger<LoginController>>();
-        _mockConfig = new Mock<IConfiguration>();
+        private readonly LoginController _controller;
+        private readonly Mock<IConfiguration> _mockConfig;
+        private readonly AppDbContext _dbContext;
 
-        // Setup in-memory database
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDB")
-            .Options;
-        _dbContext = new AppDbContext(options);
+        public LoginGoogleTest()
+        {
+            var mockLogger = new Mock<ILogger<LoginController>>();
+            _mockConfig = new Mock<IConfiguration>();
 
-        // Initialize the controller with dependencies
-        _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
-    }
+            // Setup in-memory database
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDB")
+                .Options;
+            _dbContext = new AppDbContext(options);
 
-    [Fact]
-    public void GetGoogleId_Returns_ClientId_From_Config()
-    {
-        // Arrange
-        _mockConfig.Setup(c => c["GoogleClient:ClientId"]).Returns("test-client-id");
+            // Initialize the controller with dependencies
+            _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
+        }
 
-        // Act
-        var result = _controller.GetGoogleId();
+        [Fact]
+        public void GetGoogleId_Returns_ClientId_From_Config()
+        {
+            // Arrange
+            _mockConfig.Setup(c => c["GoogleClient:ClientId"]).Returns("test-client-id");
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
+            // Act
+            var result = _controller.GetGoogleId();
 
-        var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty);
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Value);
 
-        var successValue = successProperty.GetValue(result.Value) as string;
-        Assert.NotNull(successValue);
-        Assert.Equal("test-client-id", successValue);
-    }
+            var successProperty = result.Value.GetType().GetProperty("success");
+            Assert.NotNull(successProperty);
 
-    [Fact]
-    public async Task AuthenticateGoogle_Returns_Success_When_User_Exists()
-    {
-        // Arrange
-        var testUser = new User { Email = "test@example.com", Username = "test", Password = "123", GoogleToken = "test-token" };
-        _dbContext.Users.Add(testUser);
-        await _dbContext.SaveChangesAsync();
+            var successValue = successProperty.GetValue(result.Value) as string;
+            Assert.NotNull(successValue);
+            Assert.Equal("test-client-id", successValue);
+        }
 
-        GAuthModel model = new GAuthModel {
-            GoogleToken = "test-token",
-            Email = "test@example.com"
-        };
+        [Fact]
+        public async Task AuthenticateGoogle_Returns_Success_When_User_Exists()
+        {
+            // Arrange
+            var testUser = new User { Email = "test@example.com", Username = "test", Password = "123", GoogleToken = "test-token" };
+            _dbContext.Users.Add(testUser);
+            await _dbContext.SaveChangesAsync();
 
-        // Act
-        var result = await _controller.AuthenticateGoogle(model);
+            GAuthModel model = new GAuthModel {
+                GoogleToken = "test-token",
+                Email = "test@example.com"
+            };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
+            // Act
+            var result = await _controller.AuthenticateGoogle(model);
 
-        var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty);
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Value);
 
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        Assert.True(successValue);
-    }
+            var successProperty = result.Value.GetType().GetProperty("success");
+            Assert.NotNull(successProperty);
 
-    [Fact]
-    public async Task AuthenticateGoogle_Returns_False_When_User_Does_Not_Exist()
-    {
-        // Arrange
-        GAuthModel model = new GAuthModel {
-            GoogleToken = "invalid-token",
-            Email = "nonexistent@example.com"
-        };
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            Assert.True(successValue);
+        }
 
-        // Act
-        var result = await _controller.AuthenticateGoogle(model);
+        [Fact]
+        public async Task AuthenticateGoogle_Returns_False_When_User_Does_Not_Exist()
+        {
+            // Arrange
+            GAuthModel model = new GAuthModel {
+                GoogleToken = "invalid-token",
+                Email = "nonexistent@example.com"
+            };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(result.Value);
+            // Act
+            var result = await _controller.AuthenticateGoogle(model);
 
-        var successProperty = result.Value.GetType().GetProperty("success");
-        Assert.NotNull(successProperty);
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Value);
 
-        var successValue = (bool)successProperty.GetValue(result.Value);
-        Assert.False(successValue);
+            var successProperty = result.Value.GetType().GetProperty("success");
+            Assert.NotNull(successProperty);
+
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            Assert.False(successValue);
+        }
     }
 }

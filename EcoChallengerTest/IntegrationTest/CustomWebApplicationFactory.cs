@@ -3,33 +3,36 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-public class CustomWebApplicationFactory : WebApplicationFactory<Program>
+namespace EcoChallengerTest.IntegrationTest 
 {
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
-        builder.UseEnvironment("Test");
-
-        builder.ConfigureServices(services =>
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            // Remove the existing DbContext configuration
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+            builder.UseEnvironment("Test");
 
-            if (descriptor != null)
+            builder.ConfigureServices(services =>
             {
-                services.Remove(descriptor);
-            }
+                // Remove the existing DbContext configuration
+                var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
 
-            // Add an in-memory database instead
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseInMemoryDatabase("TestDatabase");
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
+
+                // Add an in-memory database instead
+                services.AddDbContext<AppDbContext>(options =>
+                {
+                    options.UseInMemoryDatabase("TestDatabase");
+                });
+
+                // Ensure the database is initialized
+                using var scope = services.BuildServiceProvider().CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.EnsureCreated();
             });
-
-            // Ensure the database is initialized
-            using var scope = services.BuildServiceProvider().CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            context.Database.EnsureCreated();
-        });
+        }
     }
 }
