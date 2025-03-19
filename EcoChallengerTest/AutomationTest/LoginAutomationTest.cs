@@ -29,7 +29,7 @@ namespace EcoChallengerTest.AutomationTest
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
-            string email = "testuser@gmail.com";
+            string email = "testuser@example.com";
             string password = "Password123!";
 
             TypeWithDelay(emailInput, email, 100); 
@@ -41,12 +41,7 @@ namespace EcoChallengerTest.AutomationTest
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
-            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
-
-            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
-            okayButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/")); 
+            wait.Until(d => d.Url.Contains("http://localhost:4200")); 
         }
 
         [Test]
@@ -55,7 +50,7 @@ namespace EcoChallengerTest.AutomationTest
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
-            string email = "testuser@gmail.com";
+            string email = "testuser@example.com";
             string password = "Password123!";
 
             TypeWithDelay(emailInput, email, 100);
@@ -67,20 +62,19 @@ namespace EcoChallengerTest.AutomationTest
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
-            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
+            wait.Until(d => d.Url.Contains("http://localhost:4200"));
 
-            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
-            okayButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/"));
-
-            var logout = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[2]/a")));
+            var logout = wait.Until(d => d.FindElement(By.Id("user-option")));
             logout.Click();
 
-            var logoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div")));
+            var nextOption = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/div/div[2]/ul/li[2]/button")));
+            nextOption.Click();
 
-            var okayLogout = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div/div/form/app-button/button")));
-            okayLogout.Click();
+            var logoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div")));
+            
+            var yesLogoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div/div/form/app-button[1]")));
+            yesLogoutPopup.Click();
+
             wait.Until(d => d.Url.Contains("http://localhost:4200/login"));
         }
 

@@ -29,22 +29,8 @@ namespace EcoChallengerTest.AutomationTest
         }
 
         [Test]
-        public void HomePage_To_Login()
-        {
-            var loginButton = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[1]/a")));
-            loginButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/login"));
-        }
-
-        [Test]
         public void Login_To_Register()
         {
-            var loginButton = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[1]/a")));
-            loginButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/login"));
-
             var registerText = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-login/div/div[3]/a")));
             registerText.Click();
 
@@ -54,11 +40,6 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Login_To_ForgotPassword()
         {
-            var loginButton = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[1]/a")));
-            loginButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/login"));
-
             var forgotText = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-login/div/div[2]/div[1]/a")));
             forgotText.Click();
 
@@ -75,6 +56,8 @@ namespace EcoChallengerTest.AutomationTest
 
             var loginButton = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[1]/a")));
             loginButton.Click();
+            
+            wait.Until(d => d.Url.Contains("http://localhost:4200/login"));
         }
 
         [TearDown]

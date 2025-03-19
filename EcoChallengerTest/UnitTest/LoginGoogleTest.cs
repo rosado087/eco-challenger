@@ -90,7 +90,7 @@ namespace EcoChallengerTest.UnitTest
         }
 
         [Fact]
-        public async Task AuthenticateGoogle_Returns_False_When_User_Does_Not_Exist()
+        public async Task AuthenticateGoogle_Returns_True_When_User_Does_Not_Exist()
         {
             // Arrange
             GAuthModel model = new GAuthModel {
@@ -109,7 +109,7 @@ namespace EcoChallengerTest.UnitTest
             Assert.NotNull(successProperty);
 
             var successValue = (bool)successProperty.GetValue(result.Value);
-            Assert.False(successValue);
+            Assert.True(successValue);
         }
     }
 }

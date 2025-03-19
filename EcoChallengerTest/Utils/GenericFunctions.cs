@@ -13,8 +13,8 @@ namespace EcoChallengerTest.Utils
             // This runs the tests in headless mode
             // in other words without opening the browser
             // To debug the process, comment these two lines
-            var options = new FirefoxOptions();
-            options.AddArgument("--headless");
+             var options = new FirefoxOptions();
+            // options.AddArgument("--headless");
 
             // Initialize the Firefox driver
             return new FirefoxDriver(options);
