@@ -172,6 +172,16 @@ namespace EcoChallengerTest.AutomationTest
         }
 
         [Test]
+        public void View_Friend_Profile_Success()
+        {
+            //View Friend Profile
+            var removeButton = wait.Until(d => d.FindElement(By.Id("view-Tester2")));
+            removeButton.Click();
+
+            wait.Until(d => d.Url.Contains("http://localhost:4200/user-profile"));
+        }
+
+        [Test]
         public void Remove_Friend_Success() {
 
             //Remove Friend
@@ -188,17 +198,6 @@ namespace EcoChallengerTest.AutomationTest
 
             var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
             okayButton.Click();
-        }
-
-
-        [Test]
-        public void View_Friend_Profile_Success()
-        {
-            //View Friend Profile
-            var removeButton = wait.Until(d => d.FindElement(By.Id("view-Tester3")));
-            removeButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/user-profile"));
         }
 
         /*[TearDown]
