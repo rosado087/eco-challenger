@@ -1,25 +1,36 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
-
 using OpenQA.Selenium.Support.UI;
 using EcoChallengerTest.Utils;
+using Microsoft.AspNetCore.Mvc.Testing;
+using EcoChallenger;
+using System;
 
 namespace EcoChallengerTest.AutomationTest
 {
+    [TestFixture]
     public class LoginAutomationTest
     {
         private IWebDriver driver;
         private WebDriverWait wait;
+        private WebApplicationFactory<Program> _factory;
+
+        [OneTimeSetUp]
+        public void GlobalSetup()
+        {
+            _factory = new WebApplicationFactory<Program>();
+
+            GenericFunctions.Initialize(_factory);
+        }
 
         [SetUp]
         public void Setup()
-        {
-            driver = GenericFunctions.SetupSeleniumInstance();
+        {   
+            GenericFunctions.SeedTestUser();
 
-            // Set up explicit wait (up to 100 seconds)
+            driver = GenericFunctions.SetupSeleniumInstance();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
-            // Navigate to the login page
             driver.Navigate().GoToUrl("http://localhost:4200/login");
         }
 
@@ -32,16 +43,16 @@ namespace EcoChallengerTest.AutomationTest
             string email = "testuser@example.com";
             string password = "Password123!";
 
-            TypeWithDelay(emailInput, email, 100); 
-            Thread.Sleep(500); 
+            TypeWithDelay(emailInput, email, 100);
+            Thread.Sleep(500);
 
             TypeWithDelay(passwordInput, password, 100);
-            Thread.Sleep(500); 
+            Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
-            wait.Until(d => d.Url.Contains("http://localhost:4200")); 
+            wait.Until(d => d.Url.Contains("http://localhost:4200"));
         }
 
         [Test]
@@ -71,7 +82,7 @@ namespace EcoChallengerTest.AutomationTest
             nextOption.Click();
 
             var logoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div")));
-            
+
             var yesLogoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div/div/form/app-button[1]")));
             yesLogoutPopup.Click();
 
@@ -81,16 +92,23 @@ namespace EcoChallengerTest.AutomationTest
         [TearDown]
         public void Teardown()
         {
+            Console.WriteLine("🔄 Closing WebDriver.");
             driver.Quit();
         }
 
-        // Helper method to simulate typing with a delay
+        [OneTimeTearDown]
+        public void GlobalTeardown()
+        {
+            Console.WriteLine("🔄 Disposing WebApplicationFactory.");
+            _factory.Dispose();
+        }
+
         public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
         {
             foreach (var character in text)
             {
                 element.SendKeys(character.ToString());
-                Thread.Sleep(delayMilliseconds); // Delay between each character
+                Thread.Sleep(delayMilliseconds);
             }
         }
     }
