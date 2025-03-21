@@ -3,19 +3,21 @@
 import { inject, Injectable } from '@angular/core'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable } from 'rxjs'
+import { environment } from '../../../environments/environment'
 
 @Injectable({
     providedIn: 'root'
 })
 export class NetApiService {
     private http = inject(HttpClient)
-    private baseUrl = '/api'
-
+    private baseUrl = environment.apiUrl
+    
     get<T>(
         controller: string,
         action: string,
         ...routeParams: string[]
     ): Observable<T> {
+      console.log(this.baseUrl)
         return this.http.get<T>(this.#buildUrl(controller, action, routeParams))
     }
 

@@ -8,6 +8,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\chunk-5H3EYSQH.js" />
+    <Content Remove="wwwroot\chunk-DMMDRPJ3.js" />
+    <Content Remove="wwwroot\chunk-EDYTX77K.js" />
+    <Content Remove="wwwroot\chunk-EX7JYO67.js" />
+    <Content Remove="wwwroot\chunk-EYJGTNK6.js" />
+    <Content Remove="wwwroot\chunk-G2SAOHUU.js" />
+    <Content Remove="wwwroot\chunk-HNXHMZ5K.js" />
+    <Content Remove="wwwroot\chunk-HTBKKSAK.js" />
+    <Content Remove="wwwroot\chunk-XAF2PFHL.js" />
+    <Content Remove="wwwroot\chunk-Y6YQ5YPA.js" />
+    <Content Remove="wwwroot\chunk-YXOGGNVF.js" />
+    <Content Remove="wwwroot\favicon.ico" />
+    <Content Remove="wwwroot\index.html" />
+    <Content Remove="wwwroot\logo.svg" />
+    <Content Remove="wwwroot\logoImg.png" />
+    <Content Remove="wwwroot\main-GQL5A3SN.js" />
+    <Content Remove="wwwroot\polyfills-SC4UBBZS.js" />
+    <Content Remove="wwwroot\styles-HBDXZUNM.css" />
+    <Content Remove="wwwroot\user-icon.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
@@ -20,6 +42,28 @@
     <PackageReference Include="Selenium.Support" Version="4.28.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.28.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\chunk-5H3EYSQH.js" />
+    <None Include="wwwroot\chunk-DMMDRPJ3.js" />
+    <None Include="wwwroot\chunk-EDYTX77K.js" />
+    <None Include="wwwroot\chunk-EX7JYO67.js" />
+    <None Include="wwwroot\chunk-EYJGTNK6.js" />
+    <None Include="wwwroot\chunk-G2SAOHUU.js" />
+    <None Include="wwwroot\chunk-HNXHMZ5K.js" />
+    <None Include="wwwroot\chunk-HTBKKSAK.js" />
+    <None Include="wwwroot\chunk-XAF2PFHL.js" />
+    <None Include="wwwroot\chunk-Y6YQ5YPA.js" />
+    <None Include="wwwroot\chunk-YXOGGNVF.js" />
+    <None Include="wwwroot\favicon.ico" />
+    <None Include="wwwroot\index.html" />
+    <None Include="wwwroot\logo.svg" />
+    <None Include="wwwroot\logoImg.png" />
+    <None Include="wwwroot\main-GQL5A3SN.js" />
+    <None Include="wwwroot\polyfills-SC4UBBZS.js" />
+    <None Include="wwwroot\styles-HBDXZUNM.css" />
+    <None Include="wwwroot\user-icon.jpg" />
   </ItemGroup>
 
 </Project>
