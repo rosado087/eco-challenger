@@ -1,11 +1,16 @@
 <div class="card card-border bg-base-100 w-96">
     <div class="card-body">
         
-        <!-- Badge Component Slot -->
-        <ng-content></ng-content>
+        <div class="flex flex-row justify-between items-center">
+            <!-- Badge Component Slot -->
+            <ng-content></ng-content>
 
-        <div class="card-actions justify-end">
-            <button class="btn btn-primary">Buy Now</button>
+            <div class="flex gap-0.5 items-center">
+                <span class="text-sm text-gray-500 mt-1">10</span>
+                <app-eco-points-icon />
+            </div>            
+
+            <button class="btn btn-primary btn-sm">Buy Now</button>
         </div>
     </div>
 </div>

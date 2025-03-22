@@ -16,7 +16,7 @@ export class TagComponent {
     badgeClick = output()
 
     getComponentClasses(): string[] {
-        let classes = ["badge"]
+        let classes = ['badge', 'scale-120']
 
         switch(this.type()) {
             case 'normal':
