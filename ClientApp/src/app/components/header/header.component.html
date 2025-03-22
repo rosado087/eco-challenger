@@ -4,7 +4,7 @@
         @if (authService.isLoggedIn()) {
             <ul class="menu menu-horizontal px-1">
                 <li><a>Desafios</a></li>
-                <li><a>Loja</a></li>
+                <li><a routerLink="/store">Loja</a></li>
 
                 @if (authService.getUserInfo().isAdmin) {
                     <li>

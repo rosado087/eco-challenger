@@ -58,6 +58,15 @@ export const routes: Routes = [
         },
         canActivate: [authGuard]
     },
+    {
+        path: 'store',
+        loadComponent: () => {
+            return import('./pages/store/store.component').then(
+                (m) => m.StoreComponent
+            )
+        },
+        canActivate: [authGuard]
+    },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '/404', pathMatch: 'full' }
 ]
