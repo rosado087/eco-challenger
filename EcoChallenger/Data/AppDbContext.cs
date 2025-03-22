@@ -46,56 +46,24 @@ public class AppDbContext : DbContext
         Tag t1 = new Tag
         {
             Id = 1,
-            Name = "Eco-Warrior"
+            Name = "Eco-Warrior",
+            Color = "#355735"
         };
 
         Tag t2 = new Tag
         {
             Id = 2,
-            Name = "NatureLover"
+            Name = "NatureLover",
+            Color = "#355735"
         };
 
         Tag t3 = new Tag
         {
             Id = 3,
-            Name = "Green Guru"
+            Name = "Green Guru",
+            Color = "#355735"
         };
 
         modelBuilder.Entity<Tag>().HasData(t1, t2, t3);
-
-        /*TagUsers tu1 = new TagUsers
-        {
-            Id = 1,
-            User = u1,
-            Tag = t1,
-            SelectedTag = false
-        };
-
-        TagUsers tu2 = new TagUsers
-        {
-            Id = 2,
-            User = u1,
-            Tag = t2,
-            SelectedTag = false
-        };
-
-        TagUsers tu3 = new TagUsers
-        {
-            Id = 3,
-            User = u1,
-            Tag = t3,
-            SelectedTag = false
-        };
-        TagUsers tu4 = new TagUsers
-        {
-            Id = 4,
-            User = u3,
-            Tag = t2,
-            SelectedTag = true
-
-
-        };
-
-        modelBuilder.Entity<TagUsers>().HasData(tu1,tu2,tu3,tu4);*/
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250322205442_Tag-customization")]
+    partial class Tagcustomization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,8 +61,8 @@ namespace EcoChallenger.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Style")
-                        .HasColumnType("int");
+                    b.Property<string>("Style")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -70,22 +73,19 @@ namespace EcoChallenger.Migrations
                         {
                             Id = 1,
                             Color = "#355735",
-                            Name = "Eco-Warrior",
-                            Style = 0
+                            Name = "Eco-Warrior"
                         },
                         new
                         {
                             Id = 2,
                             Color = "#355735",
-                            Name = "NatureLover",
-                            Style = 0
+                            Name = "NatureLover"
                         },
                         new
                         {
                             Id = 3,
                             Color = "#355735",
-                            Name = "Green Guru",
-                            Style = 0
+                            Name = "Green Guru"
                         });
                 });
 

@@ -43,3 +43,13 @@ public class GAuthModel {
     public string GoogleToken { get; set; }
     public string Email { get; set; }
 }
+
+public class TagCreateModel {
+    public string? Name { get; set; }
+
+    public required string Color { get; set; }
+
+    public Tag.TagStyle Style { get; set; } = Tag.TagStyle.NORMAL;
+
+    public IFormFile? Icon { get; set; }
+}
