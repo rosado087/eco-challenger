@@ -67,6 +67,30 @@ export const routes: Routes = [
         },
         canActivate: [authGuard]
     },
+    {
+        path: 'admin',
+        canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: '404', // Redirect /admin to 404 not found for now
+            },
+            {
+                path: 'tags',
+                loadComponent: () => {
+                    return import('./pages/admin/tags-admin/tags-admin.component').then(
+                        (m) => m.TagsAdminComponent
+                    )
+                },
+                canActivate: [authGuard]
+            },
+            {
+                path: '**',
+                redirectTo: '/404' // Send the other unknown URLS to the 404
+            }
+        ]        
+    },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '/404', pathMatch: 'full' }
 ]
