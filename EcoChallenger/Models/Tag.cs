@@ -13,6 +13,9 @@ public class Tag {
     public string? Name { get; set; }
 
     [Required]
+    public required int Price { get; set; }
+
+    [Required]
     public required string Color { get; set; }
 
     public string? Icon { get; set; }

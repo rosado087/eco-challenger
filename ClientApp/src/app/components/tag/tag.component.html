@@ -2,7 +2,7 @@
     <div class="{{getComponentClasses()}}"
         [style.--badge-color]="color()"
         [style.--badge-fg]="getTextColor()">
-        <img src="/tag-images/test.gif" class="h-full max-h-6 aspect-square object-cover rounded" />
+        <img [src]="icon()" class="h-full max-h-6 aspect-square object-cover rounded" />
         {{ text() }}
     </div>
 </a>

@@ -6,11 +6,16 @@
             <ng-content></ng-content>
 
             <div class="flex gap-0.5 items-center">
-                <span class="text-sm text-gray-500 mt-1">10</span>
+                <span class="text-sm text-gray-500 mt-1">{{ price() }}</span>
                 <app-eco-points-icon />
             </div>            
 
-            <button class="btn btn-primary btn-sm">Buy Now</button>
+            @if(bought()) {
+                <button class="btn btn-disabled btn-sm">Comprado</button>
+            }
+            @else {
+                <button class="btn btn-primary btn-sm" (click)="buyClick.emit()">Comprar</button>
+            }
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { EcoPointsIconComponent } from "../eco-points-icon/eco-points-icon.component";
 
 @Component({
@@ -9,5 +9,7 @@ import { EcoPointsIconComponent } from "../eco-points-icon/eco-points-icon.compo
 })
 
 export class StoreTagComponent {
-
+  bought = input<boolean>(false)
+  buyClick = output()
+  price = input.required<number>()
 }

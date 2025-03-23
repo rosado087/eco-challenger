@@ -39,7 +39,8 @@ namespace EcoChallenger.Controllers
                     tag.Name,
                     tag.Color,
                     tag.Icon,
-                    tag.Style,
+                    tag.Price,
+                    Style = tag.Style.ToString().ToLower(),
                     Owned = ownedTagIds.Any(t => t.Id == tag.Id)
                 });
 

@@ -47,21 +47,24 @@ public class AppDbContext : DbContext
         {
             Id = 1,
             Name = "Eco-Warrior",
-            Color = "#355735"
+            Color = "#355735",
+            Price = 10
         };
 
         Tag t2 = new Tag
         {
             Id = 2,
             Name = "NatureLover",
-            Color = "#355735"
+            Color = "#355735",
+            Price = 50
         };
 
         Tag t3 = new Tag
         {
             Id = 3,
             Name = "Green Guru",
-            Color = "#355735"
+            Color = "#355735",
+            Price = 55
         };
 
         modelBuilder.Entity<Tag>().HasData(t1, t2, t3);

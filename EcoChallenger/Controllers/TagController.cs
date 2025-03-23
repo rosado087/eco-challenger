@@ -63,7 +63,8 @@ namespace EcoChallenger.Controllers
                     Name = tagModel.Name,
                     Color = tagModel.Color,
                     Icon = imageUrl,
-                    Style = tagModel.Style
+                    Style = tagModel.Style,
+                    Price = tagModel.Price
                 };
 
                 await _ctx.Tags.AddAsync(tag);

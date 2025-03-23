@@ -1,15 +1,21 @@
-<main class="container mx-auto px-4">
-    <!-- Header with User&Points info -->
-    <div class="flex flex-row justify-end">
-        <div>
-            User Points: 5867
-        </div>
-    </div>
+<main class="container mx-auto px-4 mt-4">
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-end">
+            <!-- Floating points badge -->
+            <div class="shadow-md border border-green-300 backdrop-blur-sm bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                <app-eco-points-icon width="16px" />
+                100
+            </div>
+        </div>        
 
-    <!-- Tags to purchase container -->
-    <div class="flex flex-col">
-        <app-store-tag >
-            <app-tag color="#355735" text="PapiChulo" type="soft" />
-        </app-store-tag>
-    </div>
+        <!-- Tags to purchase container -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 justify-items-center">
+            @for (tag of tags; track $index) {
+                <app-store-tag [bought]="tag.owned" (buyClick)="buyTag(tag.id)" [price]="tag.price">
+                    <app-tag [color]="tag.color" [text]="tag.name" [type]="tag.style" [icon]="tag.icon" />
+                </app-store-tag>
+            }
+        </div>
+    </div>    
 </main>
+  

@@ -47,6 +47,8 @@ public class GAuthModel {
 public class TagCreateModel {
     public string? Name { get; set; }
 
+    public required int Price { get; set; }
+
     public required string Color { get; set; }
 
     public Tag.TagStyle Style { get; set; } = Tag.TagStyle.NORMAL;

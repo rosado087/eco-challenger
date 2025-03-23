@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { TagStyle } from '../../models/tag-style';
+import { TagStyle } from '../../models/tag';
 
 @Component({
   selector: 'app-tag',
