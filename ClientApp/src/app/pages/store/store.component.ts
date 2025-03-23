@@ -6,6 +6,7 @@ import { Tag } from '../../models/tag';
 import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service';
 import { EcoPointsIconComponent } from "../../components/eco-points-icon/eco-points-icon.component";
 import { AuthService } from '../../services/auth/auth.service';
+import { SuccessModel } from '../../models/success-model';
 
 @Component({
   selector: 'app-store',
@@ -18,10 +19,15 @@ export class StoreComponent implements OnInit {
   authService = inject(AuthService)
   netApi = inject(NetApiService)
   popupLoader = inject(PopupLoaderService)
-  tags: Tag[] = []
+  tags: Tag[] | null = null
   userPoints: number = 0
     
-  ngOnInit(): void {
+  ngOnInit(): void {    
+    this.loadStoreTags()
+    this.loadUserPoints()
+  }
+
+  loadStoreTags(): void {
     // Load tags
     this.netApi
     .get<Tag[]>('Store', 'tags')
@@ -36,11 +42,9 @@ export class StoreComponent implements OnInit {
           'Ocorreu um erro desconhecido ao carregar as tags de loja.'
         )
     })
-
-    this.updateUserPoint()
   }
 
-  updateUserPoint() {
+  loadUserPoints(): void {
     // Fetch user points
     this.netApi
     .get<number>('Profile', 'points')
@@ -54,6 +58,26 @@ export class StoreComponent implements OnInit {
   }
 
   buyTag(id: number): void {
+    this.netApi
+    .post<SuccessModel>('Store', 'purchase', undefined, id.toString())
+    .subscribe({
+        next: (data) => {
+          if(!data.success)
+            return this.popupLoader.showPopup(
+              'Não foi possível realizar a compra.',
+              data.message || 'Ocorreu um erro ao realizar a compra.'
+            )          
 
+          this.popupLoader.showPopup(
+            'Compra realizada com sucesso!'
+          )
+
+          this.ngOnInit() //Reload the store page data
+        },
+        error: () => this.popupLoader.showPopup(
+          'Erro!',
+          'Ocorreu um erro ao realizar a compra.'
+        )
+    })
   }
 }

@@ -12,11 +12,20 @@
         
                 <!-- Tags to purchase container -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 justify-items-center">
-                    @for (tag of tags; track $index) {
-                        <app-store-tag [bought]="tag.owned" (buyClick)="buyTag(tag.id)" [price]="tag.price">
-                            <app-tag [color]="tag.color" [text]="tag.name" [type]="tag.style" [icon]="tag.icon" />
-                        </app-store-tag>
+                    @if(tags) {
+                        @for (tag of tags; track $index) {
+                            <app-store-tag [bought]="tag.owned" (buyClick)="buyTag(tag.id)" [price]="tag.price">
+                                <app-tag [color]="tag.color" [text]="tag.name" [type]="tag.style" [icon]="tag.icon" />
+                            </app-store-tag>
+                        }
                     }
+                    @else {
+                        <!-- Render skeleton for placeholder -->
+                        @for (_ of [].constructor(15); track $index) {
+                            <div class="skeleton h-[80px] w-[382px]"></div>
+                        }
+                    }
+                    
                 </div>
             </div>    
         </div>
