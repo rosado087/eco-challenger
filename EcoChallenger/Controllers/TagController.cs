@@ -33,40 +33,46 @@ namespace EcoChallenger.Controllers
         [Route("create")]
         public async Task<IActionResult> CreateTag([FromForm] TagCreateModel tagModel)
         {
-            if (string.IsNullOrWhiteSpace(tagModel.Color))
-                return BadRequest("A cor da tag é obrigatória");
+            try {
+                if (string.IsNullOrWhiteSpace(tagModel.Color))
+                    return BadRequest("A cor da tag é obrigatória");
 
-            string? imageUrl = null;
+                string? imageUrl = null;
 
-            if (tagModel.Icon != null)
-            {
-                // Make sure the upload folder exists
-                string uploadPath = Path.Combine(_env.WebRootPath, "tag-images");
-                if (!Directory.Exists(uploadPath))
-                    Directory.CreateDirectory(uploadPath);
+                if (tagModel.Icon != null)
+                {
+                    // Make sure the upload folder exists
+                    string uploadPath = Path.Combine(_env.WebRootPath, "tag-images");
+                    if (!Directory.Exists(uploadPath))
+                        Directory.CreateDirectory(uploadPath);
 
-                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(tagModel.Icon.FileName)}";
-                string filePath = Path.Combine(uploadPath, fileName);
+                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(tagModel.Icon.FileName)}";
+                    string filePath = Path.Combine(uploadPath, fileName);
 
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await tagModel.Icon.CopyToAsync(stream);
+                    using var stream = new FileStream(filePath, FileMode.Create);
+                    await tagModel.Icon.CopyToAsync(stream);
 
-                imageUrl = $"/tag-images/{fileName}";
+                    imageUrl = $"/tag-images/{fileName}";
+                }
+
+                // Insert new tag in the DB
+                Tag tag = new Tag
+                {
+                    Name = tagModel.Name,
+                    Color = tagModel.Color,
+                    Icon = imageUrl,
+                    Style = tagModel.Style
+                };
+
+                await _ctx.Tags.AddAsync(tag);
+                await _ctx.SaveChangesAsync();
+
+                return Ok(tag);
             }
-
-            // Insert new tag in the DB
-            Tag tag = new Tag
-            {
-                Name = tagModel.Name,
-                Color = tagModel.Color,
-                Icon = imageUrl,
-                Style = tagModel.Style
-            };
-
-            await _ctx.Tags.AddAsync(tag);
-            await _ctx.SaveChangesAsync();
-
-            return Ok(tag);
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return StatusCode(500, "An error occurred creating the tag.");
+            }
         }
     }
 }
