@@ -76,5 +76,28 @@ namespace EcoChallenger.Controllers
                 return StatusCode(500, "An error occurred creating the tag.");
             }
         }
+
+        /// <summary>
+        /// Gets all the tags available
+        /// </summary>
+        /// <returns>
+        /// Returns the list of tags
+        /// </returns>
+        [HttpGet]
+        [Route("all")]
+        public IActionResult GetAllTags()
+        {
+            try {
+                var tags = _ctx.Tags.ToList();
+
+                if(tags == null) return Ok(new List<Tag>());
+
+                return Ok(tags);
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return StatusCode(500, "An error occurred fetching system tags.");
+            }
+        }
     }
 }

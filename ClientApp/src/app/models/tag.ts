@@ -7,5 +7,5 @@ export interface Tag {
     color: string
     icon?: string
     style: TagStyle
-    owned: boolean
+    owned?: boolean
 }

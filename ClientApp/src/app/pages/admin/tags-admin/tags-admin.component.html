@@ -1,1 +1,66 @@
-<p>tags-admin works!</p>
+<main class="container mx-auto px-4 mt-4 pb-4">
+    <div class="card w-auto bg-base-100 shadow-md border border-base-300">
+        <div class="card-body">
+            <div class="flex flex-col">
+                <div class="flex justify-center">
+                    <h2 class="text-2xl font-bold">Lista de Tags</h2>
+                </div>
+                <div class="flex flex-row justify-between">
+                    <div class="join">
+                        <div>
+                            <label class="input">
+                                <input type="search" class="grow" placeholder="Pesquisa pelo nome" />
+                            </label>
+                        </div>
+                        <button class="btn btn-primary join-item"><ng-icon name="heroMagnifyingGlass" /></button>
+                    </div>
+
+                    <app-button text="Adicionar" (btnClick)="addTag()" />
+                </div>
+
+                <app-table class="mt-4">
+                    <!-- Columns -->
+                    <tr columns>
+                        <th>Tag</th>
+                        <th>Cor</th>
+                        <th>Preço</th>
+                        <th></th>
+                    </tr>
+                    
+                    <!-- Rows -->
+                    @for (tag of tags; track $index) {
+                        <tr row>    
+                            <td>
+                                <app-tag [color]="tag.color" [text]="tag.name" [type]="tag.style" [icon]="tag.icon" />
+                            </td>
+
+                            <td>
+                                <span [style.color]="tag.color">{{ tag.color }}</span>
+                            </td>
+    
+                            <td>
+                                <div class="flex gap-0.5 items-center">
+                                    <span class="text-sm text-gray-500 mt-1">{{ tag.price }}</span>
+                                    <app-eco-points-icon />
+                                </div> 
+                            </td>   
+    
+                            <th>
+                                <div class="flex flex-row gap-1">
+                                    <button class="btn btn-ghost btn-md">
+                                        <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
+                                        <ng-icon style="width: 20px; height: 20px" name="heroPencil" />
+                                    </button>
+                                    <button class="btn btn-ghost btn-md">
+                                        <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
+                                        <ng-icon style="width: 20px; height: 20px" name="heroTrash" />
+                                    </button>
+                                </div>
+                            </th>
+                        </tr>
+                    }
+                </app-table>
+            </div>
+        </div>
+    </div>    
+</main>

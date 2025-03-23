@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using EcoChallenger.Models;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,6 +43,12 @@ builder.Services.AddControllers(options =>
 {
     // Make the controller authorized by default
     options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+    );
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
