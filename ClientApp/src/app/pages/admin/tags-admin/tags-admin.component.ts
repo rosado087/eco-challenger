@@ -13,6 +13,7 @@ import {
   heroTrash,
   heroMagnifyingGlass
 } from '@ng-icons/heroicons/outline'
+import { SuccessModel } from '../../../models/success-model';
 
 @Component({
   selector: 'app-tags-admin',
@@ -45,5 +46,25 @@ export class TagsAdminComponent implements OnInit {
 
   addTag() {
 
+  }
+
+  removeTag(id: number) {
+    this.netApi
+    .post<SuccessModel>('Tag', 'remove', undefined, id.toString())
+    .subscribe({
+        next: (data) => {
+            if (!data || !data.success)
+              return this.popupLoader.showPopup(
+                'Erro!',
+                data.message || 'Ocorreu um erro desconhecido ao remover a tag.'
+              )
+
+              this.popupLoader.showPopup('Tag removida com sucesso!')
+        },
+        error: () => this.popupLoader.showPopup(
+          'Erro!',
+          'Ocorreu um erro desconhecido ao remover a tag.'
+        )
+    })
   }
 }

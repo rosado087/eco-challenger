@@ -99,5 +99,31 @@ namespace EcoChallenger.Controllers
                 return StatusCode(500, "An error occurred fetching system tags.");
             }
         }
+
+        /// <summary>
+        /// Gets all the tags available
+        /// </summary>
+        /// <returns>
+        /// Returns the list of tags
+        /// </returns>
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("remove/{id}")]
+        public IActionResult RemoveTag(int id)
+        {
+            try {
+                var tags = _ctx.Tags
+                    .Where(t => t.Id == id)
+                    .FirstOrDefault();
+
+                if(tags == null) StatusCode(404, "There is no tag with the given ID.");
+
+                return Ok(new { success = true });
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return StatusCode(500, "An error occurred fetching system tags.");
+            }
+        }
     }
 }
