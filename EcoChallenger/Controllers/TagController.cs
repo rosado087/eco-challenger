@@ -1,5 +1,6 @@
 
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcoChallenger.Controllers
@@ -29,6 +30,7 @@ namespace EcoChallenger.Controllers
         /// <remarks>
         /// The uploaded icon is saved to the wwwroot/tag-images/ folder, and the generated file path is stored.
         /// </remarks>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateTag([FromForm] TagCreateModel tagModel)
