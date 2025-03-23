@@ -88,7 +88,6 @@ namespace EcoChallenger.Utils
                 new ("username", user.Username),
                 new ("isAdmin", user.IsAdmin.ToString(), ClaimValueTypes.Boolean),
                 new (ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
-
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor {

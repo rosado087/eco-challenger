@@ -19,8 +19,10 @@ export class StoreComponent implements OnInit {
   netApi = inject(NetApiService)
   popupLoader = inject(PopupLoaderService)
   tags: Tag[] = []
+  userPoints: number = 0
     
   ngOnInit(): void {
+    // Load tags
     this.netApi
     .get<Tag[]>('Store', 'tags')
     .subscribe({
@@ -32,6 +34,21 @@ export class StoreComponent implements OnInit {
         error: () => this.popupLoader.showPopup(
           'Erro!',
           'Ocorreu um erro desconhecido ao carregar as tags de loja.'
+        )
+    })
+
+    this.updateUserPoint()
+  }
+
+  updateUserPoint() {
+    // Fetch user points
+    this.netApi
+    .get<number>('Profile', 'points')
+    .subscribe({
+        next: (data) => this.userPoints = data,
+        error: () => this.popupLoader.showPopup(
+          'Erro!',
+          'Ocorreu um erro ao obter os pontos do utilizador.'
         )
     })
   }

@@ -20,7 +20,6 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// TODO: Make this only accessible to Admin users
         /// Creates a new tag with the given data, including an optional image or GIF icon.
         /// </summary>
         /// <param name="tagModel">The tag data sent via multipart/form-data.</param>
