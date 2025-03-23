@@ -1,0 +1,124 @@
+<dialog id="my_modal_1" class="modal" open="">
+  <div class="modal-box">
+    <form method="dialog">
+        <button (click)="closeClick.emit()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+
+    <!-- Modal Body -->
+    <div class="flex flex-row justify-center">
+      @if(isEditMode()) {        
+        <h3 class="text-lg font-bold">Editar Tag</h3>        
+      }
+      @else {
+        <h3 class="text-lg font-bold">Criar Tag</h3>
+      }
+    </div>
+    
+    <form class="flex flex-col gap-2" [formGroup]="tagForm">
+        <label class="input input-bordered flex items-center gap-2">
+            <ng-icon name="heroKey" />
+            <input
+                formControlName="name"
+                type="text"
+                class="grow"
+                placeholder="Nome" />
+        </label>
+        @if (
+            this.tagForm.get('name')?.invalid &&
+            (this.tagForm.get('name')?.dirty || this.tagForm.get('name')?.touched)
+        ) {
+            @if (this.tagForm.get('name')?.hasError('nameOrIconRequired')) {
+                <div class="validator-hint text-red-500">
+                    A Tag deve pelo menos ou um nome, ou um icon.
+                </div>
+            }
+        }
+
+        <label class="input input-bordered flex items-center gap-2">
+          <ng-icon name="heroKey" />
+          <input
+              formControlName="color"
+              type="text"
+              class="grow"
+              placeholder="Cor" />
+        </label>
+        @if (
+            this.tagForm.get('color')?.invalid &&
+            (this.tagForm.get('color')?.dirty || this.tagForm.get('color')?.touched)
+        ) {
+            @if (this.tagForm.get('color')?.hasError('required')) {
+                <div class="validator-hint text-red-500">
+                    Este campo é obrigatório.
+                </div>
+            }
+        }
+
+        <label class="input input-bordered flex items-center gap-2">
+            <ng-icon name="heroKey" />
+            <input
+                formControlName="icon"
+                type="text"
+                class="grow"
+                placeholder="Icon" />
+        </label>
+        @if (
+            this.tagForm.get('icon')?.invalid &&
+            (this.tagForm.get('icon')?.dirty || this.tagForm.get('icon')?.touched)
+        ) {
+            @if (this.tagForm.get('icon')?.hasError('nameOrIconRequired')) {
+                <div class="validator-hint text-red-500">
+                    A Tag deve pelo menos ou um nome, ou um icon.
+                </div>
+            }
+        }
+        
+        <label class="input input-bordered flex items-center gap-2">
+          <select class="select" formControlName="style">
+            <option disabled selected>Escolha um estilo</option>
+            <option value="normal">Normal</option>
+            <option value="soft">Soft</option>
+            <option value="outline">Outline</option>
+            <option value="dash">Dash</option>
+          </select>
+        </label>
+        @if (
+            this.tagForm.get('style')?.invalid &&
+            (this.tagForm.get('style')?.dirty || this.tagForm.get('style')?.touched)
+        ) {
+            @if (this.tagForm.get('style')?.hasError('required')) {
+                <div class="validator-hint text-red-500">
+                    Este campo é obrigatório.
+                </div>
+            }
+        }
+
+        <label class="input input-bordered flex items-center gap-2">
+          <ng-icon name="heroKey" />
+          <input
+              formControlName="price"
+              type="number"
+              class="grow"
+              placeholder="Preço" />
+        </label>
+        @if (
+            this.tagForm.get('price')?.invalid &&
+            (this.tagForm.get('price')?.dirty || this.tagForm.get('price')?.touched)
+        ) {
+            @if (this.tagForm.get('price')?.hasError('required')) {
+                <div class="validator-hint text-red-500">
+                    Este campo é obrigatório.
+                </div>
+            }
+        }
+        
+    </form>
+
+    <div class="card-actions justify-center">      
+      <app-button text="Submeter" (btnClick)="submitRecord()" />
+    </div>  
+    <!---------------->
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeClick.emit()">close</button>
+  </form>
+</dialog>

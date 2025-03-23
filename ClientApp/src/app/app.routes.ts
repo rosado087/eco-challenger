@@ -83,7 +83,27 @@ export const routes: Routes = [
                         (m) => m.TagsAdminComponent
                     )
                 },
-                canActivate: [authGuard]
+                canActivate: [authGuard],
+                children: [
+                    {
+                        path: 'create',
+                        loadComponent: () => {
+                            return import('./pages/admin/tags-admin/tags-admin.component').then(
+                                (m) => m.TagsAdminComponent
+                            )
+                        },
+                        canActivate: [authGuard]                        
+                    },
+                    {
+                        path: 'edit/:id',
+                        loadComponent: () => {
+                            return import('./pages/admin/tags-admin/tags-admin.component').then(
+                                (m) => m.TagsAdminComponent
+                            )
+                        },
+                        canActivate: [authGuard]                        
+                    }
+                ]
             },
             {
                 path: '**',

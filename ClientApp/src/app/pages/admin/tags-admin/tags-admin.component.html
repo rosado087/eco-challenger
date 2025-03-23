@@ -15,7 +15,7 @@
                         <button class="btn btn-primary join-item"><ng-icon name="heroMagnifyingGlass" /></button>
                     </div>
 
-                    <app-button text="Adicionar" (btnClick)="addTag()" />
+                    <app-button text="Adicionar" (btnClick)="handleAddTag()" />
                 </div>
 
                 <app-table class="mt-4">
@@ -47,7 +47,7 @@
     
                             <th>
                                 <div class="flex flex-row gap-1">
-                                    <button class="btn btn-ghost btn-md">
+                                    <button class="btn btn-ghost btn-md" (click)="handleEditTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
                                         <ng-icon style="width: 20px; height: 20px" name="heroPencil" />
                                     </button>
@@ -62,5 +62,7 @@
                 </app-table>
             </div>
         </div>
-    </div>    
+    </div>
+
+    <app-tag-form-modal (closeClick)="closeModal()" [tagId]="modalTagId" [isEditMode]="modalIsEditMode" />
 </main>
