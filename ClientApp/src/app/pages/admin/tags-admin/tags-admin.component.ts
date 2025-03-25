@@ -123,7 +123,6 @@ export class TagsAdminComponent implements OnInit {
                 )
 
                 this.loadTags()
-                this.popupLoader.showPopup('Tag removida com sucesso!')
           },
           error: () => this.popupLoader.showPopup(
             'Erro!',
