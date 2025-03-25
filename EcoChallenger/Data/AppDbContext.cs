@@ -47,7 +47,8 @@ public class AppDbContext : DbContext
         {
             Id = 1,
             Name = "Eco-Warrior",
-            Color = "#355735",
+            BackgroundColor = "#355735",
+            TextColor = "#FFFFFF",
             Price = 10
         };
 
@@ -55,7 +56,8 @@ public class AppDbContext : DbContext
         {
             Id = 2,
             Name = "NatureLover",
-            Color = "#355735",
+            BackgroundColor = "#355735",
+            TextColor = "#FFFFFF",
             Price = 50
         };
 
@@ -63,7 +65,8 @@ public class AppDbContext : DbContext
         {
             Id = 3,
             Name = "Green Guru",
-            Color = "#355735",
+            BackgroundColor = "#355735",
+            TextColor = "#FFFFFF",
             Price = 55
         };
 

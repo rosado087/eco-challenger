@@ -37,7 +37,8 @@ namespace EcoChallenger.Controllers
                 {
                     tag.Id,
                     tag.Name,
-                    tag.Color,
+                    tag.BackgroundColor,
+                    tag.TextColor,
                     tag.Icon,
                     tag.Price,
                     Style = tag.Style.ToString().ToLower(),

@@ -9,10 +9,14 @@
                     <div class="join">
                         <div>
                             <label class="input">
-                                <input type="search" class="grow" placeholder="Pesquisa pelo nome" />
+                                <input type="search" 
+                                    [formControl]="searchControl" 
+                                    (keydown.enter)="handleSearch()"
+                                    class="grow" 
+                                    placeholder="Pesquisa pelo nome" />
                             </label>
                         </div>
-                        <button class="btn btn-primary join-item"><ng-icon name="heroMagnifyingGlass" /></button>
+                        <button class="btn btn-primary join-item" (click)="handleSearch()"><ng-icon name="heroMagnifyingGlass" /></button>
                     </div>
 
                     <app-button text="Adicionar" (btnClick)="handleAddTag()" />
@@ -22,7 +26,8 @@
                     <!-- Columns -->
                     <tr columns>
                         <th>Tag</th>
-                        <th>Cor</th>
+                        <th>Cor de Fundo</th>
+                        <th>Cor do Texto</th>
                         <th>Preço</th>
                         <th></th>
                     </tr>
@@ -31,11 +36,19 @@
                     @for (tag of tags; track $index) {
                         <tr row>    
                             <td>
-                                <app-tag [color]="tag.color" [text]="tag.name" [type]="tag.style" [icon]="tag.icon" />
+                                <app-tag [backgroundColor]="tag.backgroundColor" 
+                                    [textColor]="tag.textColor" 
+                                    [text]="tag.name" 
+                                    [type]="tag.style" 
+                                    [icon]="tag.icon" />
                             </td>
 
                             <td>
-                                <span [style.color]="tag.color">{{ tag.color }}</span>
+                                <span [style.color]="tag.backgroundColor">{{ tag.backgroundColor }}</span>
+                            </td>
+
+                            <td>
+                                <span [style.color]="tag.textColor">{{ tag.textColor }}</span>
                             </td>
     
                             <td>
@@ -64,5 +77,5 @@
         </div>
     </div>
 
-    <app-tag-form-modal (closeClick)="closeModal()" [tagId]="modalTagId" [isEditMode]="modalIsEditMode" />
+    <app-tag-form-modal (closeClick)="closeModal()" [tagId]="modalTagId" [isEditMode]="modalIsEditMode" [open]="modalShow" />
 </main>

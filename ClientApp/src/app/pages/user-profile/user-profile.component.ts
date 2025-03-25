@@ -98,7 +98,7 @@ export class UserProfileComponent implements OnInit {
      */
     loadUserProfile(id: number) {
         this.netApi
-            .get<UserModel>('Profile', 'GetUserInfo', id.toString())
+            .get<UserModel>('Profile', 'GetUserInfo', undefined, id.toString())
             .subscribe({
                 next: (data) => {
                     if (data.success) {
@@ -126,7 +126,7 @@ export class UserProfileComponent implements OnInit {
         this.isEditing = true
 
         this.netApi
-            .get<UserModel>('Profile', 'GetTags', this.id.toString())
+            .get<UserModel>('Profile', 'GetTags', undefined, this.id.toString())
             .subscribe({
                 next: (data) => {
                     if (data.success) {
@@ -217,7 +217,7 @@ export class UserProfileComponent implements OnInit {
 
     loadUserFriends(id: number) {
         this.netApi
-            .get<FriendsResponse>('Profile', 'GetFriends', id.toString())
+            .get<FriendsResponse>('Profile', 'GetFriends', undefined, id.toString())
             .subscribe({
                 next: (data: FriendsResponse) => {
                     if (data.success) {

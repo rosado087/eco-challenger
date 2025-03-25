@@ -4,7 +4,8 @@ export interface Tag {
     id: number
     name?: string
     price: number
-    color: string
+    backgroundColor: string
+    textColor: string
     icon?: string
     style: TagStyle
     owned?: boolean

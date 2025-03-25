@@ -14,12 +14,13 @@ import {
   heroMagnifyingGlass
 } from '@ng-icons/heroicons/outline'
 import { SuccessModel } from '../../../models/success-model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { TagFormModalComponent } from "../tag-form-modal/tag-form-modal.component";
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-tags-admin',
-  imports: [NgIcon, TableComponent, ButtonComponent, EcoPointsIconComponent, TagComponent, TagFormModalComponent],
+  imports: [NgIcon, TableComponent, ButtonComponent, EcoPointsIconComponent, TagComponent, TagFormModalComponent, ReactiveFormsModule],
   providers: [PopupLoaderService, provideIcons({ heroPencil, heroTrash, heroMagnifyingGlass }),],
   templateUrl: './tags-admin.component.html',
   styleUrl: './tags-admin.component.css'
@@ -31,10 +32,12 @@ export class TagsAdminComponent implements OnInit {
   router = inject(Router)
   tags: Tag[] = []
 
+  searchControl = new FormControl('')
+
   // Modal form props
   modalIsEditMode: boolean = false
-  modalTagId: number = 0
-  modalShow: boolean = true
+  modalTagId: number | null = null
+  modalShow: boolean = false
   
   ngOnInit(): void {
     this.loadTags()
@@ -42,44 +45,46 @@ export class TagsAdminComponent implements OnInit {
     // Check the route to decided whether to open
     // the modal form or not
     this.route.url.subscribe(() => {
-      const url = this.route.snapshot.routeConfig?.path;
+      this.route.firstChild?.url.subscribe((segments: UrlSegment[]) => {
+        const paths = segments.map(s => s.path)
 
-      // Open modal form in create mode
-      if (url === 'create')
-        return this.openModal()
-      
-      // Open modal form in edit mode with the corresponding ID
-      if (url === 'edit/:id') {
-        const id: string | null = this.route.snapshot.paramMap.get('id');
+        // Open modal form in create mode
+        if (paths[0] === 'create')
+          return this.openModal()
         
-        if (!id) { //Invalid id, lets redirect
-          this.router.navigate(['/admin/tags'])
-          return
-        }
+        // Open modal form in edit mode with the corresponding ID
+        if (paths[0] === 'edit') {
+          if (paths.length <= 1) { //Invalid id, lets redirect
+            this.router.navigate(['/admin/tags'])
+            return
+          }
 
-        this.openModal(true, Number(id))        
-      }
+          this.openModal(true, Number(paths[1]))        
+        }
+      })
     })
   }
 
   openModal(isEdit: boolean = false, id?: number): void {
     this.modalIsEditMode = isEdit
-    if(isEdit && id)
-      this.modalTagId = id
+    if(isEdit && id) this.modalTagId = id
+    else this.modalTagId = null
 
     this.modalShow = true
   }
 
   closeModal(): void {
     this.modalShow = false
-    this.modalTagId = 0
+    this.modalTagId = null
     this.modalIsEditMode = false
+    this.router.navigate(['/admin/tags'])
+    this.loadTags()
   }
 
-  loadTags(): void {
+  loadTags(searchQuery?: string | null): void {
     // Load tags
     this.netApi
-    .get<Tag[]>('Tag', 'all')
+    .get<Tag[]>('Tag', 'all', searchQuery ? {q: searchQuery} : undefined)
     .subscribe({
         next: (data) => {
             if (!data || data.length == 0) return
@@ -91,6 +96,10 @@ export class TagsAdminComponent implements OnInit {
           'Ocorreu um erro desconhecido ao carregar as tags.'
         )
     })
+  }
+
+  handleSearch(): void {
+    this.loadTags(this.searchControl.value)
   }
 
   handleAddTag(): void {
@@ -113,6 +122,7 @@ export class TagsAdminComponent implements OnInit {
                   data.message || 'Ocorreu um erro desconhecido ao remover a tag.'
                 )
 
+                this.loadTags()
                 this.popupLoader.showPopup('Tag removida com sucesso!')
           },
           error: () => this.popupLoader.showPopup(

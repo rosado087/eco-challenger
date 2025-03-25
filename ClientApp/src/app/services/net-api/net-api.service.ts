@@ -14,9 +14,10 @@ export class NetApiService {
     get<T>(
         controller: string,
         action: string,
+        queryParams?: { [key: string]: string },
         ...routeParams: string[]
     ): Observable<T> {
-        return this.http.get<T>(this.#buildUrl(controller, action, routeParams))
+        return this.http.get<T>(this.#buildUrl(controller, action, routeParams, queryParams))
     }
 
     post<T>(
@@ -27,38 +28,27 @@ export class NetApiService {
     ): Observable<T> {
         return this.http.post<T>(
             this.#buildUrl(controller, action, routeParams),
-            data,
-            {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json'
-                })
-            }
+            data
         )
     }
 
-    put<T>(
-        controller: string,
-        action: string,
-        data: any,
-        ...routeParams: string[]
-    ): Observable<T> {
-        return this.http.put<T>(
-            this.#buildUrl(controller, action, routeParams),
-            data,
-            {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json'
-                })
-            }
-        )
-    }
-
-    #buildUrl(controller: string, action: string, routeParams: string[]) {
+    #buildUrl(controller: string, action: string, routeParams: string[], queryParams?: { [key: string]: string }) {
         let route = `${this.baseUrl}/${controller.toLowerCase()}/${action.toLocaleLowerCase()}`
 
+        // Add route params
         routeParams?.forEach((r) => {
             route += `/${r}`
         })
+
+        if(queryParams) {
+            let strParams = ''
+            Object.keys(queryParams).forEach((key) => {
+                strParams += `&${key}=${queryParams[key]}`
+            })
+
+            // We dont want the first &
+            route += `?${strParams.substring(1)}`
+        }
 
         return route
     }

@@ -44,12 +44,14 @@ public class GAuthModel {
     public string Email { get; set; }
 }
 
-public class TagCreateModel {
+public class TagCRUDModel {
     public string? Name { get; set; }
 
     public required int Price { get; set; }
 
-    public required string Color { get; set; }
+    public required string BackgroundColor { get; set; }
+
+    public required string TextColor { get; set; }
 
     public Tag.TagStyle Style { get; set; } = Tag.TagStyle.NORMAL;
 

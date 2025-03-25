@@ -9,10 +9,12 @@ import { TagStyle } from '../../models/tag';
 })
 
 export class TagComponent {
-    color = input.required<string>()
-    type = input<TagStyle>('normal')
-    text = input<string>()
-    icon = input<string>()
+    backgroundColor = input.required<string>()
+    textColor = input.required<string>()
+    type = input<TagStyle | null>('normal')
+    text = input<string | null>()
+    icon = input<string | null>()
+    iconRawData = input<File | null>()
     badgeClick = output()
 
     getComponentClasses(): string[] {
@@ -29,29 +31,13 @@ export class TagComponent {
                 break
             case 'outline':
                 classes.push('badge-outline')
-
         }
 
         return classes
     }
-
-    getTextColor() {
-        return this.darkenColor(this.color(), 50)
+    
+    getRawImageURL(): string | null {
+        if(!this.iconRawData()) return null
+        return URL.createObjectURL(this.iconRawData() as File)
     }
-
-    darkenColor(hex: string, percent: number): string {
-        const num = parseInt(hex.replace("#", ""), 16);
-        const amt = Math.round(2.55 * percent);
-        const R = (num >> 16) - amt;
-        const G = ((num >> 8) & 0x00FF) - amt;
-        const B = (num & 0x0000FF) - amt;
-      
-        return "#" + (
-          0x1000000 +
-          (Math.max(0, R) << 16) +
-          (Math.max(0, G) << 8) +
-          Math.max(0, B)
-        ).toString(16).slice(1);
-      }
-      
 }
