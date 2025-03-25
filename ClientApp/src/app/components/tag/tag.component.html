@@ -1,12 +1,12 @@
-<a (click)="badgeClick.emit()">
+<a tabindex="0" role="button" (click)="badgeClick.emit()" (keydown.enter)="badgeClick.emit()">
     <div class="{{getComponentClasses()}}"
         [style.--badge-color]="backgroundColor()"
         [style.--badge-fg]="textColor()">
         @if(icon()) {
-            <img [src]="icon()" class="h-full max-h-6 aspect-square object-cover rounded" />
+            <img [src]="icon()" alt="tag" class="h-full max-h-6 aspect-square object-cover rounded" />
         }
         @else if (iconRawData()) {
-            <img [src]="getRawImageURL()" class="h-full max-h-6 aspect-square object-cover rounded" />
+            <img [src]="getRawImageURL()" alt="tag" class="h-full max-h-6 aspect-square object-cover rounded" />
         }      
         {{ text() }}
     </div>

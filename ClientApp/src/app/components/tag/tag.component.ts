@@ -18,7 +18,7 @@ export class TagComponent {
     badgeClick = output()
 
     getComponentClasses(): string[] {
-        let classes = ['badge', 'scale-120', 'static']
+        const classes = ['badge', 'scale-120', 'static']
 
         switch(this.type()) {
             case 'normal':
