@@ -9,14 +9,19 @@
                     <div class="join">
                         <div>
                             <label class="input">
-                                <input type="search" 
-                                    [formControl]="searchControl" 
+                                <input
+                                    type="search"
+                                    [formControl]="searchControl"
                                     (keydown.enter)="handleSearch()"
-                                    class="grow" 
+                                    class="grow"
                                     placeholder="Pesquisa pelo nome" />
                             </label>
                         </div>
-                        <button class="btn btn-primary join-item" (click)="handleSearch()"><ng-icon name="heroMagnifyingGlass" /></button>
+                        <button
+                            class="btn btn-primary join-item"
+                            (click)="handleSearch()">
+                            <ng-icon name="heroMagnifyingGlass" />
+                        </button>
                     </div>
 
                     <app-button text="Adicionar" (btnClick)="handleAddTag()" />
@@ -31,42 +36,57 @@
                         <th>Preço</th>
                         <th></th>
                     </tr>
-                    
+
                     <!-- Rows -->
                     @for (tag of tags; track $index) {
-                        <tr row>    
+                        <tr row>
                             <td>
-                                <app-tag [backgroundColor]="tag.backgroundColor" 
-                                    [textColor]="tag.textColor" 
-                                    [text]="tag.name" 
-                                    [type]="tag.style" 
+                                <app-tag
+                                    [backgroundColor]="tag.backgroundColor"
+                                    [textColor]="tag.textColor"
+                                    [text]="tag.name"
+                                    [type]="tag.style"
                                     [icon]="tag.icon" />
                             </td>
 
                             <td>
-                                <span [style.color]="tag.backgroundColor">{{ tag.backgroundColor }}</span>
+                                <span [style.color]="tag.backgroundColor">{{
+                                    tag.backgroundColor
+                                }}</span>
                             </td>
 
                             <td>
-                                <span [style.color]="tag.textColor">{{ tag.textColor }}</span>
+                                <span [style.color]="tag.textColor">{{
+                                    tag.textColor
+                                }}</span>
                             </td>
-    
+
                             <td>
                                 <div class="flex gap-0.5 items-center">
-                                    <span class="text-sm text-gray-500 mt-1">{{ tag.price }}</span>
+                                    <span class="text-sm text-gray-500 mt-1">{{
+                                        tag.price
+                                    }}</span>
                                     <app-eco-points-icon />
-                                </div> 
-                            </td>   
-    
+                                </div>
+                            </td>
+
                             <th>
                                 <div class="flex flex-row gap-1">
-                                    <button class="btn btn-ghost btn-md" (click)="handleEditTag(tag.id)">
+                                    <button
+                                        class="btn btn-ghost btn-md"
+                                        (click)="handleEditTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
-                                        <ng-icon style="width: 20px; height: 20px" name="heroPencil" />
+                                        <ng-icon
+                                            style="width: 20px; height: 20px"
+                                            name="heroPencil" />
                                     </button>
-                                    <button class="btn btn-ghost btn-md" (click)="removeTag(tag.id)">
+                                    <button
+                                        class="btn btn-ghost btn-md"
+                                        (click)="removeTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
-                                        <ng-icon style="width: 20px; height: 20px" name="heroTrash" />
+                                        <ng-icon
+                                            style="width: 20px; height: 20px"
+                                            name="heroTrash" />
                                     </button>
                                 </div>
                             </th>
@@ -77,5 +97,9 @@
         </div>
     </div>
 
-    <app-tag-form-modal (closeClick)="closeModal()" [tagId]="modalTagId" [isEditMode]="modalIsEditMode" [open]="modalShow" />
+    <app-tag-form-modal
+        (closeClick)="closeModal()"
+        [tagId]="modalTagId"
+        [isEditMode]="modalIsEditMode"
+        [open]="modalShow" />
 </main>

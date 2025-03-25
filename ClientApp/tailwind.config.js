@@ -4,11 +4,7 @@ module.exports = {
     theme: {
         extend: {}
     },
-    safelist: [
-        'badge-soft',
-        'badge-dash',
-        'badge-outline',
-    ],
+    safelist: ['badge-soft', 'badge-dash', 'badge-outline']
     //plugins: [require('daisyui')],
     //daisyui: {
     //    themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
@@ -19,7 +15,7 @@ module.exports = {
     //    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
     //    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
     //    themeRoot: ':root', // The element that receives theme color CSS variables
-//
+    //
     //    themes: [
     //        {
     //            light: {

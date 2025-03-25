@@ -1,13 +1,12 @@
-import { Component, input, output } from '@angular/core';
-import { TagStyle } from '../../models/tag';
+import { Component, input, output } from '@angular/core'
+import { TagStyle } from '../../models/tag'
 
 @Component({
-  selector: 'app-tag',
-  imports: [],
-  templateUrl: './tag.component.html',
-  styleUrl: './tag.component.css'
+    selector: 'app-tag',
+    imports: [],
+    templateUrl: './tag.component.html',
+    styleUrl: './tag.component.css'
 })
-
 export class TagComponent {
     backgroundColor = input.required<string>()
     textColor = input.required<string>()
@@ -20,7 +19,7 @@ export class TagComponent {
     getComponentClasses(): string[] {
         const classes = ['badge', 'scale-120', 'static']
 
-        switch(this.type()) {
+        switch (this.type()) {
             case 'normal':
                 break
             case 'soft':
@@ -35,9 +34,9 @@ export class TagComponent {
 
         return classes
     }
-    
+
     getRawImageURL(): string | null {
-        if(!this.iconRawData()) return null
+        if (!this.iconRawData()) return null
         return URL.createObjectURL(this.iconRawData() as File)
     }
 }

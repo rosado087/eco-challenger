@@ -9,35 +9,42 @@
                 @if (authService.getUserInfo().isAdmin) {
                     <li>
                         <div class="dropdown dropdown-end">
-                            <div id="user-option"
-                                tabindex="0"
-                                role="button">
+                            <div id="user-option" tabindex="0" role="button">
                                 Admin
                             </div>
                             <div
                                 tabindex="0"
                                 class="menu menu-sm dropdown-content bg-base-100 z-1 mt-1 p-2 shadow-sm w-auto">
-                                <div class="flex flex-col items-start justify-center">
-                                    <a id="Utilizadores"                                            
+                                <div
+                                    class="flex flex-col items-start justify-center">
+                                    <a
+                                        id="Utilizadores"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
-                                    >Utilizadores</a>
+                                        >Utilizadores</a
+                                    >
 
-                                    <a id="Desafios"                                            
+                                    <a
+                                        id="Desafios"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
-                                    >Desafios</a>
+                                        >Desafios</a
+                                    >
 
-                                    <a id="Tags"                                            
+                                    <a
+                                        id="Tags"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
                                         routerLink="/admin/tags"
-                                    >Tags</a>
+                                        >Tags</a
+                                    >
 
-                                    <a id="Estatistica"                                            
+                                    <a
+                                        id="Estatistica"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
                                         routerLink="/admin/tags"
-                                    >Estatística</a>
+                                        >Estatística</a
+                                    >
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </li>
                 }
             </ul>
@@ -54,7 +61,8 @@
     } @else {
         <div class="navbar-end flex gap-2">
             <div class="dropdown dropdown-end">
-                <div id="user-option"
+                <div
+                    id="user-option"
                     tabindex="0"
                     role="button"
                     class="btn btn-ghost btn-circle avatar">
@@ -77,8 +85,11 @@
                         class="py-2 text-sm text-gray-700"
                         aria-labelledby="dropdownInformationButton">
                         <li>
-                            <a id="profile"
-                                routerLink="/user-profile/{{this.authService.getUserInfo().id}}"
+                            <a
+                                id="profile"
+                                routerLink="/user-profile/{{
+                                    this.authService.getUserInfo().id
+                                }}"
                                 class="block px-4 py-2 hover:bg-gray-100"
                                 >Profile</a
                             >

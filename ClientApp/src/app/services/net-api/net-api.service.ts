@@ -17,7 +17,9 @@ export class NetApiService {
         queryParams?: Record<string, string>,
         ...routeParams: string[]
     ): Observable<T> {
-        return this.http.get<T>(this.#buildUrl(controller, action, routeParams, queryParams))
+        return this.http.get<T>(
+            this.#buildUrl(controller, action, routeParams, queryParams)
+        )
     }
 
     post<T>(
@@ -32,7 +34,12 @@ export class NetApiService {
         )
     }
 
-    #buildUrl(controller: string, action: string, routeParams: string[], queryParams?: Record<string, string>) {
+    #buildUrl(
+        controller: string,
+        action: string,
+        routeParams: string[],
+        queryParams?: Record<string, string>
+    ) {
         let route = `${this.baseUrl}/${controller.toLowerCase()}/${action.toLocaleLowerCase()}`
 
         // Add route params
@@ -40,7 +47,7 @@ export class NetApiService {
             route += `/${r}`
         })
 
-        if(queryParams) {
+        if (queryParams) {
             let strParams = ''
             Object.keys(queryParams).forEach((key) => {
                 strParams += `&${key}=${queryParams[key]}`
