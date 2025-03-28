@@ -1,16 +1,23 @@
+using EcoChallenger.Models;
+using EcoChallenger.Services;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
 
 namespace EcoChallenger.Controllers
 {
     public class RegisterController : BaseApiController
     {
         private readonly AppDbContext _ctx;
+        private Random _random;
 
-        public RegisterController(AppDbContext context){
+        public RegisterController(AppDbContext context)
+        {
             _ctx = context;
+            _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
         }
 
         /// <summary>
@@ -37,7 +44,53 @@ namespace EcoChallenger.Controllers
 
                 // Adiciona um novo utilizador
                 await _ctx.Users.AddAsync(data);
+
+
+                var dailyChallenges = await _ctx.Challenges.Where(c => c.Type == "Daily").ToListAsync();
+
+                List<Challenge> challenges = [];
+
+                while (challenges.Count < 3)
+                {
+                    var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
+
+                    if (challenge != null && !challenges.Contains(challenge))
+                    {
+                        await _ctx.UserChallenges.AddAsync(new UserChallenges
+                        {
+                            Challenge = challenge,
+                            User = data,
+                            WasConcluded = false
+                        });
+
+                        challenges.Add(challenge);
+                    }
+                }
+
+                var weeklyChallenges = await _ctx.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
+
+                challenges = [];
+
+                while (challenges.Count < 2)
+                {
+                    var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
+
+                    if (challenge != null && !challenges.Contains(challenge))
+                    {
+                        await _ctx.UserChallenges.AddAsync(new UserChallenges
+                        {
+                            Challenge = challenge,
+                            User = data,
+                            Progress = 0,
+                            WasConcluded = false
+                        });
+                        challenges.Add(challenge);
+                    }
+                }
+
                 await _ctx.SaveChangesAsync();
+                
+                
 
                 return new JsonResult(new { success = true });
             }
@@ -47,5 +100,51 @@ namespace EcoChallenger.Controllers
                 return new JsonResult(new { success = false, message = e.Message });
             }                
         }
+
+        /*private async void AddChallenges(User user)
+        {
+            var dailyChallenges = await _ctx.Challenges.ToListAsync();
+
+            List<Challenge> challenges = [];
+
+            while (challenges.Count < 3)
+            {
+                var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
+
+                if (challenge != null && !challenges.Contains(challenge))
+                {
+                    await _ctx.UserChallenges.AddAsync(new UserChallenges
+                    {
+                        Challenge = challenge,
+                        User = user,
+                        WasConcluded = false
+                    });
+
+                    challenges.Add(challenge);
+                }
+            }
+
+            var weeklyChallenges = await _ctx.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
+
+            challenges = [];
+
+            while (challenges.Count < 2)
+            {
+                var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
+
+                if (challenge != null && !challenges.Contains(challenge))
+                {
+                    await _ctx.UserChallenges.AddAsync(new UserChallenges
+                    {
+                        Challenge = challenge,
+                        User = user,
+                        Progress = 0,
+                        WasConcluded = false
+                    });
+                    challenges.Add(challenge);
+                }
+            }
+            await _ctx.SaveChangesAsync();
+        }*/
     }
 }
