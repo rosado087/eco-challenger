@@ -1,5 +1,6 @@
 using System.Text;
 using EcoChallenger.Models;
+using EcoChallenger.Services;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,8 @@ builder.Services.AddAuthentication(x => {
     };
 });
 
+
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers(options =>
@@ -54,7 +57,8 @@ else
         options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 }
 
-
+builder.Services.AddHostedService<DailyTaskService>();
+builder.Services.AddHostedService<WeeklyTaskService>();
 // Email Service DI
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
