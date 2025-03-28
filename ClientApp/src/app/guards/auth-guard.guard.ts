@@ -23,14 +23,15 @@ export const authGuard: CanActivateFn = (
     // Bypass guard for external URLs such as Google Auth
     if (state.url.startsWith('http') || state.url.startsWith('//')) return true
 
-    const isUnprotected = unprotectedRoutes.some((route) =>
+    const isRouteUnprotected = unprotectedRoutes.some((route) =>
         state.url.startsWith(route)
     )
-    const isLoggedIn = authService.isLoggedIn()
+    const isUserLoggedIn = authService.isLoggedIn()
+    const isUserAdmin = authService.getUserInfo().isAdmin
 
-    if (isUnprotected) {
+    if (isRouteUnprotected) {
         // Allow navigating to unprotected routes if not logged in
-        if (!isLoggedIn) return true
+        if (!isUserLoggedIn) return true
 
         // Otherwise send to home
         router.navigate(['/'])
@@ -39,8 +40,16 @@ export const authGuard: CanActivateFn = (
 
     // If its protected and user is not logged it
     // force him to login page
-    if (!isLoggedIn) {
+    if (!isUserLoggedIn) {
         router.navigate(['/login'])
+        return false
+    }
+
+    // Make sure he can only access admin routes if isAdmin true
+    if (state.url.startsWith('/admin') && !isUserAdmin) {
+        // Navigate to 404 instead of homepage so the common user
+        // doesn't even know this is an existing route
+        router.navigate(['/404'])
         return false
     }
 

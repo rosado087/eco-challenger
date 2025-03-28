@@ -43,3 +43,17 @@ public class GAuthModel {
     public string GoogleToken { get; set; }
     public string Email { get; set; }
 }
+
+public class TagCRUDModel {
+    public string? Name { get; set; }
+
+    public required int Price { get; set; }
+
+    public required string BackgroundColor { get; set; }
+
+    public required string TextColor { get; set; }
+
+    public Tag.TagStyle Style { get; set; } = Tag.TagStyle.NORMAL;
+
+    public IFormFile? Icon { get; set; }
+}

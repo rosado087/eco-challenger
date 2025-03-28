@@ -17,18 +17,17 @@ export interface FriendsResponse {
 }
 
 export interface AddFriendRequest {
-    username: string;
-    friendUsername: string;
+    username: string
+    friendUsername: string
 }
 
 export interface AddFriendResponse {
-    success: boolean;
-    message?: string;
-    friendId?: number;
+    success: boolean
+    message?: string
+    friendId?: number
 }
 
-export interface RemoveFriendResponse 
-{
-    success: boolean;
-    message?: string;
+export interface RemoveFriendResponse {
+    success: boolean
+    message?: string
 }

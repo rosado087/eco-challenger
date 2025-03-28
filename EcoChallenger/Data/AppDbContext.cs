@@ -10,7 +10,6 @@ public class AppDbContext : DbContext
     public DbSet<TagUsers> TagUsers { get; set; }
     public DbSet<Friend> Friendships { get; set; }
     public DbSet<Challenge> Challenges { get; set; }
-    //public DbSet<WeeklyChallenge> WeeklyChallenges { get; set; }
     public DbSet<UserChallenges> UserChallenges { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -49,19 +48,28 @@ public class AppDbContext : DbContext
         Tag t1 = new Tag
         {
             Id = 1,
-            Name = "Eco-Warrior"
+            Name = "Eco-Warrior",
+            BackgroundColor = "#355735",
+            TextColor = "#FFFFFF",
+            Price = 10
         };
 
         Tag t2 = new Tag
         {
             Id = 2,
-            Name = "NatureLover"
+            Name = "NatureLover",
+            BackgroundColor = "#355735",
+            TextColor = "#FFFFFF",
+            Price = 50
         };
 
         Tag t3 = new Tag
         {
             Id = 3,
-            Name = "Green Guru"
+            Name = "Green Guru",
+            BackgroundColor = "#355735",
+            TextColor = "#FFFFFF",
+            Price = 55
         };
 
         modelBuilder.Entity<Tag>().HasData(t1, t2, t3);
@@ -231,5 +239,6 @@ public class AppDbContext : DbContext
         };
 
         modelBuilder.Entity<TagUsers>().HasData(tu1,tu2,tu3,tu4);*/
+
     }
 }

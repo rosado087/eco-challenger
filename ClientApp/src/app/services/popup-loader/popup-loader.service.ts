@@ -18,7 +18,7 @@ export class PopupLoaderService {
 
     public showPopup(
         title: string,
-        message: string,
+        message: string = '',
         buttons?: PopupButton[]
     ): void {
         this.componentRef =

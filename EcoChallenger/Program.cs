@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using EcoChallenger.Models;
 using EcoChallenger.Services;
 using EcoChallenger.Utils;
@@ -6,7 +8,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-var builder = WebApplication.CreateBuilder(args);
+var options = new WebApplicationOptions
+{
+    WebRootPath = "wwwroot"
+};
+var builder = WebApplication.CreateBuilder(options);
 
 // Set up JWT authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
@@ -40,6 +46,12 @@ builder.Services.AddControllers(options =>
 {
     // Make the controller authorized by default
     options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+    );
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -57,8 +69,10 @@ else
         options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 }
 
+//Challenges Rotation
 builder.Services.AddHostedService<DailyTaskService>();
 builder.Services.AddHostedService<WeeklyTaskService>();
+
 // Email Service DI
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();

@@ -1,22 +1,50 @@
 <div class="navbar bg-secondary">
     <div class="navbar-start flex">
-        <a routerLink="/" class="text-xl"><app-logo [height]="'4rem'" /></a>
+        <a routerLink="/" class="text-xl mr-2"><app-logo height="4rem" /></a>
         @if (authService.isLoggedIn()) {
-            <ul class="menu menu-horizontal px-1">
+            <ul class="menu menu-horizontal px-1 gap-4">
                 <li><a>Desafios</a></li>
-                <li><a>Loja</a></li>
+                <li><a routerLink="/store">Loja</a></li>
 
                 @if (authService.getUserInfo().isAdmin) {
                     <li>
-                        <details>
-                            <summary>Admin</summary>
-                            <ul class="p-2">
-                                <li><a>Utilizadores</a></li>
-                                <li><a>Desafios</a></li>
-                                <li><a>Tags</a></li>
-                                <li><a>Estatística</a></li>
-                            </ul>
-                        </details>
+                        <div class="dropdown dropdown-end">
+                            <div id="user-option" tabindex="0" role="button">
+                                Admin
+                            </div>
+                            <div
+                                tabindex="0"
+                                class="menu menu-sm dropdown-content bg-base-100 z-1 mt-1 p-2 shadow-sm w-auto">
+                                <div
+                                    class="flex flex-col items-start justify-center">
+                                    <a
+                                        id="Utilizadores"
+                                        class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
+                                        >Utilizadores</a
+                                    >
+
+                                    <a
+                                        id="Desafios"
+                                        class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
+                                        >Desafios</a
+                                    >
+
+                                    <a
+                                        id="Tags"
+                                        class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
+                                        routerLink="/admin/tags"
+                                        >Tags</a
+                                    >
+
+                                    <a
+                                        id="Estatistica"
+                                        class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
+                                        routerLink="/admin/tags"
+                                        >Estatística</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 }
             </ul>
@@ -33,7 +61,8 @@
     } @else {
         <div class="navbar-end flex gap-2">
             <div class="dropdown dropdown-end">
-                <div id="user-option"
+                <div
+                    id="user-option"
                     tabindex="0"
                     role="button"
                     class="btn btn-ghost btn-circle avatar">
@@ -56,8 +85,11 @@
                         class="py-2 text-sm text-gray-700"
                         aria-labelledby="dropdownInformationButton">
                         <li>
-                            <a id="profile"
-                                routerLink="/user-profile/{{this.authService.getUserInfo().id}}"
+                            <a
+                                id="profile"
+                                routerLink="/user-profile/{{
+                                    this.authService.getUserInfo().id
+                                }}"
                                 class="block px-4 py-2 hover:bg-gray-100"
                                 >Profile</a
                             >
