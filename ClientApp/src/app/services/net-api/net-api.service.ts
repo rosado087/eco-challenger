@@ -17,7 +17,6 @@ export class NetApiService {
         action: string,
         ...routeParams: string[]
     ): Observable<T> {
-      console.log(this.baseUrl)
         return this.http.get<T>(this.#buildUrl(controller, action, routeParams))
     }
 
