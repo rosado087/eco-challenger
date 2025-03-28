@@ -114,7 +114,12 @@ export class ResetPasswordComponent implements OnInit {
         }
 
         this.netApi
-            .get<SuccessModel>('RecoverPassword', 'CheckToken', this.resetToken)
+            .get<SuccessModel>(
+                'RecoverPassword',
+                'CheckToken',
+                undefined,
+                this.resetToken
+            )
             .subscribe({
                 next: (data) => {
                     if (!data.success) this.router.navigate(['/'])

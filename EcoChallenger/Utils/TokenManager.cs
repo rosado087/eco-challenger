@@ -86,7 +86,8 @@ namespace EcoChallenger.Utils
                 new (JwtRegisteredClaimNames.Email, user.Email),
                 new ("userid", user.Id.ToString()),
                 new ("username", user.Username),
-                new ("isAdmin", user.IsAdmin.ToString(), ClaimValueTypes.Boolean)
+                new ("isAdmin", user.IsAdmin.ToString(), ClaimValueTypes.Boolean),
+                new (ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor {

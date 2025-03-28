@@ -1,0 +1,45 @@
+<main class="container mx-auto px-4 mt-4 pb-4">
+    <div class="card w-auto bg-base-100 shadow-md border border-base-300">
+        <div class="card-body">
+            <div class="flex justify-center">
+                <h2 class="text-2xl font-bold">Loja</h2>
+            </div>
+
+            <div class="flex flex-col gap-6">
+                <div class="flex flex-row justify-end">
+                    <!-- Floating points badge -->
+                    <div
+                        class="shadow-md border border-green-300 backdrop-blur-sm bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                        <app-eco-points-icon width="16px" />
+                        {{ userPoints }}
+                    </div>
+                </div>
+
+                <!-- Tags to purchase container -->
+                <div
+                    class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 justify-items-center">
+                    @if (tags) {
+                        @for (tag of tags; track $index) {
+                            <app-store-tag
+                                [bought]="tag.owned || false"
+                                (buyClick)="buyTag(tag.id)"
+                                [price]="tag.price">
+                                <app-tag
+                                    [backgroundColor]="tag.backgroundColor"
+                                    [textColor]="tag.textColor"
+                                    [text]="tag.name"
+                                    [type]="tag.style"
+                                    [icon]="tag.icon" />
+                            </app-store-tag>
+                        }
+                    } @else {
+                        <!-- Render skeleton for placeholder -->
+                        @for (_ of [].constructor(15); track $index) {
+                            <div class="skeleton h-[80px] w-[382px]"></div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

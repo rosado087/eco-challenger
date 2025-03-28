@@ -5,5 +5,9 @@
     "pathRewrite": {
       "^/api": ""
     }
+  },
+  "/tag-images": {
+    "target": "http://localhost:5294",
+    "secure": false
   }
 }

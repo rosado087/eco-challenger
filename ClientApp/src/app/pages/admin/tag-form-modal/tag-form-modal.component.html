@@ -1,0 +1,225 @@
+<dialog #tagModal id="my_modal_1" class="modal">
+    <div class="modal-box">
+        <form method="dialog">
+            <button
+                (click)="closeClick.emit()"
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+            </button>
+        </form>
+
+        <!-- Modal Body -->
+        <div class="flex flex-col">
+            <div class="flex flex-row justify-center">
+                @if (isEditMode()) {
+                    <h3 class="text-lg font-bold">Editar Tag</h3>
+                } @else {
+                    <h3 class="text-lg font-bold">Criar Tag</h3>
+                }
+            </div>
+
+            <form class="flex flex-col gap-2" [formGroup]="tagForm">
+                <div class="flex flex-row gap-6">
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend">Nome</legend>
+                        <label
+                            class="input input-bordered flex items-center gap-2">
+                            <input
+                                formControlName="name"
+                                type="text"
+                                class="grow" />
+                        </label>
+                        @if (
+                            this.tagForm.get('name')?.invalid &&
+                            (this.tagForm.get('name')?.dirty ||
+                                this.tagForm.get('name')?.touched)
+                        ) {
+                            @if (
+                                this.tagForm
+                                    .get('name')
+                                    ?.hasError('nameOrIconRequired')
+                            ) {
+                                <div class="validator-hint text-red-500">
+                                    A Tag deve pelo menos ou um nome, ou um
+                                    icon.
+                                </div>
+                            }
+                        }
+                    </fieldset>
+
+                    <fieldset class="fieldset w-[50%]">
+                        <legend class="fieldset-legend">Estilo</legend>
+                        <select class="select" formControlName="style">
+                            <option disabled selected>Escolha um estilo</option>
+                            <option value="normal">Normal</option>
+                            <option value="soft">Soft</option>
+                            <option value="outline">Outline</option>
+                            <option value="dash">Dash</option>
+                        </select>
+                        @if (
+                            this.tagForm.get('style')?.invalid &&
+                            (this.tagForm.get('style')?.dirty ||
+                                this.tagForm.get('style')?.touched)
+                        ) {
+                            @if (
+                                this.tagForm.get('style')?.hasError('required')
+                            ) {
+                                <div class="validator-hint text-red-500">
+                                    Este campo é obrigatório.
+                                </div>
+                            }
+                        }
+                    </fieldset>
+                </div>
+
+                <div class="flex flex-row gap-6">
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend">Cor de Fundo</legend>
+                        <label
+                            class="input input-bordered flex items-center gap-2">
+                            <input
+                                formControlName="backgroundColor"
+                                type="text"
+                                class="grow" />
+                        </label>
+                        @if (
+                            this.tagForm.get('backgroundColor')?.invalid &&
+                            (this.tagForm.get('backgroundColor')?.dirty ||
+                                this.tagForm.get('backgroundColor')?.touched)
+                        ) {
+                            @if (
+                                this.tagForm
+                                    .get('backgroundColor')
+                                    ?.hasError('required')
+                            ) {
+                                <div class="validator-hint text-red-500">
+                                    Este campo é obrigatório.
+                                </div>
+                            }
+                        }
+                    </fieldset>
+
+                    <fieldset class="fieldset w-[50%]">
+                        <legend class="fieldset-legend">Icon</legend>
+                        <label class="flex items-center gap-2">
+                            <input
+                                formControlName="icon"
+                                type="file"
+                                class="file-input"
+                                accept="image/*"
+                                (change)="onImagePicked($event)" />
+                        </label>
+                        @if (
+                            this.tagForm.get('icon')?.invalid &&
+                            (this.tagForm.get('icon')?.dirty ||
+                                this.tagForm.get('icon')?.touched)
+                        ) {
+                            @if (
+                                this.tagForm
+                                    .get('icon')
+                                    ?.hasError('nameOrIconRequired')
+                            ) {
+                                <div class="validator-hint text-red-500">
+                                    A Tag deve pelo menos ou um nome, ou um
+                                    icon.
+                                </div>
+                            } @else if (
+                                this.tagForm
+                                    .get('icon')
+                                    ?.hasError('IconMustBeImage')
+                            ) {
+                                <div class="validator-hint text-red-500">
+                                    O ficheiro selecionado deve ser uma imagem.
+                                </div>
+                            }
+                        }
+                    </fieldset>
+                </div>
+
+                <div class="flex flex-row gap-6">
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend">Cor do Texto</legend>
+                        <label
+                            class="input input-bordered flex items-center gap-2">
+                            <input
+                                formControlName="textColor"
+                                type="text"
+                                class="grow" />
+                        </label>
+                        <p class="fieldset-label">
+                            Este campo é ignorado com estilo soft.
+                        </p>
+                        @if (
+                            this.tagForm.get('textColor')?.invalid &&
+                            (this.tagForm.get('textColor')?.dirty ||
+                                this.tagForm.get('textColor')?.touched)
+                        ) {
+                            @if (
+                                this.tagForm
+                                    .get('textColor')
+                                    ?.hasError('required')
+                            ) {
+                                <div class="validator-hint text-red-500">
+                                    Este campo é obrigatório.
+                                </div>
+                            }
+                        }
+                    </fieldset>
+
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend">Preço</legend>
+                        <label
+                            class="input input-bordered flex items-center gap-2">
+                            <input
+                                formControlName="price"
+                                type="number"
+                                class="grow" />
+                        </label>
+                        @if (
+                            this.tagForm.get('price')?.invalid &&
+                            (this.tagForm.get('price')?.dirty ||
+                                this.tagForm.get('price')?.touched)
+                        ) {
+                            @if (
+                                this.tagForm.get('price')?.hasError('required')
+                            ) {
+                                <div class="validator-hint text-red-500">
+                                    Este campo é obrigatório.
+                                </div>
+                            }
+                        }
+                    </fieldset>
+                </div>
+            </form>
+
+            <!-- Preview of the tag -->
+            <div class="flex flex-col gap-2 my-8 items-center">
+                <h3 class="text-md font-bold">Pré-visualização</h3>
+                <app-tag
+                    [backgroundColor]="getPreviewBackgroundColor()"
+                    [textColor]="getPreviewTextColor()"
+                    [text]="tagForm.get('name')?.value"
+                    [type]="getPreviewStyle()"
+                    [icon]="
+                        !tagForm.get('icon')?.value ? loadedTag?.icon : null
+                    "
+                    [iconRawData]="tagForm.get('icon')?.value" />
+            </div>
+
+            <div class="card-actions justify-center">
+                <div class="flex flex-col items-center">
+                    <app-button text="Submeter" (btnClick)="submitRecord()" />
+                    @if (formError) {
+                        <div class="validator-hint text-red-500">
+                            {{ formError }}
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <!---------------->
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button (click)="closeClick.emit()">close</button>
+    </form>
+</dialog>

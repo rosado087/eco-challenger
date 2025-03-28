@@ -9,10 +9,11 @@
                     Perfil de Utilizador
                 </h2>
                 @if (userId === this.id) {
-                    <ng-icon id="edit-info"
-                    name="heroPencil"
-                    class="ml-5"
-                    (click)="editProfile()" />
+                    <ng-icon
+                        id="edit-info"
+                        name="heroPencil"
+                        class="ml-5"
+                        (click)="editProfile()" />
                 }
             </div>
 
@@ -25,7 +26,8 @@
 
                     <div class="flex items-center gap-2">
                         @if (isEditing) {
-                            <input id="edit-username"
+                            <input
+                                id="edit-username"
                                 type="text"
                                 [(ngModel)]="username"
                                 formControlName="editUserName"
@@ -53,24 +55,26 @@
                     </div>
                 </div>
 
-                @if (userId === this.id){
+                @if (userId === this.id) {
                     <!-- Email -->
                     <div class="mt-4">
                         <span class="font-medium text-gray-700">Email:</span>
                         <p class="text-gray-600">{{ email }}</p>
                     </div>
                 }
-                
+
                 <!-- Tag -->
                 <div class="mt-4">
                     <span class="font-medium text-gray-700">Tag:</span>
                     @if (isEditing) {
                         <div class="flex items-center gap-2">
-                            <select id="edit-tag"
+                            <select
+                                id="edit-tag"
                                 [(ngModel)]="tag"
                                 formControlName="tag"
                                 class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator">
-                                <option id="option-{{tagOption}}"
+                                <option
+                                    id="option-{{ tagOption }}"
                                     *ngFor="let tagOption of availableTags"
                                     [value]="tagOption">
                                     {{ tagOption }}
@@ -91,19 +95,19 @@
                 <!-- Botões -->
 
                 @if (isEditing) {
-
-                    <div class="mt-4 flex justify-evenly">                        
-                        <button id="edit-cancel"
-                            class="btn btn-outline btn-error" 
+                    <div class="mt-4 flex justify-evenly">
+                        <button
+                            id="edit-cancel"
+                            class="btn btn-outline btn-error"
                             (click)="cancelEdit()">
                             Cancelar
                         </button>
-                    
-                        <app-button id="edit-save"
+
+                        <app-button
+                            id="edit-save"
                             text="Editar"
                             (btnClick)="confirmEdit()" />
                     </div>
-                    
                 }
             </form>
         </div>
@@ -114,12 +118,13 @@
                 <h2 class="text-xl font-semibold text-gray-700">
                     Lista de amigos
                 </h2>
-                @if (userId === this.authService.getUserInfo().id){
-                    <button id="add-friend-modal"
-                    (click)="showAddFriendModal = true"
-                    class="text-green-600 hover:text-green-800 text-lg font-bold">
-                    +
-                </button>
+                @if (userId === this.authService.getUserInfo().id) {
+                    <button
+                        id="add-friend-modal"
+                        (click)="showAddFriendModal = true"
+                        class="text-green-600 hover:text-green-800 text-lg font-bold">
+                        +
+                    </button>
                 }
             </div>
 
@@ -132,7 +137,8 @@
                             class="border-b">
                             <td class="p-2">{{ friend.username }}</td>
                             <td class="p-2">
-                                <button id="view-{{friend.username}}"
+                                <button
+                                    id="view-{{ friend.username }}"
                                     (click)="viewProfile(friend.id)"
                                     class="text-green-600 hover:text-green-800">
                                     Ver perfil
@@ -140,7 +146,8 @@
                             </td>
                             @if (userId === this.authService.getUserInfo().id) {
                                 <td class="p-2">
-                                    <button id="rem-{{friend.username}}"
+                                    <button
+                                        id="rem-{{ friend.username }}"
                                         (click)="
                                             selectedFriendIndex = i;
                                             showRemoveFriendModal = true
@@ -164,7 +171,8 @@
         </div>
 
         <!-- MODAL: ADICIONAR AMIGO -->
-        <div id="add-div"
+        <div
+            id="add-div"
             *ngIf="showAddFriendModal"
             class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -179,7 +187,7 @@
                         class="block text-gray-700 font-medium mb-1"
                         >Nome de utilizador:</label
                     >
-                    <input 
+                    <input
                         id="input-add"
                         type="text"
                         (input)="findUser()"
@@ -195,7 +203,8 @@
                             <tr
                                 *ngFor="let username of userList; let i = index"
                                 class="border-b">
-                                <td id="pos-{{username}}"
+                                <td
+                                    id="pos-{{ username }}"
                                     class="p-2 cursor-pointer"
                                     [class.bg-green-600]="
                                         username === selectedUser
@@ -212,16 +221,18 @@
                 </div>
 
                 <!-- Botões -->
-                <div class="mt-4 flex justify-evenly">  
-                    <app-button id="add-friend-modal"
+                <div class="mt-4 flex justify-evenly">
+                    <app-button
+                        id="add-friend-modal"
                         text="Adicionar"
                         (btnClick)="addFriend()" />
 
-                    <button id="add-cancel"
-                        class="btn btn-outline btn-error" 
+                    <button
+                        id="add-cancel"
+                        class="btn btn-outline btn-error"
                         (click)="showAddFriendModal = false">
                         Cancelar
-                    </button>                        
+                    </button>
                 </div>
             </div>
         </div>
@@ -238,16 +249,18 @@
 
                 <!-- Botões -->
                 <!-- Botões -->
-                <div class="mt-4 flex justify-evenly">  
-                    <app-button id="confirm-rem"
+                <div class="mt-4 flex justify-evenly">
+                    <app-button
+                        id="confirm-rem"
                         text="Sim"
                         (click)="removeFriend(selectedFriendIndex)" />
 
-                    <button id="rem-cancel"
-                        class="btn btn-outline btn-error" 
+                    <button
+                        id="rem-cancel"
+                        class="btn btn-outline btn-error"
                         (click)="showRemoveFriendModal = false">
                         Não
-                    </button>                        
+                    </button>
                 </div>
             </div>
         </div>

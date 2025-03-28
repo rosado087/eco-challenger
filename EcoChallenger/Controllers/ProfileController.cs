@@ -129,6 +129,7 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
+        /// TODO: Remove this from there and replace the frontend call
         /// Gets all tags that the user owns.
         /// </summary>
         /// <param name="id">Id of the user</param>
@@ -287,6 +288,29 @@ namespace EcoChallenger.Controllers
             await _ctx.SaveChangesAsync();
 
             return new JsonResult(new { success = true, message = "Amizade removida com sucesso" });
+        }
+
+        /// <summary>
+        /// Gets the amount of points a user has
+        /// </summary>
+        /// <returns>
+        /// Returns the amount of points
+        /// </returns>
+        [HttpGet]
+        [Route("points")]
+        public async Task<IActionResult> GetUserPoint()
+        {
+            try {
+                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == UserContext.Id);
+
+                if(user == null) throw new InvalidOperationException("No matching user was found.");
+
+                return Ok(user.Points);
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return StatusCode(500, "An error occurred fetching user points.");
+            }
         }
     }
 }
