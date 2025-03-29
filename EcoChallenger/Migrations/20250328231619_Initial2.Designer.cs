@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250328231619_Initial2")]
+    partial class Initial2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,23 +248,7 @@ namespace EcoChallenger.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BackgroundColor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Icon")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Style")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TextColor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -273,29 +260,17 @@ namespace EcoChallenger.Migrations
                         new
                         {
                             Id = 1,
-                            BackgroundColor = "#355735",
-                            Name = "Eco-Warrior",
-                            Price = 10,
-                            Style = 0,
-                            TextColor = "#FFFFFF"
+                            Name = "Eco-Warrior"
                         },
                         new
                         {
                             Id = 2,
-                            BackgroundColor = "#355735",
-                            Name = "NatureLover",
-                            Price = 50,
-                            Style = 0,
-                            TextColor = "#FFFFFF"
+                            Name = "NatureLover"
                         },
                         new
                         {
                             Id = 3,
-                            BackgroundColor = "#355735",
-                            Name = "Green Guru",
-                            Price = 55,
-                            Style = 0,
-                            TextColor = "#FFFFFF"
+                            Name = "Green Guru"
                         });
                 });
 

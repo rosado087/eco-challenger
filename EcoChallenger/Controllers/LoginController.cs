@@ -1,7 +1,10 @@
+using EcoChallenger.Models;
+using EcoChallenger.Services;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace EcoChallenger.Controllers
 {
@@ -10,12 +13,14 @@ namespace EcoChallenger.Controllers
         private readonly AppDbContext _ctx;
         private readonly IConfiguration _configuration;
         private readonly ILogger<LoginController> _logger;
+        private Random _random;
 
         public LoginController(AppDbContext context, IConfiguration configuration, ILogger<LoginController> logger)
         {
             _ctx = context;
             _configuration = configuration;
             _logger = logger;
+            _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
         }
 
         [AllowAnonymous]
@@ -96,7 +101,52 @@ namespace EcoChallenger.Controllers
                         GoogleToken = data.GoogleToken
                     };
                     await _ctx.Users.AddAsync(newUser);
+
+                    var dailyChallenges = await _ctx.Challenges.Where(c => c.Type == "Daily").ToListAsync();
+
+                    List<Challenge> challenges = [];
+
+                    while (challenges.Count < 3)
+                    {
+                        var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
+
+                        if (challenge != null && !challenges.Contains(challenge))
+                        {
+                            await _ctx.UserChallenges.AddAsync(new UserChallenges
+                            {
+                                Challenge = challenge,
+                                User = newUser,
+                                WasConcluded = false
+                            });
+
+                            challenges.Add(challenge);
+                        }
+                    }
+
+                    var weeklyChallenges = await _ctx.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
+
+                    challenges = [];
+
+                    while (challenges.Count < 2)
+                    {
+                        var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
+
+                        if (challenge != null && !challenges.Contains(challenge))
+                        {
+                            await _ctx.UserChallenges.AddAsync(new UserChallenges
+                            {
+                                Challenge = challenge,
+                                User = newUser,
+                                Progress = 0,
+                                WasConcluded = false
+                            });
+                            challenges.Add(challenge);
+                        }
+                    }
+
                     await _ctx.SaveChangesAsync();
+
+
 
                     token = TokenManager.GenerateJWT(newUser);
                     
@@ -134,5 +184,7 @@ namespace EcoChallenger.Controllers
                 return new JsonResult(new { success = false, message = "Ocorreu um erro ao efetuar o login com Google Authentication."});
             }
         }
+
+        
     }
 }
