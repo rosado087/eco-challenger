@@ -7,11 +7,12 @@
       <ul class="list bg-base-100 rounded-box shadow-md">
         <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
   
-        <li class="list-row">
+        <li class="list-row"
+        *ngFor="let challenge of dailyChallengesToDo">
           <div></div>
           <div>
-            <div>Desafio tal</div>
-            <div class="text-xs uppercase font-semibold opacity-60">Desafio Diário</div>
+            <div>{{ challenge.title }}</div>
+            <div class="text-xs uppercase font-semibold opacity-60">Desafio {{ challenge.type.toUpperCase() }}</div>
           </div>
           <button class="btn btn-primary btn-sm">Concluir</button>
         </li>
