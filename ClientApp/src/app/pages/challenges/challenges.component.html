@@ -1,79 +1,89 @@
 <!-- DAILY CHALLENGES -->
 <section class="max-w-6xl mx-auto mb-16">
-  <h2 class="text-2xl font-bold text-center mb-6">Desafios Diários</h2>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- TO COMPLETE -->
-    <ul class="list bg-base-100 rounded-box shadow-md">
-      <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
-      <li class="list-row">
-        <div></div>
-        <div>
-          <div>Desafio tal</div>
-          <div class="text-xs uppercase font-semibold opacity-60">Desafio Diário</div>
-        </div>
-        <button class="btn btn-primary btn-sm">Concluir</button>
-      </li>
-      <li class="list-row">
-        <div></div>
-        <div>
-          <div>Desafio tal</div>
-          <div class="text-xs uppercase font-semibold opacity-60">Desafio Diário</div>
-        </div>
-        <button class="btn btn-primary btn-sm">Concluir</button>
-      </li>
-    </ul>
-    <!-- COMPLETED -->
-    <ul class="list bg-base-100 rounded-box shadow-md">
-      <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
-      <li class="list-row">
-        <div></div>
-        <div>
-          <div>Desafio tal</div>
-          <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
-        </div>
-      </li>
-      <li class="list-row">
-        <div></div>
-        <div>
-          <div>Desafio tal</div>
-          <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
-        </div>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- WEEKLY CHALLENGES -->
-<section class="max-w-6xl mx-auto">
-  <h2 class="text-2xl font-bold text-center mb-6">Desafios Semanais</h2>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    
-    <!-- TO COMPLETE -->
-    <ul class="list bg-base-100 rounded-box shadow-md">
-      <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
-      <li class="list-row">
-        <div></div>
-        <div>
-          <div>Desafio tal</div>
-          <div class="text-xs uppercase font-semibold opacity-60">Desafio Semanal</div>
-        </div>
-        <div class="flex gap-2">
+    <h2 class="text-2xl font-bold text-center mb-6">Desafios Diários</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- TO COMPLETE -->
+      <ul class="list bg-base-100 rounded-box shadow-md">
+        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
+  
+        <li class="list-row"
+        *ngFor="let challenge of dailyChallengesToDo">
+          <div></div>
+          <div>
+            <div>{{ challenge.title }}</div>
+            <div class="text-xs uppercase font-semibold opacity-60">Desafio {{ challenge.type.toUpperCase() }}</div>
+          </div>
           <button class="btn btn-primary btn-sm">Concluir</button>
-          <button class="btn btn-primary btn-sm">+ Progresso</button>
-        </div>
-      </li>
-    </ul>
-
-    <!-- COMPLETED -->
-    <ul class="list bg-base-100 rounded-box shadow-md">
-      <li class="p-5 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
-      <li class="list-row">
-        <div></div>
-        <div>
-          <div>Desafio tal</div>
-          <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
-        </div>
-      </li>
-    </ul>
-  </div>
-</section>
+        </li>
+  
+        <li class="list-row">
+          <div></div>
+          <div>
+            <div>Desafio tal</div>
+            <div class="text-xs uppercase font-semibold opacity-60">Desafio Diário</div>
+          </div>
+          <button class="btn btn-primary btn-sm">Concluir</button>
+        </li>
+      </ul>
+  
+      <!-- COMPLETED -->
+      <ul class="list bg-base-100 rounded-box shadow-md">
+        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
+  
+        <li class="list-row">
+          <div></div>
+          <div>
+            <div>Desafio tal</div>
+            <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
+          </div>
+        </li>
+  
+        <li class="list-row">
+          <div></div>
+          <div>
+            <div>Desafio tal</div>
+            <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+  
+  <!-- WEEKLY CHALLENGES -->
+  <section class="max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-6">Desafios Semanais</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- TO COMPLETE -->
+      <ul class="list bg-base-100 rounded-box shadow-md">
+        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
+  
+        <li class="list-row">
+          <div></div>
+          <div>
+            <div>Desafio tal</div>
+            <div class="text-xs uppercase font-semibold opacity-60">Desafio Semanal</div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-primary btn-sm">Concluir</button>
+            <button class="btn btn-primary btn-sm">+ Progresso</button>
+          </div>
+        </li>
+      </ul>
+  
+      <!-- COMPLETED -->
+      <ul class="list bg-base-100 rounded-box shadow-md">
+        <li class="p-5 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
+  
+        <li class="list-row">
+          <div></div>
+          <div>
+            <div>Desafio tal</div>
+            <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+  
