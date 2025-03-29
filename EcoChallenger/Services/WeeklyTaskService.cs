@@ -14,7 +14,7 @@ namespace EcoChallenger.Services
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
+            _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd"))); 
         }
 
         /// <summary>
