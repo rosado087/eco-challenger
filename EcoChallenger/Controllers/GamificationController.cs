@@ -24,8 +24,8 @@ namespace EcoChallenger.Controllers
         [HttpGet("GetChallenges/")]
         public async Task<JsonResult> GetChallenges()
         {
-            var weeklyChallenges = await _ctx.UserChallenges.Where(x => x.User.Id == UserContext.Id && x.Challenge.Type == "Weekly").Select(x => new{x.Challenge, x.Progress, x.WasConcluded }).ToListAsync();
-            var dailyChallenges = await _ctx.UserChallenges.Where(x => x.User.Id == UserContext.Id && x.Challenge.Type == "Daily").Select(x => new { x.Challenge, x.WasConcluded }).ToListAsync();
+            var weeklyChallenges = await _ctx.UserChallenges.Where(x => x.User.Id == UserContext.Id && x.Challenge.Type == "Weekly").Select(x => new{challenge = x.Challenge, progress = x.Progress, wasConcluded = x.WasConcluded }).ToListAsync();
+            var dailyChallenges = await _ctx.UserChallenges.Where(x => x.User.Id == UserContext.Id && x.Challenge.Type == "Daily").Select(x => new { challenge = x.Challenge, wasConcluded = x.WasConcluded }).ToListAsync();
             if (weeklyChallenges == null || dailyChallenges == null)
                 return new JsonResult(new { success = false, message = "Ocorreu um problema ao encontrar  os desafios atribuidos." });
 
