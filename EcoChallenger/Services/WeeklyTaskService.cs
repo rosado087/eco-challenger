@@ -6,13 +6,13 @@ namespace EcoChallenger.Services
 {
     public class WeeklyTaskService : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<WeeklyTaskService> _logger;
         private Random _random;
 
-        public WeeklyTaskService(IServiceProvider serviceProvider, ILogger<WeeklyTaskService> logger)
+        public WeeklyTaskService(IServiceScopeFactory serviceScopeFactory, ILogger<WeeklyTaskService> logger)
         {
-            _serviceProvider = serviceProvider;
+            _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
             _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd"))); 
         }
@@ -32,7 +32,7 @@ namespace EcoChallenger.Services
 
                 try
                 {
-                    using (var scope = _serviceProvider.CreateScope())
+                    using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                         var weeklyChallenges = await dbContext.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
@@ -84,7 +84,7 @@ namespace EcoChallenger.Services
 
         public async void UpdateUserChallenges(User user)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var weeklyChallenges = await dbContext.Challenges.Where(c => c.Type == "Weekly").ToListAsync();

@@ -130,7 +130,10 @@ namespace EcoChallengerTest.IntegrationTest
 
             var user = new User { Username = "taggeduser", Email = "taggeduser@example.com" };
             context.Users.Add(user);
-            context.TagUsers.Add(new TagUsers { User = user, Tag = new Tag { Name = "EcoWarrior" }, SelectedTag = true });
+            context.TagUsers.Add(new TagUsers { User = user, Tag = new Tag { Name = "EcoWarrior" ,Price = 10,
+                BackgroundColor = "#355735",
+                TextColor = "#FFFFFF"
+            }, SelectedTag = true });
             await context.SaveChangesAsync();
 
             var token = TokenManager.GenerateJWT(user);

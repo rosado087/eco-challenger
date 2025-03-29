@@ -198,7 +198,11 @@ namespace EcoChallengerTest.UnitTest
             {
                 SelectedTag = true,
                 User = testUser,
-                Tag = new Tag { Name = "EcoWarrior" }
+                Tag = new Tag { Name = "EcoWarrior",
+                    Price = 10,
+                    BackgroundColor = "#355735",
+                    TextColor = "#FFFFFF"
+                }
             };
 
             _dbContext.Users.Add(testUser);
@@ -283,7 +287,7 @@ namespace EcoChallengerTest.UnitTest
             var user = new User {Username = "OldName", Email = "user@example.com", Points = 10 };
             _dbContext.Users.Add(user);
 
-            var tag = new Tag {Name = "Eco-Warrior"};
+            var tag = new Tag {Name = "Eco-Warrior", Price = 10, BackgroundColor = "#355735", TextColor = "#FFFFFF" };
             _dbContext.Tags.Add(tag);
             
             var tu = new TagUsers {User = user, Tag = tag, SelectedTag = false};
@@ -386,8 +390,8 @@ namespace EcoChallengerTest.UnitTest
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
 
-            var tag1 = new Tag { Name = "EcoWarrior" };
-            var tag2 = new Tag { Name = "Recycler" };
+            var tag1 = new Tag {Name = "EcoWarrior", Price = 10, BackgroundColor = "#355735", TextColor = "#FFFFFF" };
+            var tag2 = new Tag {Name = "Recycler", Price = 10, BackgroundColor = "#355735", TextColor = "#FFFFFF" };
             _dbContext.Tags.AddRange(tag1, tag2);
             await _dbContext.SaveChangesAsync();
 
