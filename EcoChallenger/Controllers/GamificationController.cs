@@ -22,7 +22,7 @@ namespace EcoChallenger.Controllers
         /// challenges of the user</returns>
 
         [HttpGet("GetChallenges/{id}")]
-        public async Task<JsonResult> GenerateToken(int id)
+        public async Task<JsonResult> GetChallenges(int id)
         {
             var weeklyChallenges = await _ctx.UserChallenges.Where(x => x.User.Id == id && x.Challenge.Type == "Weekly").Select(x => new{x.Challenge, x.Progress, x.WasConcluded }).ToListAsync();
             var dailyChallenges = await _ctx.UserChallenges.Where(x => x.User.Id == id && x.Challenge.Type == "Daily").Select(x => new { x.Challenge, x.WasConcluded }).ToListAsync();
