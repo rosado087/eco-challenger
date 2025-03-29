@@ -33,10 +33,6 @@ public class DailyTaskService : BackgroundService
             var nextRun = now.Date.AddDays(1);
             var delay = nextRun - now;
 
-            _logger.LogInformation($"{now}Próxima rotação de desafios diários é {nextRun}");
-
-            await Task.Delay(delay, stoppingToken);
-
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
@@ -83,6 +79,10 @@ public class DailyTaskService : BackgroundService
             {
                 _logger.LogError(ex, "Erro ao fazer rotação dos desafios diários");
             }
+
+            _logger.LogInformation($"Próxima rotação de desafios diários é {nextRun}");
+            await Task.Delay(delay, stoppingToken);
+            
         }
     }
 
