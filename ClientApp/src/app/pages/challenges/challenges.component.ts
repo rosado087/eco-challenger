@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component, inject, OnInit } from '@angular/core';
 import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
 import { NetApiService } from '../../services/net-api/net-api.service'
@@ -55,4 +56,16 @@ export class ChallengesComponent implements OnInit {
         }
       })
   }
+=======
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-challenges',
+  imports: [],
+  templateUrl: './challenges.component.html',
+  styleUrl: './challenges.component.css'
+})
+export class ChallengesComponent {
+
+>>>>>>> 3bdd3dac26703734ee9dac16e8400c52b1374668
 }
