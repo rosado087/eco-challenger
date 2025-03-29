@@ -3,16 +3,17 @@
 
 using EcoChallenger.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 public class DailyTaskService : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ILogger<DailyTaskService> _logger;
     private Random _random;
 
-    public DailyTaskService(IServiceProvider serviceProvider, ILogger<DailyTaskService> logger)
+    public DailyTaskService(IServiceScopeFactory serviceScopeFactory, ILogger<DailyTaskService> logger)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScopeFactory = serviceScopeFactory;
         _logger = logger;
         _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
         
@@ -35,7 +36,7 @@ public class DailyTaskService : BackgroundService
 
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                     var dailyChallenges = await dbContext.Challenges.Where(c => c.Type == "Daily").ToListAsync();
@@ -89,7 +90,7 @@ public class DailyTaskService : BackgroundService
     public async void UpdateUserChallenges(User user)
     {
         
-        using (var scope = _serviceProvider.CreateScope())
+        using (var scope = _serviceScopeFactory.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var dailyChallenges = await dbContext.Challenges.ToListAsync();
