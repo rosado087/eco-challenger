@@ -7,10 +7,10 @@ namespace EcoChallenger.Services
     public class WeeklyTaskService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<DailyTaskService> _logger;
+        private readonly ILogger<WeeklyTaskService> _logger;
         private Random _random;
 
-        public WeeklyTaskService(IServiceProvider serviceProvider, ILogger<DailyTaskService> logger)
+        public WeeklyTaskService(IServiceProvider serviceProvider, ILogger<WeeklyTaskService> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -29,10 +29,6 @@ namespace EcoChallenger.Services
                 var now = DateTime.Now;
                 var nextRun = now.Date.AddDays(7);
                 var delay = nextRun - now;
-
-                _logger.LogInformation($"Próxima rotação de desafios semanais é {nextRun}");
-
-                await Task.Delay(delay, stoppingToken);
 
                 try
                 {
@@ -79,6 +75,10 @@ namespace EcoChallenger.Services
                 {
                     _logger.LogError(ex, "Erro ao fazer rotação dos desafios semanais");
                 }
+
+                _logger.LogInformation($"Próxima rotação de desafios semanais é {nextRun}");
+                await Task.Delay(delay, stoppingToken);
+
             }
         }
 
