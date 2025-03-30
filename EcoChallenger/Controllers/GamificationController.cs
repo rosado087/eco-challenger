@@ -1,4 +1,5 @@
-﻿using EcoChallenger.Utils;
+﻿using EcoChallenger.Models;
+using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,26 @@ namespace EcoChallenger.Controllers
                 dailyChallenges = dailyChallenges,
                 weeklyChallenges = weeklyChallenges,
             });
+        }
+
+        /// <summary>
+        /// Completes a challenge.
+        /// </summary>
+        /// <param name="id">Id of the completed challenge.</param>
+        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns </returns>
+        [HttpPost("CompleteChallenge/{id}")]
+        public async Task<JsonResult> CompleteChallenge(int id)
+        {
+            var userChallenge = await _ctx.UserChallenges.FirstOrDefaultAsync(x => x.Challenge.Id == id && x.User.Id == UserContext.Id && x.WasConcluded == false);
+
+            if (userChallenge == null)
+                return new JsonResult(new {success = false, message = "O desafio não existe." });
+
+            userChallenge.User.Points += userChallenge.Challenge.Points;
+            userChallenge.WasConcluded = true;
+            await _ctx.SaveChangesAsync();
+
+            return new JsonResult(new {success = true, message = "Desafio concluido com sucesso." });
         }
     }
 }
