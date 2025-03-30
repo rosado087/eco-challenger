@@ -30,7 +30,7 @@ namespace EcoChallenger.Migrations
                     table.PrimaryKey("PK_Challenges", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Friendships",
                 columns: table => new
                 {
@@ -43,8 +43,9 @@ namespace EcoChallenger.Migrations
                 {
                     table.PrimaryKey("PK_Friendships", x => x.Id);
                 });
+                */
 
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Tags",
                 columns: table => new
                 {
@@ -106,7 +107,7 @@ namespace EcoChallenger.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
+            */
             migrationBuilder.CreateTable(
                 name: "UserChallenges",
                 columns: table => new
@@ -135,7 +136,7 @@ namespace EcoChallenger.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "UserTokens",
                 columns: table => new
                 {
@@ -157,7 +158,7 @@ namespace EcoChallenger.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
+            */
             migrationBuilder.InsertData(
                 table: "Challenges",
                 columns: new[] { "Id", "Description", "MaxProgress", "Points", "Title", "Type" },
@@ -180,7 +181,7 @@ namespace EcoChallenger.Migrations
                     { 15, "Description 5", 4, 80, "Weekly Challenge 5", "Weekly" }
                 });
 
-            migrationBuilder.InsertData(
+            /*migrationBuilder.InsertData(
                 table: "Tags",
                 columns: new[] { "Id", "BackgroundColor", "Icon", "Name", "Price", "Style", "TextColor" },
                 values: new object[,]
@@ -209,6 +210,7 @@ namespace EcoChallenger.Migrations
                 name: "IX_TagUsers_UserId",
                 table: "TagUsers",
                 column: "UserId");
+            */
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserChallenges_ChallengeId",
@@ -220,10 +222,12 @@ namespace EcoChallenger.Migrations
                 table: "UserChallenges",
                 column: "UserId");
 
+            /*
             migrationBuilder.CreateIndex(
                 name: "IX_UserTokens_UserId",
                 table: "UserTokens",
                 column: "UserId");
+            */
         }
 
         /// <inheritdoc />
