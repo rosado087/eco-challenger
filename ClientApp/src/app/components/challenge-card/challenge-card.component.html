@@ -1,0 +1,21 @@
+<li class="list-row">
+    <div></div>
+    <div>
+      <div>{{ title() }}</div>
+      <div class="text-xs uppercase font-semibold opacity-60">
+        DESAFIO {{ type().toUpperCase() }}
+      </div>
+    </div>
+  
+    @if (completed()) {
+      <span class="text-green-600 text-xl">✔️</span>
+    }<!-- @else {
+      <div class="flex gap-2">
+        <button class="btn btn-primary btn-sm" (click)="onComplete.emit()">Concluir</button>
+        @if (showProgress()) {
+          <button class="btn btn-outline btn-primary btn-sm" (click)="onProgress.emit()">+ Progresso</button>
+        }
+      </div>
+    }-->
+  </li>
+  

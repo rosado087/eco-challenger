@@ -6,46 +6,29 @@
       <!-- TO COMPLETE -->
       <ul class="list bg-base-100 rounded-box shadow-md">
         <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
-  
-        <li class="list-row"
-        *ngFor="let challenge of dailyChallengesToDo">
-          <div></div>
-          <div>
-            <div>{{ challenge.title }}</div>
-            <div class="text-xs uppercase font-semibold opacity-60">Desafio {{ challenge.type.toUpperCase() }}</div>
-          </div>
-          <button class="btn btn-primary btn-sm">Concluir</button>
-        </li>
-  
-        <li class="list-row">
-          <div></div>
-          <div>
-            <div>Desafio tal</div>
-            <div class="text-xs uppercase font-semibold opacity-60">Desafio Diário</div>
-          </div>
-          <button class="btn btn-primary btn-sm">Concluir</button>
-        </li>
+      
+        @for (challenge of dailyChallenges; track $index) {
+          @if (!challenge.wasConcluded) {
+            <app-challenge-card
+              [title]="challenge.challenge.title"
+              [type]="challenge.challenge.type"
+              [completed]="false"/>
+          }
+        }
       </ul>
   
       <!-- COMPLETED -->
       <ul class="list bg-base-100 rounded-box shadow-md">
         <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
-  
-        <li class="list-row">
-          <div></div>
-          <div>
-            <div>Desafio tal</div>
-            <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
-          </div>
-        </li>
-  
-        <li class="list-row">
-          <div></div>
-          <div>
-            <div>Desafio tal</div>
-            <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
-          </div>
-        </li>
+      
+        @for (challenge of dailyChallenges; track $index) {
+          @if (challenge.wasConcluded) {
+            <app-challenge-card
+              [title]="challenge.challenge.title"
+              [type]="challenge.challenge.type"
+              [completed]="true" />
+          }
+        }
       </ul>
     </div>
   </section>
@@ -58,31 +41,30 @@
       <!-- TO COMPLETE -->
       <ul class="list bg-base-100 rounded-box shadow-md">
         <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
-  
-        <li class="list-row">
-          <div></div>
-          <div>
-            <div>Desafio tal</div>
-            <div class="text-xs uppercase font-semibold opacity-60">Desafio Semanal</div>
-          </div>
-          <div class="flex gap-2">
-            <button class="btn btn-primary btn-sm">Concluir</button>
-            <button class="btn btn-primary btn-sm">+ Progresso</button>
-          </div>
-        </li>
+      
+        @for (challenge of weeklyChallenges; track $index) {
+          @if (!challenge.wasConcluded) {
+            <app-challenge-card
+              [title]="challenge.challenge.title"
+              [type]="challenge.challenge.type"
+              [completed]="false"
+              [showProgress]="true"/>
+          }
+        }
       </ul>
   
       <!-- COMPLETED -->
       <ul class="list bg-base-100 rounded-box shadow-md">
-        <li class="p-5 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
-  
-        <li class="list-row">
-          <div></div>
-          <div>
-            <div>Desafio tal</div>
-            <div class="text-xs uppercase font-semibold opacity-60">Desafio Concluído</div>
-          </div>
-        </li>
+        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
+      
+        @for (challenge of dailyChallenges; track $index) {
+          @if (challenge.wasConcluded) {
+            <app-challenge-card
+              [title]="challenge.challenge.title"
+              [type]="challenge.challenge.type"
+              [completed]="true" />
+          }
+        }
       </ul>
     </div>
   </section>

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcoChallenger.Controllers
 {
-    public class GamificationController : Controller
+    public class GamificationController : BaseApiController
     {
         private readonly AppDbContext _ctx;
         private readonly ILogger<ProfileController> _logger;
@@ -21,7 +21,7 @@ namespace EcoChallenger.Controllers
         /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns a list of 
         /// challenges of the user</returns>
 
-        [HttpGet("GetChallenges/")]
+        [HttpGet("GetChallenges")]
         public async Task<JsonResult> GetChallenges()
         {
             var weeklyChallenges = await _ctx.UserChallenges.Where(x => x.User.Id == UserContext.Id && x.Challenge.Type == "Weekly").Select(x => new{challenge = x.Challenge, progress = x.Progress, wasConcluded = x.WasConcluded }).ToListAsync();
