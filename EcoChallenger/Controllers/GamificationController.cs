@@ -9,9 +9,9 @@ namespace EcoChallenger.Controllers
     public class GamificationController : BaseApiController
     {
         private readonly AppDbContext _ctx;
-        private readonly ILogger<ProfileController> _logger;
+        private readonly ILogger<GamificationController> _logger;
 
-        public GamificationController(AppDbContext context, ILogger<ProfileController> logger)
+        public GamificationController(AppDbContext context, ILogger<GamificationController> logger)
         {
             _ctx = context;
             _logger = logger;
@@ -45,42 +45,62 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="id">Id of the completed challenge.</param>
         /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns </returns>
-        [AllowAnonymous]
-        [HttpPost("CompleteChallenge/{id}")]
+        [HttpGet("CompleteChallenge/{id}")]
         public async Task<JsonResult> CompleteChallenge(int id)
         {
-            var userChallenge = await _ctx.UserChallenges.
-            FirstOrDefaultAsync(x => x.Challenge.Id == id && x.User.Id == 1);
+            var userChallenge = await _ctx.UserChallenges.Include(x => x.Challenge).Include(x => x.User).
+            FirstOrDefaultAsync(x => x.Challenge.Id == id && x.User.Id == UserContext.Id);
 
             if (userChallenge == null)
                 return new JsonResult(new {success = false, message = "O desafio não existe." });
 
-            var challenge = await _ctx.UserChallenges
-            .Where(x => x.Challenge.Id == userChallenge.Challenge.Id && x.User.Id == 1)
-            .Select(x => x.Challenge).FirstOrDefaultAsync();
+            if (userChallenge.WasConcluded == true)
+                return new JsonResult(new {success = false, message = "O desafio já está concluído" });
 
-            if (challenge == null)
-                return new JsonResult(new {success = false, message = "O desafio não existe." });
-
-            userChallenge.User.Points += challenge.Points;
+            userChallenge.User.Points += userChallenge.Challenge.Points;
             userChallenge.WasConcluded = true;
             await _ctx.SaveChangesAsync();
 
-            var weeklyChallenges = await _ctx.UserChallenges
-            .Where(x => x.User.Id == UserContext.Id && x.Challenge.Type == "Weekly")
-            .Select(x => new{challenge = x.Challenge, progress = x.Progress, wasConcluded = x.WasConcluded })
-            .ToListAsync();
-            
-            var dailyChallenges = await _ctx.UserChallenges
-            .Where(x => x.User.Id == UserContext.Id && x.Challenge.Type == "Daily")
-            .Select(x => new { challenge = x.Challenge, wasConcluded = x.WasConcluded })
-            .ToListAsync();
-
-            return new JsonResult(new { 
+            return new JsonResult(new {
                 success = true, 
                 message = "Desafio concluido com sucesso.",
-                dailyChallenges = dailyChallenges,
-                weeklyChallenges = weeklyChallenges, 
+            });
+        }
+
+        /// <summary>
+        /// Completes a challenge.
+        /// </summary>
+        /// <param name="id">Id of the completed challenge.</param>
+        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns </returns>
+        [HttpGet("AddProgress/{id}")]
+        public async Task<JsonResult> AddProgress (int id)
+        {
+            var userChallenge = await _ctx.UserChallenges.Include(x => x.Challenge).Include(x => x.User).
+            FirstOrDefaultAsync(x => x.Challenge.Id == id && x.User.Id == UserContext.Id);
+
+            if (userChallenge == null)
+                return new JsonResult(new {success = false, message = "O desafio não existe." });
+
+            if (userChallenge.WasConcluded == true)
+                return new JsonResult(new {success = false, message = "O desafio já está concluído" });
+
+            userChallenge.Progress++;
+
+            if (userChallenge.Progress == userChallenge.Challenge.MaxProgress){
+                userChallenge.User.Points += userChallenge.Challenge.Points;
+                userChallenge.WasConcluded = true;
+                await _ctx.SaveChangesAsync();
+
+                return new JsonResult(new { 
+                    success = true, 
+                    message = "Desafio concluido com sucesso.",
+                });
+            }
+            await _ctx.SaveChangesAsync();
+                
+            return new JsonResult(new { 
+                success = true,
+                message = "Progresso adicionado com sucesso.",
             });
         }
     }

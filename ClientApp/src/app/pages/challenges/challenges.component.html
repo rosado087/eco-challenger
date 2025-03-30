@@ -56,7 +56,8 @@
               [points]="challenge.challenge.points"
               [completed]="false"
               [showProgress]="true"
-              (complete)="completeChallenge(challenge.challenge.id)"/>
+              (complete)="completeChallenge(challenge.challenge.id)"
+              (progressClick)="addProgress(challenge.challenge.id)"/>
           }
         }
       </ul>
@@ -65,7 +66,7 @@
       <ul class="list bg-base-100 rounded-box shadow-md">
         <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
       
-        @for (challenge of dailyChallenges; track $index) {
+        @for (challenge of weeklyChallenges; track $index) {
           @if (challenge.wasConcluded) {
             <app-challenge-card
               (openModal)="selectedChallenge = challenge.challenge"
