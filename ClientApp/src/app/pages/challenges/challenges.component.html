@@ -10,9 +10,12 @@
         @for (challenge of dailyChallenges; track $index) {
           @if (!challenge.wasConcluded) {
             <app-challenge-card
+              (onOpenModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
-              [completed]="false"/>
+              [points]="challenge.challenge.points"
+              [completed]="false"
+              (onComplete)="completeChallenge(challenge.challenge.id)"/>
           }
         }
       </ul>
@@ -24,8 +27,10 @@
         @for (challenge of dailyChallenges; track $index) {
           @if (challenge.wasConcluded) {
             <app-challenge-card
+              (onOpenModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
+              [points]="challenge.challenge.points"
               [completed]="true" />
           }
         }
@@ -45,10 +50,13 @@
         @for (challenge of weeklyChallenges; track $index) {
           @if (!challenge.wasConcluded) {
             <app-challenge-card
+              (onOpenModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
+              [points]="challenge.challenge.points"
               [completed]="false"
-              [showProgress]="true"/>
+              [showProgress]="true"
+              (onComplete)="completeChallenge(challenge.challenge.id)"/>
           }
         }
       </ul>
@@ -60,12 +68,59 @@
         @for (challenge of dailyChallenges; track $index) {
           @if (challenge.wasConcluded) {
             <app-challenge-card
+              (onOpenModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
+              [points]="challenge.challenge.points"
               [completed]="true" />
           }
         }
       </ul>
     </div>
   </section>
+
+  @if (selectedChallenge) {
+    <div class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+      <div class="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md relative">
+        
+        <!-- Close Button -->
+        <button
+          class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+          (click)="selectedChallenge = null"
+          aria-label="Fechar">
+          ✕
+        </button>
   
+        <!-- Title & Description -->
+        <h3 class="text-xl font-bold mb-2">{{ selectedChallenge.title }}</h3>
+        <p class="text-gray-700 mb-4">{{ selectedChallenge.description }}</p>
+        <p class="text-green-700 font-medium mb-4">
+          Recompensa: {{ selectedChallenge.points }} pontos
+        </p>
+  
+        <!-- Progress bar only for weekly -->
+        @if (selectedChallenge.type === 'Weekly') {
+          <progress
+            class="progress progress-success w-full mb-4"
+            value="0"
+            max="{{ selectedChallenge.maxProgress }}">
+          </progress>
+        }
+  
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-2">
+          <button
+            class="btn btn-primary btn-sm"
+            (click)="completeChallenge(selectedChallenge.id)">
+            Concluir
+          </button>
+  
+          @if (selectedChallenge.type === 'Weekly') {
+            <button class="btn btn-outline btn-primary btn-sm" disabled>
+              + Progresso
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }

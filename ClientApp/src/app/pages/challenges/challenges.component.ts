@@ -25,7 +25,7 @@ export class ChallengesComponent implements OnInit {
   authService = inject(AuthService)
   dailyChallenges: { challenge: ChallengeModel, wasConcluded: boolean }[] = []
   weeklyChallenges: {challenge: ChallengeModel, progress: number, wasConcluded: boolean}[] = []
-
+  selectedChallenge: ChallengeModel | null = null
 
   ngOnInit(): void {
     this.getChallenges()
@@ -40,8 +40,6 @@ export class ChallengesComponent implements OnInit {
                           if (data.success) {
                              this.dailyChallenges = data.dailyChallenges
                              this.weeklyChallenges = data.weeklyChallenges
-                             console.log(this.dailyChallenges)
-                             console.log(this.weeklyChallenges)
                           } else {
                               this.popupLoader.showPopup(
                                   'Erro',
@@ -58,12 +56,15 @@ export class ChallengesComponent implements OnInit {
                   })
   }
 
-  completeChallenge() {
+  completeChallenge(id: number) {
+    console.log(id);
     this.netApi
-        .post<ChallengeListModel>('Gamification', 'GetChallenges', 1)
+        .post<ChallengeListModel>('Gamification', 'CompleteChallenge', id)
         .subscribe({
                     next: (data) => {
                         if (data.success) {
+                          this.dailyChallenges = data.dailyChallenges
+                          this.weeklyChallenges = data.weeklyChallenges
                           this.popupLoader.showPopup(
                             'Sucesso',
                             data.message || 'Concluído com sucesso'
@@ -78,7 +79,7 @@ export class ChallengesComponent implements OnInit {
                     error: () => {
                         this.popupLoader.showPopup(
                             'Erro',
-                            'Não foi possível carregar os dados do perfil.'
+                            'Não foi possível concluir o desafio.'
                         )
                     }
                 })

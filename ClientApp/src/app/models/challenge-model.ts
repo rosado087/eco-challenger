@@ -3,5 +3,6 @@ export interface ChallengeModel {
     title: string
     description: string
     type: 'Daily' | 'Weekly'
+    points: number
     maxProgress: number
   }  
