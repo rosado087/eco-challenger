@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250328215541_Initial5")]
-    partial class Initial5
+    [Migration("20250330160222_InitialChallenge")]
+    partial class InitialChallenge
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,7 +248,23 @@ namespace EcoChallenger.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BackgroundColor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Style")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TextColor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -260,17 +276,29 @@ namespace EcoChallenger.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Eco-Warrior"
+                            BackgroundColor = "#355735",
+                            Name = "Eco-Warrior",
+                            Price = 10,
+                            Style = 0,
+                            TextColor = "#FFFFFF"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "NatureLover"
+                            BackgroundColor = "#355735",
+                            Name = "NatureLover",
+                            Price = 50,
+                            Style = 0,
+                            TextColor = "#FFFFFF"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Green Guru"
+                            BackgroundColor = "#355735",
+                            Name = "Green Guru",
+                            Price = 55,
+                            Style = 0,
+                            TextColor = "#FFFFFF"
                         });
                 });
 
