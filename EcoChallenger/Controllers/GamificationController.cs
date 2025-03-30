@@ -10,6 +10,7 @@ namespace EcoChallenger.Controllers
     {
         private readonly AppDbContext _ctx;
         private readonly ILogger<GamificationController> _logger;
+        
 
         public GamificationController(AppDbContext context, ILogger<GamificationController> logger)
         {
@@ -22,7 +23,6 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns a list of 
         /// challenges of the user</returns>
-        [AllowAnonymous]
         [HttpGet("GetChallenges")]
         public async Task<JsonResult> GetChallenges()
         {
@@ -44,7 +44,7 @@ namespace EcoChallenger.Controllers
         /// Completes a challenge.
         /// </summary>
         /// <param name="id">Id of the completed challenge.</param>
-        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns </returns>
+        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns a message</returns>
         [HttpGet("CompleteChallenge/{id}")]
         public async Task<JsonResult> CompleteChallenge(int id)
         {
@@ -54,11 +54,12 @@ namespace EcoChallenger.Controllers
             if (userChallenge == null)
                 return new JsonResult(new {success = false, message = "O desafio não existe." });
 
-            if (userChallenge.WasConcluded == true)
-                return new JsonResult(new {success = false, message = "O desafio já está concluído" });
+            if (userChallenge.WasConcluded == true || userChallenge.Progress == userChallenge.Challenge.MaxProgress)
+                return new JsonResult(new {success = false, message = "O desafio já está concluído." });
 
             userChallenge.User.Points += userChallenge.Challenge.Points;
             userChallenge.WasConcluded = true;
+            userChallenge.Progress = userChallenge.Challenge.MaxProgress;
             await _ctx.SaveChangesAsync();
 
             return new JsonResult(new {
@@ -68,10 +69,10 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// Completes a challenge.
+        /// Adds progress on a challenge. If the progress reaches the end it completes the challenge.
         /// </summary>
         /// <param name="id">Id of the completed challenge.</param>
-        /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns </returns>
+        /// <returns>JSON result indicating success or failure and a message.</returns>
         [HttpGet("AddProgress/{id}")]
         public async Task<JsonResult> AddProgress (int id)
         {
@@ -82,7 +83,7 @@ namespace EcoChallenger.Controllers
                 return new JsonResult(new {success = false, message = "O desafio não existe." });
 
             if (userChallenge.WasConcluded == true)
-                return new JsonResult(new {success = false, message = "O desafio já está concluído" });
+                return new JsonResult(new {success = false, message = "O desafio já está concluído." });
 
             userChallenge.Progress++;
 
