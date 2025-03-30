@@ -1,6 +1,9 @@
 ﻿using EcoChallenger.Controllers;
 using EcoChallenger.Models;
 using EcoChallenger.Services;
+using EcoChallenger.Utils;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +12,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +22,9 @@ namespace EcoChallengerTest.UnitTest
     {
 
         private readonly AppDbContext _dbContext;
+        private readonly GamificationController _controller;
         private readonly Mock<IConfiguration> _config;
+        private readonly Mock<ILogger<GamificationController>> _mockLogger;
         
 
         public GamificationTest()
@@ -26,8 +32,10 @@ namespace EcoChallengerTest.UnitTest
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
-             _dbContext = new AppDbContext(options);
-             _config = new Mock<IConfiguration>();
+            _dbContext = new AppDbContext(options);
+            _config = new Mock<IConfiguration>();
+            _mockLogger = new Mock<ILogger<GamificationController>>();
+            _controller = new GamificationController(_dbContext, _mockLogger.Object);
 
 
             var user = new User { Username = "testuser", Email = "test@example.com", IsAdmin = false };
@@ -199,5 +207,283 @@ namespace EcoChallengerTest.UnitTest
                 Times.Once);
             
         }
+
+        [Fact]
+        public async Task CompleteChallenge_Works_AsExpected()
+        {          
+            // Arrange
+
+            var testUser = new User
+            {
+                Email = "test@example.com",
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+            };
+
+            var challenge1 = new Challenge
+            {
+                Title = "New Challenge",
+                Description = "Challenge 1",
+                Points = 10,
+                Type = "Daily",
+                MaxProgress = 1
+            };
+
+            var userChallenge1 = new UserChallenges
+            {
+                User = testUser,
+                Challenge = challenge1,
+                WasConcluded = false,
+                Progress = 0
+            };
+
+            _dbContext.Users.Add(testUser);
+            _dbContext.Challenges.Add(challenge1);
+            _dbContext.UserChallenges.Add(userChallenge1);
+            await _dbContext.SaveChangesAsync();
+
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("userid", testUser.Id.ToString())
+            }));
+
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+            UserContext.Initialize(httpContextAccessor.Object);
+
+            // Act 
+            var result = await _controller.CompleteChallenge(challenge1.Id) as JsonResult;
+
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
+            Assert.Equal("Desafio concluido com sucesso.", messageValue);
+        }
+
+
+        [Fact]
+        public async Task CompleteChallenge_Already_Completed()
+        {          
+            // Arrange
+            var testUser = new User
+            {
+                Email = "test@example.com",
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+            };
+
+            var challenge1 = new Challenge
+            {
+                Title = "New Challenge",
+                Description = "Challenge 1",
+                Points = 10,
+                Type = "Daily",
+                MaxProgress = 1
+            };
+
+            var userChallenge1 = new UserChallenges
+            {
+                User = testUser,
+                Challenge = challenge1,
+                WasConcluded = true,
+                Progress = 0
+            };
+
+            _dbContext.Users.Add(testUser);
+            _dbContext.Challenges.Add(challenge1);
+            _dbContext.UserChallenges.Add(userChallenge1);
+            await _dbContext.SaveChangesAsync();
+
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("userid", testUser.Id.ToString())
+            }));
+
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+            UserContext.Initialize(httpContextAccessor.Object);
+
+            // Act 
+            var result = await _controller.CompleteChallenge(challenge1.Id) as JsonResult;
+
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("O desafio já está concluído.", messageValue);
+        }
+
+        [Fact]
+        public async Task CompleteChallenge_Does_Not_Exist()
+        {          
+            // Arrange
+
+            int i = 999;
+
+            // Act 
+            var result = await _controller.CompleteChallenge(i) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("O desafio não existe.", messageValue);
+        }
+
+        [Fact]
+        public async Task AddProgress_Returns_Error_When_Challenge_NotFound()
+        {
+            // Arrange
+            int i = 999;
+
+            // Act
+            var result = await _controller.AddProgress(i) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("O desafio não existe.", messageValue);
+        }
+
+        [Fact]
+        public async Task AddProgress_Returns_Error_When_Challenge_Already_Completed()
+        {
+            // Arrange
+            var testUser = new User
+            {
+                Email = "test@example.com",
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+            };
+
+            var challenge1 = new Challenge
+            {
+                Title = "New Challenge",
+                Description = "Challenge 1",
+                Points = 40,
+                Type = "Weekly",
+                MaxProgress = 1
+            };
+
+            var userChallenge1 = new UserChallenges
+            {
+                User = testUser,
+                Challenge = challenge1,
+                WasConcluded = true,
+                Progress = 0
+            };
+
+            _dbContext.Users.Add(testUser);
+            _dbContext.Challenges.Add(challenge1);
+            _dbContext.UserChallenges.Add(userChallenge1);
+            await _dbContext.SaveChangesAsync();
+
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("userid", testUser.Id.ToString())
+            }));
+
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+            UserContext.Initialize(httpContextAccessor.Object);
+
+            // Act 
+            var result = await _controller.AddProgress(challenge1.Id) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(successProperty);
+            Assert.False(successValue);
+            Assert.Equal("O desafio já está concluído.", messageValue);
+        }
+
+        [Fact]
+        public async Task AddProgress_Successfully()
+        {
+            // Arrange
+            var testUser = new User
+            {
+                Email = "test@example.com",
+                Username = "test",
+                Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
+            };
+
+            var challenge1 = new Challenge
+            {
+                Title = "New Challenge",
+                Description = "Challenge 1",
+                Points = 40,
+                Type = "Weekly",
+                MaxProgress = 5
+            };
+
+            var userChallenge1 = new UserChallenges
+            {
+                User = testUser,
+                Challenge = challenge1,
+                WasConcluded = false,
+                Progress = 0
+            };
+
+            _dbContext.Users.Add(testUser);
+            _dbContext.Challenges.Add(challenge1);
+            _dbContext.UserChallenges.Add(userChallenge1);
+            await _dbContext.SaveChangesAsync();
+
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("userid", testUser.Id.ToString())
+            }));
+
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+            UserContext.Initialize(httpContextAccessor.Object);
+
+            // Act 
+            var result = await _controller.AddProgress(challenge1.Id) as JsonResult;
+            var successProperty = result.Value.GetType().GetProperty("success");
+            var successValue = (bool)successProperty.GetValue(result.Value);
+            var messageProperty = result.Value.GetType().GetProperty("message");
+            var messageValue = (string)messageProperty.GetValue(result.Value);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(successProperty);
+            Assert.True(successValue);
+            Assert.Equal("Progresso adicionado com sucesso.", messageValue);
+        }
+
     }
 }
