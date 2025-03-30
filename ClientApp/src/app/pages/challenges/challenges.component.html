@@ -10,12 +10,12 @@
         @for (challenge of dailyChallenges; track $index) {
           @if (!challenge.wasConcluded) {
             <app-challenge-card
-              (onOpenModal)="selectedChallenge = challenge.challenge"
+              (openModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
               [points]="challenge.challenge.points"
               [completed]="false"
-              (onComplete)="completeChallenge(challenge.challenge.id)"/>
+              (complete)="completeChallenge(challenge.challenge.id)"/>
           }
         }
       </ul>
@@ -27,7 +27,7 @@
         @for (challenge of dailyChallenges; track $index) {
           @if (challenge.wasConcluded) {
             <app-challenge-card
-              (onOpenModal)="selectedChallenge = challenge.challenge"
+              (openModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
               [points]="challenge.challenge.points"
@@ -50,13 +50,13 @@
         @for (challenge of weeklyChallenges; track $index) {
           @if (!challenge.wasConcluded) {
             <app-challenge-card
-              (onOpenModal)="selectedChallenge = challenge.challenge"
+              (openModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
               [points]="challenge.challenge.points"
               [completed]="false"
               [showProgress]="true"
-              (onComplete)="completeChallenge(challenge.challenge.id)"/>
+              (complete)="completeChallenge(challenge.challenge.id)"/>
           }
         }
       </ul>
@@ -68,7 +68,7 @@
         @for (challenge of dailyChallenges; track $index) {
           @if (challenge.wasConcluded) {
             <app-challenge-card
-              (onOpenModal)="selectedChallenge = challenge.challenge"
+              (openModal)="selectedChallenge = challenge.challenge"
               [title]="challenge.challenge.title"
               [type]="challenge.challenge.type"
               [points]="challenge.challenge.points"

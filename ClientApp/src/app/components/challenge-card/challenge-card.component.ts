@@ -16,7 +16,7 @@ export class ChallengeCardComponent {
   progress = input<number | null>()
   maxProgress = input<number | null>()
   showProgress = input<boolean>(false)
-  onComplete = output()
-  onProgress = output()
-  onOpenModal = output()
+  complete = output()         // renamed from onComplete
+  progressClick = output()    // renamed from onProgress
+  openModal = output()  
 }
