@@ -102,6 +102,8 @@ namespace EcoChallenger.Controllers
                     };
                     await _ctx.Users.AddAsync(newUser);
 
+
+                    //Secção de atribuição de desafios
                     var dailyChallenges = await _ctx.Challenges.Where(c => c.Type == "Daily").ToListAsync();
 
                     List<Challenge> challenges = [];
