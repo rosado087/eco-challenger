@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://ecochallengerapi.azurewebsite.net/api'
+  apiUrl: 'https://ecochallengerapi.azurewebsite.net/api'
 };
