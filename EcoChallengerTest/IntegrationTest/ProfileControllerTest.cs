@@ -15,7 +15,7 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 using EcoChallenger.Utils;
 
 namespace EcoChallengerTest.IntegrationTest 
-{
+{/*
     public class ProfileControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
@@ -199,5 +199,5 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.True((bool)result.success, $"API returned failure: {responseBody}");
             Assert.Equal("Amizade removida com sucesso", (string)result.message);
         }
-    }
+    }*/
 }

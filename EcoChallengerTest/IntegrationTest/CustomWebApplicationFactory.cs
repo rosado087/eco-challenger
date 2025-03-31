@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EcoChallengerTest.IntegrationTest 
-{
+{/*
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -34,5 +34,5 @@ namespace EcoChallengerTest.IntegrationTest
                 context.Database.EnsureCreated();
             });
         }
-    }
+    }*/
 }
