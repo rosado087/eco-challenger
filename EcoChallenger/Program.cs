@@ -14,6 +14,17 @@ var options = new WebApplicationOptions
 };
 var builder = WebApplication.CreateBuilder(options);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder.WithOrigins("http://ecochallengerapi.azurewebsites.net")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
+    });
+});
+
 // Set up JWT authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 if(jwtSettings == null)
@@ -58,16 +69,16 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-if (builder.Environment.IsEnvironment("Test"))
+/*if (builder.Environment.IsEnvironment("Test"))
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseInMemoryDatabase("TestDatabase"));
 }
 else
-{
+{*/
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-}
+        options.UseSqlServer(builder.Configuration.GetConnectionString("ProdConnection")));
+//}
 
 //Challenges Rotation
 builder.Services.AddHostedService<DailyTaskService>();
@@ -85,11 +96,11 @@ UserContext.Initialize(builder.Services.BuildServiceProvider().GetRequiredServic
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 // Run migrations on startup
 using (var scope = app.Services.CreateScope())
@@ -105,10 +116,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 //app.UseHttpsRedirection();
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllowSpecifOrigin");
 
 app.MapControllers();
 
@@ -118,4 +131,3 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.Run();
-public partial class Program { } 

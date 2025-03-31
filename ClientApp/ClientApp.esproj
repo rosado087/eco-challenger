@@ -2,22 +2,18 @@
   <PropertyGroup>
     <!-- We turn off the SDK hardcoded npm install task, and replace it with our own Pnpm restore task -->
     <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
-    
     <JavaScriptTestRoot>.\</JavaScriptTestRoot>
     <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
     <!-- Allows the build (or compile) script located on package.json to run on Build -->
     <ShouldRunBuildScript>false</ShouldRunBuildScript>
-
     <StartupCommand>pnpm run start</StartupCommand>
     <BuildCommand>pnpm run build</BuildCommand>
     <TestCommand>pnpm run vite:test</TestCommand>
     <!--<CleanCommand>pnpm run clean</CleanCommand>-->
     <PublishCommand>pnpm run build</PublishCommand>
-    
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
-
   <!-- This target has been copied from the SDK targets and modified to use pnpm instead -->
   <Target Name="RunPnpmInstall" DependsOnTargets="PreNpmInstallCheck" Inputs="$(PackageJsonDirectory)package.json" Outputs="$(NpmInstallCheck)" BeforeTargets="RunNpmInstall">
     <!-- Ensure Node.js is installed -->
@@ -31,5 +27,4 @@
     </Exec>
     <Touch Files="$(NpmInstallCheck)" Condition="'$(ErrorCodeNpmInstall)' == '0'" AlwaysCreate="true" />
   </Target>
-
 </Project>
