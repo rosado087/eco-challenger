@@ -35,6 +35,9 @@ namespace EcoChallenger.Controllers
         public async Task<IActionResult> CreateTag([FromForm] TagCRUDModel tagModel)
         {
             try {
+                if (_ctx.Tags.Any(t => t.Name == tagModel.Name))
+                    return BadRequest(new { success = false, message = "Esta tag já existe." });
+
                 string? imageUrl = null;
 
                 if (tagModel.Icon != null)
