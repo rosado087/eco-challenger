@@ -54,7 +54,8 @@ namespace EcoChallengerTest.UnitTest
             // Assert
             Assert.NotNull(result);
             Assert.True(successValue);
-            mockEmailService.Verify(e => e.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockEmailService.Verify(e => e.SendRecoveryEmailAsync(It.IsAny<string>(), It.IsAny<string>()),Times.Once);
+
         }
 
 

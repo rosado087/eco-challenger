@@ -50,7 +50,7 @@ namespace EcoChallenger.Controllers
 
                 List<Challenge> challenges = [];
 
-                while (challenges.Count < 3)
+                while (challenges.Count < 3 && dailyChallenges.Count > 2)
                 {
                     var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
 
@@ -71,7 +71,7 @@ namespace EcoChallenger.Controllers
 
                 challenges = [];
 
-                while (challenges.Count < 2)
+                while (challenges.Count < 2 && dailyChallenges.Count > 1)
                 {
                     var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
 

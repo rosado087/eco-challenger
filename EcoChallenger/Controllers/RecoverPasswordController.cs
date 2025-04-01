@@ -52,7 +52,7 @@ namespace EcoChallenger.Controllers
 
             await _ctx.SaveChangesAsync();
 
-            // Now we only need to send the email
+            /* Now we only need to send the email
             // To build the message we need to point the user to the correct URL
             string? baseUrl = _configuration.GetValue<string>("ApplicationSettings:FrontEndUrl");
 
@@ -66,8 +66,8 @@ namespace EcoChallenger.Controllers
                 baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
 
             string recoveryLink = baseUrl + "/reset-password/" + userToken.Token;
-            await _emailService.SendEmailAsync(data.Email, "Echo-Challenger: Recuperação de Palavra-Passe", 
-                "Para repore a sua palavra-passe, por favor aceda a este link: " + recoveryLink);
+            */
+            await _emailService.SendRecoveryEmailAsync(data.Email, userToken.Token);
 
             return new JsonResult(new { success = true });
         }

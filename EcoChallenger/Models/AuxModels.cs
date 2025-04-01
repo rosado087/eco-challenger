@@ -57,3 +57,8 @@ public class TagCRUDModel {
 
     public IFormFile? Icon { get; set; }
 }
+
+ public class ResponseModel
+{
+    public bool Success { get; set; }
+}

@@ -3,23 +3,37 @@ using OpenQA.Selenium;
 
 using OpenQA.Selenium.Support.UI;
 using EcoChallengerTest.Utils;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace EcoChallengerTest.AutomationTest
 {
+    [TestFixture]
     public class LoginAutomationTest
     {
         private IWebDriver driver;
         private WebDriverWait wait;
+        private WebApplicationFactory<Program> factory;
+
+        [OneTimeSetUp]
+        public async Task GlobalSetup()
+        {
+            factory = new WebApplicationFactory<Program>();
+            var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                BaseAddress = new Uri("http://localhost:5294")
+            });
+
+            GenericFunctions.Initialize(client);
+
+            await GenericFunctions.SeedTestUsers();
+        }
 
         [SetUp]
         public void Setup()
-        {
+        {   
             driver = GenericFunctions.SetupSeleniumInstance();
-
-            // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
-            // Navigate to the login page
             driver.Navigate().GoToUrl("http://localhost:4200/login");
         }
 
@@ -29,19 +43,19 @@ namespace EcoChallengerTest.AutomationTest
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
-            string email = "testuser@example.com";
+            string email = "tester1@gmail.com";
             string password = "Password123!";
 
-            TypeWithDelay(emailInput, email, 100); 
-            Thread.Sleep(500); 
+            TypeWithDelay(emailInput, email, 100);
+            Thread.Sleep(500);
 
             TypeWithDelay(passwordInput, password, 100);
-            Thread.Sleep(500); 
+            Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
-            wait.Until(d => d.Url.Contains("http://localhost:4200")); 
+            wait.Until(d => d.Url.Contains("http://localhost:4200"));
         }
 
         [Test]

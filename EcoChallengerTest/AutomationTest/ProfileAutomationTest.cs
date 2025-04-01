@@ -41,7 +41,7 @@ namespace EcoChallengerTest.AutomationTest
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
             string email = "tester1@gmail.com";
-            string password = "12345678";
+            string password = "Password123!";
 
             TypeWithDelay(emailInput, email, 100);
             Thread.Sleep(500);
@@ -54,7 +54,7 @@ namespace EcoChallengerTest.AutomationTest
             Thread.Sleep(2000);
             
             // Navigate to the profile page
-            driver.Navigate().GoToUrl("http://localhost:4200/user-profile/1");
+            driver.Navigate().GoToUrl("http://localhost:4200/user-profile/3");
 
             Thread.Sleep(500);
         }
@@ -200,11 +200,11 @@ namespace EcoChallengerTest.AutomationTest
             okayButton.Click();
         }
 
-        /*[TearDown]
+        [TearDown]
         public void Teardown()
         {
             driver.Quit();
-        }*/
+        }
 
         // Helper method to simulate typing with a delay
         public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
