@@ -8,29 +8,29 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\chunk-2Y2NZ5LG.js" />
+    <Content Remove="wwwroot\chunk-4BW7JOG5.js" />
     <Content Remove="wwwroot\chunk-5AEKUYTL.js" />
     <Content Remove="wwwroot\chunk-77PJFM5S.js" />
-    <Content Remove="wwwroot\chunk-BPKCSGOR.js" />
-    <Content Remove="wwwroot\chunk-CWBR6L7Z.js" />
-    <Content Remove="wwwroot\chunk-GS6HS3KW.js" />
-    <Content Remove="wwwroot\chunk-HILQVAW2.js" />
-    <Content Remove="wwwroot\chunk-JT2BBZRO.js" />
+    <Content Remove="wwwroot\chunk-A3W5Z3EM.js" />
+    <Content Remove="wwwroot\chunk-FWCPFTTJ.js" />
+    <Content Remove="wwwroot\chunk-IUIGZNUZ.js" />
     <Content Remove="wwwroot\chunk-K7XW6FRA.js" />
     <Content Remove="wwwroot\chunk-MVHLBYCX.js" />
-    <Content Remove="wwwroot\chunk-NB7E3DWU.js" />
+    <Content Remove="wwwroot\chunk-NAITSGWE.js" />
     <Content Remove="wwwroot\chunk-NKZCXZ6M.js" />
-    <Content Remove="wwwroot\chunk-RXWEZZGY.js" />
+    <Content Remove="wwwroot\chunk-ODBMWRJK.js" />
+    <Content Remove="wwwroot\chunk-PTVBOGJE.js" />
     <Content Remove="wwwroot\chunk-TTUYF2K4.js" />
+    <Content Remove="wwwroot\chunk-X76JKR4Y.js" />
     <Content Remove="wwwroot\chunk-XQBMVCRQ.js" />
-    <Content Remove="wwwroot\chunk-Z6R54DFI.js" />
-    <Content Remove="wwwroot\chunk-ZNU6RNTR.js" />
     <Content Remove="wwwroot\client-tag-images\test.gif" />
     <Content Remove="wwwroot\eco-points.svg" />
     <Content Remove="wwwroot\favicon.ico" />
     <Content Remove="wwwroot\index.html" />
     <Content Remove="wwwroot\logo.svg" />
     <Content Remove="wwwroot\logoImg.png" />
-    <Content Remove="wwwroot\main-3AMBSBUM.js" />
+    <Content Remove="wwwroot\main-UPNRDX57.js" />
     <Content Remove="wwwroot\polyfills-SC4UBBZS.js" />
     <Content Remove="wwwroot\styles-DHSHSLGU.css" />
     <Content Remove="wwwroot\user-icon.jpg" />
@@ -52,29 +52,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\chunk-2Y2NZ5LG.js" />
+    <None Include="wwwroot\chunk-4BW7JOG5.js" />
     <None Include="wwwroot\chunk-5AEKUYTL.js" />
     <None Include="wwwroot\chunk-77PJFM5S.js" />
-    <None Include="wwwroot\chunk-BPKCSGOR.js" />
-    <None Include="wwwroot\chunk-CWBR6L7Z.js" />
-    <None Include="wwwroot\chunk-GS6HS3KW.js" />
-    <None Include="wwwroot\chunk-HILQVAW2.js" />
-    <None Include="wwwroot\chunk-JT2BBZRO.js" />
+    <None Include="wwwroot\chunk-A3W5Z3EM.js" />
+    <None Include="wwwroot\chunk-FWCPFTTJ.js" />
+    <None Include="wwwroot\chunk-IUIGZNUZ.js" />
     <None Include="wwwroot\chunk-K7XW6FRA.js" />
     <None Include="wwwroot\chunk-MVHLBYCX.js" />
-    <None Include="wwwroot\chunk-NB7E3DWU.js" />
+    <None Include="wwwroot\chunk-NAITSGWE.js" />
     <None Include="wwwroot\chunk-NKZCXZ6M.js" />
-    <None Include="wwwroot\chunk-RXWEZZGY.js" />
+    <None Include="wwwroot\chunk-ODBMWRJK.js" />
+    <None Include="wwwroot\chunk-PTVBOGJE.js" />
     <None Include="wwwroot\chunk-TTUYF2K4.js" />
+    <None Include="wwwroot\chunk-X76JKR4Y.js" />
     <None Include="wwwroot\chunk-XQBMVCRQ.js" />
-    <None Include="wwwroot\chunk-Z6R54DFI.js" />
-    <None Include="wwwroot\chunk-ZNU6RNTR.js" />
     <None Include="wwwroot\client-tag-images\test.gif" />
     <None Include="wwwroot\eco-points.svg" />
     <None Include="wwwroot\favicon.ico" />
     <None Include="wwwroot\index.html" />
     <None Include="wwwroot\logo.svg" />
     <None Include="wwwroot\logoImg.png" />
-    <None Include="wwwroot\main-3AMBSBUM.js" />
+    <None Include="wwwroot\main-UPNRDX57.js" />
     <None Include="wwwroot\polyfills-SC4UBBZS.js" />
     <None Include="wwwroot\styles-DHSHSLGU.css" />
     <None Include="wwwroot\user-icon.jpg" />
