@@ -114,7 +114,7 @@ export const routes: Routes = [
                     {
                         path: 'edit/:id',
                         loadComponent: () => {
-                            return import(
+                            return import( 
                                 './pages/admin/tags-admin/tags-admin.component'
                             ).then((m) => m.TagsAdminComponent)
                         },
