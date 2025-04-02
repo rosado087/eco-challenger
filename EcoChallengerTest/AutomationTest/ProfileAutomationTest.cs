@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Microsoft.Extensions.Configuration;
 using EcoChallengerTest.Utils;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace EcoChallengerTest.AutomationTest
 {
@@ -22,6 +23,20 @@ namespace EcoChallengerTest.AutomationTest
         private WebDriverWait wait;
         private Mock<IConfiguration> _mockConfig;
         private AppDbContext _dbContext;
+        private WebApplicationFactory<Program> factory;
+
+        [OneTimeSetUp]
+        public async Task GlobalSetup()
+        {
+            factory = new WebApplicationFactory<Program>();
+            var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                BaseAddress = new Uri("http://localhost:5294")
+            });
+
+            GenericFunctions.Initialize(client);
+            await GenericFunctions.SeedTestUsers();
+        }
 
         [SetUp]
         public void Setup()
@@ -30,9 +45,6 @@ namespace EcoChallengerTest.AutomationTest
 
             // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
-
-
-
 
             //Perform Login
             driver.Navigate().GoToUrl("http://localhost:4200/login");

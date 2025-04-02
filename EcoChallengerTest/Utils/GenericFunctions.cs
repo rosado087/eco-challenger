@@ -141,6 +141,33 @@ namespace EcoChallengerTest.Utils
                 if (result == null || !result.Success) 
                     continue;                
             }
+
+            string createFriendshipsEndpoint = $"{_baseUrl}/api/Profile/AddFriend";
+
+            var friendships = new List<Friend>
+            {
+                new Friend { UserId = testUsers[2].Id, FriendId = testUsers[0].Id},
+                new Friend { UserId = testUsers[2].Id, FriendId = testUsers[1].Id}
+            };
+
+            foreach (var friendship in friendships)
+            {
+                
+                var response = await _client.PostAsJsonAsync(createFriendshipsEndpoint, friendship);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Failed to add '{friendship.FriendId}' as a friend - StatusCode: {response.StatusCode}, Error: {error}");
+                    continue;
+                }
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                var result = JsonSerializer.Deserialize<ResponseModel>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (result == null || !result.Success) 
+                    continue;                
+            }
         }   
     }
 }
