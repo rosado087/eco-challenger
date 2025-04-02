@@ -11,4 +11,5 @@ export class StoreTagComponent {
     bought = input<boolean>(false)
     buyClick = output()
     price = input.required<number>()
+    id = input.required<number>()
 }

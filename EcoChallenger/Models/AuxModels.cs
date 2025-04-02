@@ -39,6 +39,7 @@ public class ProfileFriendModel
     public int Id {get; set; }
     public string FriendUsername {get; set; }
 }
+
 public class GAuthModel {
     public string GoogleToken { get; set; }
     public string Email { get; set; }
@@ -61,4 +62,27 @@ public class TagCRUDModel {
  public class ResponseModel
 {
     public bool Success { get; set; }
+}
+
+public class TagUsersTestModel
+{
+
+    public int UserId { get; set;}
+
+    public int TagId { get; set;}
+
+    public bool SelectedTag { get; set;}
+}
+
+public class ChallengeModel
+{
+    public string Title { get; set; }
+
+    public string Description { get; set; }
+
+    public int Points { get; set; }
+
+    public string Type { get; set; }
+    public int MaxProgress { get; set; } = 1;
+    public int UserId {get; set;}
 }

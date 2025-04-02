@@ -24,7 +24,7 @@
                         </button>
                     </div>
 
-                    <app-button text="Adicionar" (btnClick)="handleAddTag()" />
+                    <app-button text="Adicionar" id="addTag" (btnClick)="handleAddTag()" />
                 </div>
 
                 <app-table class="mt-4">
@@ -74,6 +74,7 @@
                                 <div class="flex flex-row gap-1">
                                     <button
                                         class="btn btn-ghost btn-md"
+                                        id="editTag{{tag.id}}"
                                         (click)="handleEditTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
                                         <ng-icon
@@ -81,7 +82,8 @@
                                             name="heroPencil" />
                                     </button>
                                     <button
-                                        class="btn btn-ghost btn-md"
+                                        class="btn btn-ghost btn-md" 
+                                        id="removeTag{{tag.id}}"
                                         (click)="removeTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
                                         <ng-icon

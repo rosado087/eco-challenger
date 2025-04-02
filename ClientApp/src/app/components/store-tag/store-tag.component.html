@@ -13,7 +13,7 @@
             @if (bought()) {
                 <button class="btn btn-disabled btn-sm">Comprado</button>
             } @else {
-                <button
+                <button id="buy-{{id()}}"
                     class="btn btn-primary btn-sm"
                     (click)="buyClick.emit()">
                     Comprar

@@ -8,6 +8,7 @@ using EcoChallenger.Utils;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using NUnit.Framework.Constraints;
 
 namespace EcoChallengerTest.Utils
 {
@@ -48,7 +49,7 @@ namespace EcoChallengerTest.Utils
             if (_client == null || string.IsNullOrEmpty(_baseUrl))
                 throw new InvalidOperationException("GenericFunctions not initialized correctly.");
 
-            Console.WriteLine($"🌐 Base URL: {_baseUrl}");
+            Console.WriteLine($" Base URL: {_baseUrl}");
     
             string registerEndpoint = $"{_baseUrl}/api/Register/RegisterAccount";
 
@@ -56,9 +57,10 @@ namespace EcoChallengerTest.Utils
             {
                 new User { Username = "testuser", Email = "testuser@example.com", Password = "Password123!" },
                 new User { Username = "testuserpasswordrecover", Email = "testuserpasswordrecover@example.com", Password = "Password123!"  },
-                new User { Username = "Tester1", Email = "tester1@gmail.com", Password = "Password123!" },
-                new User { Username = "Tester2", Email = "tester2@gmail.com", Password = "Password123!" },
-                new User { Username = "Tester3", Email = "tester3@gmail.com", Password = "Password123!" }
+                new User { Username = "Tester1", Email = "tester1@gmail.com", Password = "Password123!", IsAdmin = true, Points = 100 },
+                new User { Username = "Tester2", Email = "tester2@gmail.com", Password = "Password123!", Points = 100 },
+                new User { Username = "Tester3", Email = "tester3@gmail.com", Password = "Password123!", Points = 100 },
+                new User { Username = "tester4", Email = "201902087@estudantes.ips.pt", Password = "Password123!"}
             };
 
             foreach (var user in testUsers)
@@ -86,7 +88,7 @@ namespace EcoChallengerTest.Utils
                 Console.WriteLine($"Successfully registered: {user.Email}");
             }
 
-            string createTagsEndpoint = $"{_baseUrl}/api/Profile/CreateTags";
+            string createTagsEndpoint = $"{_baseUrl}/api/Profile/CreateTag";
 
             var testTags = new List<Tag>
             {
@@ -114,14 +116,16 @@ namespace EcoChallengerTest.Utils
                     continue;                
             }
 
-            string createUserTagsEndpoint = $"{_baseUrl}/api/Profile/CreateTags";
 
-            var userTags = new List<TagUsers>
+            string createUserTagsEndpoint = $"{_baseUrl}/api/Profile/CreateTagUser";
+
+            var userTags = new List<object>
             {
-                new TagUsers { User = testUsers[2], Tag = testTags[0], SelectedTag = true },
-                new TagUsers { User = testUsers[2], Tag = testTags[1], SelectedTag = false} ,
-                new TagUsers { User = testUsers[2], Tag = testTags[2], SelectedTag = false },
+                new  { UserId = 3, TagId = 1, SelectedTag = true },
+                new  { UserId = 3, TagId = 2, SelectedTag = false} ,
+                new  { UserId = 3, TagId = 3, SelectedTag = false },
             };
+
 
             foreach (var userTag in userTags)
             {
@@ -131,7 +135,7 @@ namespace EcoChallengerTest.Utils
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Failed to create tag '{userTag.User}' - StatusCode: {response.StatusCode}, Error: {error}");
+                    Console.WriteLine($"Failed to create tag - StatusCode: {response.StatusCode}, Error: {error}");
                     continue;
                 }
 
@@ -144,10 +148,10 @@ namespace EcoChallengerTest.Utils
 
             string createFriendshipsEndpoint = $"{_baseUrl}/api/Profile/AddFriend";
 
-            var friendships = new List<Friend>
+            var friendships = new List<object>
             {
-                new Friend { UserId = testUsers[2].Id, FriendId = testUsers[0].Id},
-                new Friend { UserId = testUsers[2].Id, FriendId = testUsers[1].Id}
+                new { Id = 3, FriendUsername = "testuser"},
+                new { Id = 3, FriendUsername = "Tester3"}
             };
 
             foreach (var friendship in friendships)
@@ -158,7 +162,7 @@ namespace EcoChallengerTest.Utils
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Failed to add '{friendship.FriendId}' as a friend - StatusCode: {response.StatusCode}, Error: {error}");
+                    Console.WriteLine($"Failed to add as a friend - StatusCode: {response.StatusCode}, Error: {error}");
                     continue;
                 }
 
@@ -168,6 +172,37 @@ namespace EcoChallengerTest.Utils
                 if (result == null || !result.Success) 
                     continue;                
             }
-        }   
+
+             string createChallengeEndpoint = $"{_baseUrl}/api/Challenge/CreateChallenge";
+
+            var challenges = new List<object>
+            {
+                new  { Title = "testChallenge1", Description = "descricao1", Points = 20, Type = "Daily", UserId = 3},
+                new  { Title = "testChallenge2", Description = "descricao2", Points = 20, Type = "Daily", UserId = 3},
+                new  { Title = "testChallenge3", Description = "descricao3", Points = 20, Type = "Daily", UserId = 3},
+                new  { Title = "testChallenge4", Description = "descricao4", Points = 50, Type = "Weekly", MaxProgress = 3, UserId = 3},
+                new  { Title = "testChallenge5", Description = "descricao5", Points = 50, Type = "Weekly", MaxProgress = 4, UserId = 3},
+            };
+
+            foreach (var challenge in challenges)
+            {
+                
+                var response = await _client.PostAsJsonAsync(createChallengeEndpoint, challenge);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Failed to add challenge - StatusCode: {response.StatusCode}, Error: {error}");
+                    continue;
+                }
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                var result = JsonSerializer.Deserialize<ResponseModel>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (result == null || !result.Success) 
+                    continue;                
+            }
+
+        }
     }
 }
