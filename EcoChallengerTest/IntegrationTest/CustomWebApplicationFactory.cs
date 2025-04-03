@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace EcoChallengerTest.IntegrationTest 
 {
@@ -9,30 +10,10 @@ namespace EcoChallengerTest.IntegrationTest
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.UseEnvironment("Test");
-
-            builder.ConfigureServices(services =>
-            {
-                // Remove the existing DbContext configuration
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-
-                if (descriptor != null)
-                {
-                    services.Remove(descriptor);
-                }
-
-                // Add an in-memory database instead
-                services.AddDbContext<AppDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("TestDatabase");
-                });
-
-                // Ensure the database is initialized
-                using var scope = services.BuildServiceProvider().CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                context.Database.EnsureCreated();
-            });
+            // DO NOT remove this from there!!
+            // This makes sure the project runs with the InMemoryDB in test mode
+            // and it seems to be the only way to force it to do so
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
         }
     }
 }
