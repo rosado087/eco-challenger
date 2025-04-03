@@ -60,7 +60,7 @@ namespace EcoChallengerTest.Utils
                 new User { Username = "Tester1", Email = "tester1@gmail.com", Password = "Password123!", IsAdmin = true, Points = 100 },
                 new User { Username = "Tester2", Email = "tester2@gmail.com", Password = "Password123!", Points = 100 },
                 new User { Username = "Tester3", Email = "tester3@gmail.com", Password = "Password123!", Points = 100 },
-                new User { Username = "tester4", Email = "201902087@estudantes.ips.pt", Password = "Password123!"}
+                new User { Username = "tester4", Email = "201902087@estudantes.ips.pt", Password = "Password123!", IsAdmin = true}
             };
 
             foreach (var user in testUsers)
