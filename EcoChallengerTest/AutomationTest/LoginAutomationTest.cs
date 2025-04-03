@@ -21,6 +21,11 @@ namespace EcoChallengerTest.AutomationTest
             await GenericFunctions.SeedTestUsers();
         }
 
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await GenericFunctions.ResetDatabase();
+        }
+
         [SetUp]
         public void Setup()
         {   

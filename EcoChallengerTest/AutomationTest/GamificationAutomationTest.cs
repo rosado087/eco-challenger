@@ -20,6 +20,11 @@ namespace EcoChallengerTest.AutomationTest
             await GenericFunctions.SeedTestUsers();
         }
 
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await GenericFunctions.ResetDatabase();
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -47,11 +52,12 @@ namespace EcoChallengerTest.AutomationTest
             loginButton.Click();
             Thread.Sleep(2000);
             
-            // Navigate to the profile page
-            driver.Navigate().GoToUrl("http://localhost:4200/challenges/3");
+            GenericFunctions.NavigateToChallenges(wait);
 
             Thread.Sleep(500);
         }
+
+        
 
         [Test]
         public void Complete_Challenge_Success()
@@ -68,7 +74,7 @@ namespace EcoChallengerTest.AutomationTest
 
             okayButton.Click();
 
-            driver.Navigate().GoToUrl("http://localhost:4200/user-profile/3");
+            GenericFunctions.NavigateToProfile(wait);
             Thread.Sleep(1000);
         }
 

@@ -74,7 +74,7 @@
                                 <div class="flex flex-row gap-1">
                                     <button
                                         class="btn btn-ghost btn-md"
-                                        id="editTag{{tag.id}}"
+                                        data-action="editTag"
                                         (click)="handleEditTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
                                         <ng-icon
@@ -83,7 +83,7 @@
                                     </button>
                                     <button
                                         class="btn btn-ghost btn-md" 
-                                        id="removeTag{{tag.id}}"
+                                        data-action="removeTag"
                                         (click)="removeTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
                                         <ng-icon

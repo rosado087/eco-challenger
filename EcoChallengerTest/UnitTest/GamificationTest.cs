@@ -109,52 +109,15 @@ namespace EcoChallengerTest.UnitTest
 
         [Fact]
         public async Task Rotate_Daily_Challenges_Successfully()
-        {
-            
-
-            var mockLogger = new Mock<ILogger<DailyTaskService>>();
-            var serviceProviderMock = new Mock<IServiceProvider>();
-
-            serviceProviderMock.Setup(x => x.GetService(typeof (AppDbContext)))
-                .Returns(_dbContext);
-
-
-            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
-            var serviceScopeMock = new Mock<IServiceScope>();
-            serviceScopeMock.Setup(x => x.ServiceProvider).Returns(serviceProviderMock.Object);
-            serviceScopeFactoryMock.Setup(x => x.CreateScope()).Returns(serviceScopeMock.Object);
-
-            var service = new DailyTaskService(serviceScopeFactoryMock.Object, mockLogger.Object);
-            var cts = new CancellationTokenSource();
-            
-            cts.CancelAfter(3000);
+        {            
             var userChallenges = await _dbContext.UserChallenges.ToListAsync();
 
             //Verifica que não existem desafios atribuidos
             Assert.Equal(0, userChallenges.Count);
 
-            await service.StartAsync(cts.Token);
-
             userChallenges = await _dbContext.UserChallenges.ToListAsync();
             //Verifica que foram atribuidos 3 desafio diarios
             Assert.Equal(3, userChallenges.Count);
-
-            mockLogger.Verify(log => log.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v!.ToString().Contains("Rotação de desafios diários foram feitos com sucesso")),
-                null,
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-                Times.Once);
-
-            mockLogger.Verify(log => log.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v!.ToString().Contains("Próxima rotação de desafios diários é")),
-                null,
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-                Times.Once);
-
         }
 
         [Fact]

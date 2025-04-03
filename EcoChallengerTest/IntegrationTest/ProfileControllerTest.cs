@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using EcoChallenger.Utils;
+using EcoChallengerTest.Utils;
 
 namespace EcoChallengerTest.IntegrationTest 
 {
@@ -58,6 +59,8 @@ namespace EcoChallengerTest.IntegrationTest
 
             Assert.True((bool)result.success, $"API returned failure: {content}");
             Assert.NotNull(result.token);
+
+            await GenericFunctions.ResetDatabase();
         }
 
         [Fact]
@@ -95,6 +98,8 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.NotNull(result);
             Assert.True((bool)result.success, $"API returned failure: {content}");
             Assert.Equal("testuser2", (string)result.username);
+
+            await GenericFunctions.ResetDatabase();
         }
 
         [Fact]
@@ -120,6 +125,8 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.NotNull(result);
             Assert.True((bool)result.success, $"API returned failure: {responseBody}");
             Assert.Equal("newuser", (string)result.username);
+
+            await GenericFunctions.ResetDatabase();
         }
 
         [Fact]
@@ -146,6 +153,8 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.NotNull(result);
             Assert.True((bool)result.success, $"API returned failure: {content}");
             Assert.Contains("EcoWarrior", result.list.ToObject<List<string>>());
+
+            await GenericFunctions.ResetDatabase();
         }
 
         [Fact]
@@ -172,7 +181,10 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.NotNull(result);
             Assert.True((bool)result.success, $"API returned failure: {responseBody}");
             Assert.Equal("Amigo adicionado com sucesso!", (string)result.message);
+            
+            await GenericFunctions.ResetDatabase();
         }
+
         [Fact]
         public async Task RemoveFriend_ValidRequest_RemovesFriend()
         {
@@ -198,6 +210,8 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.NotNull(result);
             Assert.True((bool)result.success, $"API returned failure: {responseBody}");
             Assert.Equal("Amizade removida com sucesso", (string)result.message);
+
+            await GenericFunctions.ResetDatabase();
         }
     }
 }

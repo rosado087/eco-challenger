@@ -5,6 +5,7 @@ using EcoChallengerTest.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Castle.Core.Configuration;
 using Moq;
+using Xunit.Sdk;
 
 namespace EcoChallengerTest.AutomationTest
 {
@@ -18,6 +19,11 @@ namespace EcoChallengerTest.AutomationTest
         {
             GenericFunctions.Initialize("http://localhost:4200");
             await GenericFunctions.SeedTestUsers();
+        }
+
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await GenericFunctions.ResetDatabase();
         }
 
         [SetUp]
@@ -82,10 +88,10 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Tag_Success()
         {
+            var editButtons = driver.FindElements(By.CssSelector("[data-action='editTag']"));
+            if(editButtons.Count() == 0) throw new Exception("There are no tags that can be edited");
 
-            var edit = wait.Until(d => d.FindElement(By.Id("editTag1")));
-            edit.Click();
-
+            editButtons[0].Click();
             Thread.Sleep(1000);
 
             string name = "tag test";
@@ -108,9 +114,10 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Remove_Tag_Success()
         {
+            var removeButtons = driver.FindElements(By.CssSelector("[data-action='removeTag']"));
+            if(removeButtons.Count() == 0) throw new Exception("There are no tags that can be removed");
 
-            var complete = wait.Until(d => d.FindElement(By.Id("removeTag1")));
-            complete.Click();
+            removeButtons[0].Click();
 
             Thread.Sleep(1000);
 

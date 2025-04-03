@@ -9,6 +9,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using NUnit.Framework.Constraints;
+using OpenQA.Selenium.Support.UI;
 
 namespace EcoChallengerTest.Utils
 {
@@ -35,10 +36,42 @@ namespace EcoChallengerTest.Utils
             // in other words without opening the browser
             // To debug the process, comment these two lines
             var options = new FirefoxOptions();
-            options.AddArgument("--headless");
+            //options.AddArgument("--headless");
 
             // Initialize the Firefox driver
             return new FirefoxDriver(options);
+        }
+
+        /// <summary>
+        /// Resets the database data, clears everything
+        /// </summary>
+        public static async Task ResetDatabase() {
+            if (_client == null || string.IsNullOrEmpty(_baseUrl))
+                throw new InvalidOperationException("GenericFunctions not initialized correctly.");
+
+            string url = $"{_baseUrl}/api/test/reset-db";
+            var response = await _client.PostAsync(url, null);
+
+            if(!response.IsSuccessStatusCode) throw new Exception("Invalid status code reseting database");
+        }
+
+        /// <summary>
+        /// Navigates to user profile
+        /// </summary>
+        public static void NavigateToProfile(WebDriverWait wait) {
+            var navbarUserIcon = wait.Until(d => d.FindElement(By.Id("navbar-user-icon")));
+            navbarUserIcon.Click();
+
+            var navbarProfileBtn = wait.Until(d => d.FindElement(By.Id("profile-navbar-button")));
+            navbarProfileBtn.Click();
+        }
+
+        /// <summary>
+        /// Navigates to user challenges
+        /// </summary>
+        public static void NavigateToChallenges(WebDriverWait wait) {
+            var navbarProfileBtn = wait.Until(d => d.FindElement(By.Id("challenges-navbar-button")));
+            navbarProfileBtn.Click();
         }
 
         /// <summary>
