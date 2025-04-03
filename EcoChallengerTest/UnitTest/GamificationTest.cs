@@ -108,16 +108,40 @@ namespace EcoChallengerTest.UnitTest
         }
 
         [Fact]
-        public async Task Rotate_Daily_Challenges_Successfully()
+        public async void Rotate_Daily_Challenges_Successfully()
         {            
-            var userChallenges = await _dbContext.UserChallenges.ToListAsync();
+            var userChallenges = _dbContext.UserChallenges.ToList();
 
             //Verifica que não existem desafios atribuidos
-            Assert.Equal(0, userChallenges.Count);
+            Assert.Empty(userChallenges);
 
-            userChallenges = await _dbContext.UserChallenges.ToListAsync();
+            // User gamification rotation service to attribute 3 challenges
+            var mockLogger = new Mock<ILogger<DailyTaskService>>(); // Setup logger mock interface
+
+            // This IServiceScope is used do the se
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(x => x.GetService(typeof (AppDbContext))) // Make sure DB is running
+                .Returns(_dbContext);
+
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var serviceScopeMock = new Mock<IServiceScope>();
+            serviceScopeMock.Setup(x => x.ServiceProvider).Returns(serviceProviderMock.Object);
+            serviceScopeFactoryMock.Setup(x => x.CreateScope()).Returns(serviceScopeMock.Object);
+            
+            var service = new DailyTaskService(serviceScopeFactoryMock.Object, mockLogger.Object);
+            var cts = new CancellationTokenSource();
+            
+            // This will start the service for task attribution
+            await service.StartAsync(cts.Token);
+
+            Thread.Sleep(3000); // Make sure rotation is done
+
+            userChallenges = _dbContext.UserChallenges.ToList();
             //Verifica que foram atribuidos 3 desafio diarios
             Assert.Equal(3, userChallenges.Count);
+
+            // Make sure the service is not running anymore
+            await service.StopAsync(cts.Token);
         }
 
         [Fact]
