@@ -5,6 +5,7 @@ using OpenQA.Selenium.Support.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using EcoChallengerTest.Utils;
+using EcoChallenger.Utils;
 
 namespace EcoChallengerTest.AutomationTest 
 {
@@ -29,13 +30,26 @@ namespace EcoChallengerTest.AutomationTest
             configuration = configBuilder.Build();
 
             // Get connection string from configuration
-            string connectionString = configuration.GetConnectionString("Default");
+            string connectionString = configuration.GetConnectionString("Test");
 
             // Initialize the database context
             var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            /*var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlServer(connectionString)
                 .Options;
+            */
             dbContext = new AppDbContext(options);
+            User user = new User{
+                Email = "201902087@estudantes.ips.pt",
+                Password = PasswordGenerator.GeneratePasswordHash("12345678"),
+                Username = "tester5",
+                IsAdmin = true
+            };
+            dbContext.Users.Add(user);
+            dbContext.SaveChanges();
 
             driver.Navigate().GoToUrl("http://localhost:4200/forgot-password");
         }
@@ -56,7 +70,14 @@ namespace EcoChallengerTest.AutomationTest
             var popup = wait.Until(d => d.FindElement(By.CssSelector("app-popup")));
             var okayButton = wait.Until(d => d.FindElement(By.CssSelector(".modal-action button.btn.btn-primary")));
 
-            string token = RetrieveTokenFromDatabase(emailAddress);
+            //string token = RetrieveTokenFromDatabase(emailAddress);
+
+
+            var token = FakeEmailService.Tokens
+                .FirstOrDefault(e => e.Key == emailAddress).Value;
+
+            //var resetUrl = $"https://localhost:5001/reset-password?token={token}";
+            //driver.Navigate().GoToUrl(resetUrl);
 
             driver.Navigate().GoToUrl($"http://localhost:4200/reset-password/{token}");
 
