@@ -29,7 +29,7 @@ namespace EcoChallenger.Controllers
         [HttpPost("SendRecoveryEmail")]
         public async Task<JsonResult> SendRecoveryEmail([FromBody] SendRecoveryEmailModel data)
         {
-            var user = _ctx.Users.Where(u => u.Email == data.Email).First();
+            var user = _ctx.Users.Where(u => u.Email == data.Email).FirstOrDefault();
 
             // When no users where found we want the frontend to think that
             // an email was sent, otherwise the person sending the email would
@@ -52,21 +52,6 @@ namespace EcoChallenger.Controllers
 
             await _ctx.SaveChangesAsync();
 
-            /* Now we only need to send the email
-            // To build the message we need to point the user to the correct URL
-            string? baseUrl = _configuration.GetValue<string>("ApplicationSettings:FrontEndUrl");
-
-            if(baseUrl == null){
-                _logger.LogError("No application URL was configured in appsettings.json. Recovery emails are not being sent!");
-                return new JsonResult(new {success = false});
-            }
-
-            // Make sure the baseURL value doesn't have a / at the end
-            if(baseUrl.Substring(baseUrl.Length - 1) == "/")
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-
-            string recoveryLink = baseUrl + "/reset-password/" + userToken.Token;
-            */
             await _emailService.SendRecoveryEmailAsync(data.Email, userToken.Token);
 
             return new JsonResult(new { success = true });

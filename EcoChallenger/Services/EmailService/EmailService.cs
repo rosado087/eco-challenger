@@ -27,19 +27,7 @@ public class EmailService : IEmailService
     {
         if(_emailSettings == null) throw new InvalidConfigurationException("No email settings were configured.");
 
-        // Now we only need to send the email
-        // To build the message we need to point the user to the correct URL
-        string? baseUrl = _configuration.GetValue<string>("ApplicationSettings:FrontEndUrl");
-
-        if(baseUrl == null){
-            _logger.LogError("No application URL was configured in appsettings.json. Recovery emails are not being sent!");
-        }
-
-        // Make sure the baseURL value doesn't have a / at the end
-        if(baseUrl.Substring(baseUrl.Length - 1) == "/")
-            baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-
-        string recoveryLink = baseUrl + "/reset-password/" + token;
+        string recoveryLink = GetResetPasswordUrl(token);
 
         using (var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort))
         {
@@ -67,5 +55,21 @@ public class EmailService : IEmailService
                 throw new InvalidOperationException("Could not send email.", ex);
             }
         }
+    }
+
+    private string GetResetPasswordUrl(string token) {
+        // Now we only need to send the email
+        // To build the message we need to point the user to the correct URL
+        string? baseUrl = _configuration.GetValue<string>("ApplicationSettings:FrontEndUrl");
+
+        if(baseUrl == null){
+            _logger.LogError("No application URL was configured in appsettings.json. Recovery emails are not being sent!");
+        }
+
+        // Make sure the baseURL value doesn't have a / at the end
+        if(baseUrl.Substring(baseUrl.Length - 1) == "/")
+            baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
+
+        return baseUrl + "/reset-password/" + token;
     }
 }

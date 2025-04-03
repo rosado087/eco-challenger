@@ -12,18 +12,11 @@ namespace EcoChallengerTest.AutomationTest
     {
         private IWebDriver driver;
         private WebDriverWait wait;
-        private WebApplicationFactory<Program> factory;
 
         [OneTimeSetUp]
         public async Task GlobalSetup()
         {
-            factory = new WebApplicationFactory<Program>();
-            var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                BaseAddress = new Uri("http://localhost:5294")
-            });
-
-            GenericFunctions.Initialize(client);
+            GenericFunctions.Initialize("http://localhost:4200");
 
             await GenericFunctions.SeedTestUsers();
         }

@@ -19,9 +19,9 @@ namespace EcoChallengerTest.Utils
         /// <summary>
         /// Sets the base URL of the backend application.
         /// </summary>
-        public static void Initialize(HttpClient client)
+        public static void Initialize(string baseUrl)
         {
-            _baseUrl = client.BaseAddress?.ToString()?.TrimEnd('/');
+            _baseUrl = baseUrl.TrimEnd('/');
             if (string.IsNullOrEmpty(_baseUrl))
                 throw new InvalidOperationException("HttpClient BaseAddress is not set.");
         }
@@ -34,8 +34,8 @@ namespace EcoChallengerTest.Utils
             // This runs the tests in headless mode
             // in other words without opening the browser
             // To debug the process, comment these two lines
-             var options = new FirefoxOptions();
-            // options.AddArgument("--headless");
+            var options = new FirefoxOptions();
+            options.AddArgument("--headless");
 
             // Initialize the Firefox driver
             return new FirefoxDriver(options);
