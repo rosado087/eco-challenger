@@ -149,7 +149,6 @@ namespace EcoChallengerTest.Utils
                     continue;                
             }
 
-
             string createUserTagsEndpoint = $"{_baseUrl}/api/Profile/CreateTagUser";
 
             var userTags = new List<object>
