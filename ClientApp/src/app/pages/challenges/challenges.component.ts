@@ -26,7 +26,7 @@ export class ChallengesComponent implements OnInit {
     authService = inject(AuthService)
     dailyChallenges: { challenge: ChallengeModel, wasConcluded: boolean }[] = []
     weeklyChallenges: {challenge: ChallengeModel, progress: number, wasConcluded: boolean}[] = []
-    selectedChallenge: ChallengeModel | null = null
+    selectedChallenge: { challenge: ChallengeModel, wasConcluded: boolean, progress?: number } | null = null;
 
     ngOnInit(): void {
         this.getChallenges()
@@ -93,7 +93,17 @@ export class ChallengesComponent implements OnInit {
                         'Sucesso',
                         data.message || 'Progresso adicionado com sucesso!'
                     )
-                    this.getChallenges()
+                    if (this.selectedChallenge?.challenge.id === id && this.selectedChallenge.progress !== undefined) {
+                        this.selectedChallenge.progress++;
+            
+                        // If it just reached max progress, we can optionally disable or hide the button too
+                        if (this.selectedChallenge.progress >= this.selectedChallenge.challenge.maxProgress) {
+                          this.selectedChallenge.wasConcluded = true;
+                        }
+                    }
+
+                this.getChallenges()
+                
                 } else {
                     this.popupLoader.showPopup(
                         'Erro',
@@ -109,5 +119,4 @@ export class ChallengesComponent implements OnInit {
             }
         })
     }
-
 }

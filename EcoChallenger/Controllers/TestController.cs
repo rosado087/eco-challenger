@@ -80,6 +80,4 @@ namespace EcoChallenger.Controllers
         }
         #endif
     }
-
-
 }
