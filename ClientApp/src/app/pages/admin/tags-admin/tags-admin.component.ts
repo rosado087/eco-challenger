@@ -136,11 +136,6 @@ export class TagsAdminComponent implements OnInit {
                                 data.message ||
                                     'Ocorreu um erro desconhecido ao remover a tag.'
                             )
-                    this.popupLoader.showPopup(
-                      'Success',
-                      data.message ||
-                      'Tag removida com successo.'
-                    )
                         this.loadTags()
                     },
                     error: () =>

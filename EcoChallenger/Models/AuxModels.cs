@@ -69,7 +69,7 @@ public class TagUsersTestModel
 
     public int UserId { get; set;}
 
-    public int TagId { get; set;}
+    public string TagName { get; set;}
 
     public bool SelectedTag { get; set;}
 }

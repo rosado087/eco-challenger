@@ -78,7 +78,8 @@ namespace EcoChallenger.Controllers
             _ctx.SaveChanges();
             return Ok();
         }
+        #endif
     }
-#endif
+
 
 }

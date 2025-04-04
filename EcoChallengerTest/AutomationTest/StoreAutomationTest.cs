@@ -39,7 +39,7 @@ namespace EcoChallengerTest.AutomationTest
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
-            string email = "tester2@gmail.com";
+            string email = "tester1@gmail.com";
             string password = "Password123!";
 
             TypeWithDelay(emailInput, email, 100);
@@ -62,7 +62,9 @@ namespace EcoChallengerTest.AutomationTest
         public void Buy_Tag_Success()
         {
 
-            var buy = wait.Until(d => d.FindElement(By.Id("buy-1")));
+            //var buy = wait.Until(d => d.FindElement(By.Id("buy-1")));
+            //var buy = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-store/main/div/div/div[2]/div[2]/app-store-tag[1]/div/div/div/button")));
+            var buy = wait.Until(d => d.FindElement(By.CssSelector("[data-role='store-purchase-button']")));
             buy.Click();
 
             Thread.Sleep(1000);

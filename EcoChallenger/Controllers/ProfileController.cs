@@ -196,7 +196,6 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="values">Array containing the username of the requester and the friend’s username.</param>
         /// <returns>JSON result indicating success or failure.</returns>
-        [AllowAnonymous]
         [HttpPost("AddFriend")]
         public async Task<JsonResult> AddFriend([FromBody] ProfileFriendModel request)
         {
@@ -312,8 +311,7 @@ namespace EcoChallenger.Controllers
                 return StatusCode(500, "An error occurred fetching user points.");
             }
         }
-
-        [AllowAnonymous]
+        
         [HttpPost("CreateTag")]
         public async Task<JsonResult> CreateTags([FromBody] TagCRUDModel tagModel){
             try {
@@ -336,12 +334,11 @@ namespace EcoChallenger.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("CreateTagUser")]
         public async Task<JsonResult> CreateTagUser([FromBody] TagUsersTestModel tagUsersTest){
             try {
                 var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == tagUsersTest.UserId);
-                var tag = await _ctx.Tags.FirstOrDefaultAsync(t => t.Id == tagUsersTest.TagId);
+                var tag = await _ctx.Tags.FirstOrDefaultAsync(t => t.Name == tagUsersTest.TagName);
 
 
                 await _ctx.TagUsers.AddAsync(new TagUsers{User = user, Tag = tag, SelectedTag = tagUsersTest.SelectedTag});
@@ -355,7 +352,6 @@ namespace EcoChallenger.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet("GetByEmail")]
         public async Task<JsonResult> GetUserByEmail(string email)
         {
@@ -363,15 +359,12 @@ namespace EcoChallenger.Controllers
             return new JsonResult(user);
         }
 
-        [AllowAnonymous]
         [HttpGet("GetTagByName")]
         public async Task<JsonResult> GetTagByName(string name)
         {
             var tag = await _ctx.Tags.FirstOrDefaultAsync(t => t.Name == name);
             return new JsonResult(tag);
         }
-
-
 
         
     }

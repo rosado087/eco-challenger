@@ -63,7 +63,7 @@ namespace EcoChallengerTest.AutomationTest
         public void Complete_Challenge_Success()
         {
 
-            var complete = wait.Until(d => d.FindElement(By.Id("complete-testChallenge1")));
+            var complete = wait.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-complete-button']")));
             complete.Click();
 
             Thread.Sleep(1000);

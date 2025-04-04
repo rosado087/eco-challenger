@@ -10,12 +10,14 @@ using System.Text.Json;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using NUnit.Framework.Constraints;
 using OpenQA.Selenium.Support.UI;
+using System.Net.Http.Headers;
+
 
 namespace EcoChallengerTest.Utils
 {
     public static class GenericFunctions {
         private static HttpClient _client = new HttpClient();
-        private static string _baseUrl;
+        private static string _baseUrl = "";
 
         /// <summary>
         /// Sets the base URL of the backend application.
@@ -97,9 +99,7 @@ namespace EcoChallengerTest.Utils
             };
 
             foreach (var user in testUsers)
-            {
-                Console.WriteLine($"Registering user: {user.Email}");
-                
+            {                
                 var response = await _client.PostAsJsonAsync(registerEndpoint, user);
                 Console.WriteLine($"Status code for {user.Email}: {response.StatusCode}");
 
@@ -118,26 +118,48 @@ namespace EcoChallengerTest.Utils
                     continue;
                 }
 
-                Console.WriteLine($"Successfully registered: {user.Email}");
             }
 
-            string createTagsEndpoint = $"{_baseUrl}/api/Profile/CreateTag";
+            string loginEndPoint = $"{_baseUrl}/api/Login/Login";
 
-            var testTags = new List<Tag>
+            
+            var userCredenciais = new LoginRequestModel{
+                Email =  testUsers[2].Email,
+                Password =  testUsers[2].Password
+            };
+
+            var res = await _client.PostAsJsonAsync(loginEndPoint, userCredenciais);
+            var json = await res.Content.ReadAsStringAsync();
+            var token = JsonSerializer.Deserialize<LoginResponseModel>(json, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true});
+            var adminToken = token.Token;
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", adminToken);
+
+            string createTagsEndpoint = $"{_baseUrl}/api/Tag/create";
+
+            var testTags = new List<TagCRUDModel>
             {
-                new Tag { Name = "Eco-Warrior", BackgroundColor = "#355735", Price = 40, TextColor = "#FFFFFF"},
-                new Tag { Name = "NatureLover", BackgroundColor = "#355735", Price = 50, TextColor = "#FFFFFF"},
-                new Tag { Name ="Green Guru", BackgroundColor = "#355735", Price = 30, TextColor = "#FFFFFF"},
+                new TagCRUDModel { Name = "Eco-Warrior", Price = 40, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
+                new TagCRUDModel { Name = "NatureLover", Price = 50, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
+                new TagCRUDModel { Name ="Green Guru", Price = 30, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
             };
 
             foreach (var tag in testTags)
             {
-                
-                var response = await _client.PostAsJsonAsync(createTagsEndpoint, tag);
+
+                var form = new MultipartFormDataContent
+                {
+                    { new StringContent(tag.Name), "Name" },
+                    { new StringContent(tag.Price.ToString()), "Price" },
+                    { new StringContent(tag.BackgroundColor), "BackgroundColor" },
+                    { new StringContent(tag.TextColor), "TextColor" },
+                    // If needed: add a fake file here too
+                };
+                var response = await _client.PostAsync(createTagsEndpoint, form);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Failed to create tag - StatusCode: {response.StatusCode}");
                     Console.WriteLine($"Failed to create tag '{tag.Name}' - StatusCode: {response.StatusCode}, Error: {error}");
                     continue;
                 }
@@ -154,9 +176,8 @@ namespace EcoChallengerTest.Utils
 
             var userTags = new List<object>
             {
-                new  { UserId = 3, TagId = 1, SelectedTag = true },
-                new  { UserId = 3, TagId = 2, SelectedTag = false} ,
-                new  { UserId = 3, TagId = 3, SelectedTag = false },
+                new  { UserId = testUsers[2].Id, TagName = testTags[1].Name, SelectedTag = true} ,
+                new  { UserId = testUsers[2].Id, TagName = testTags[2].Name, SelectedTag = false },
             };
 
 
@@ -168,7 +189,8 @@ namespace EcoChallengerTest.Utils
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Failed to create tag - StatusCode: {response.StatusCode}, Error: {error}");
+                    Console.WriteLine($"Failed to create tag - StatusCode: {response.StatusCode}");
+                    Console.WriteLine($"{error}");
                     continue;
                 }
 
@@ -181,10 +203,10 @@ namespace EcoChallengerTest.Utils
 
             string createFriendshipsEndpoint = $"{_baseUrl}/api/Profile/AddFriend";
 
-            var friendships = new List<object>
+            var friendships = new List<ProfileFriendModel>
             {
-                new { Id = 3, FriendUsername = "testuser"},
-                new { Id = 3, FriendUsername = "Tester3"}
+                new ProfileFriendModel { Id = testUsers[2].Id, FriendUsername = "testuser"},
+                new ProfileFriendModel { Id = testUsers[2].Id, FriendUsername = "Tester3"}
             };
 
             foreach (var friendship in friendships)
@@ -208,13 +230,13 @@ namespace EcoChallengerTest.Utils
 
              string createChallengeEndpoint = $"{_baseUrl}/api/Challenge/CreateChallenge";
 
-            var challenges = new List<object>
+            var challenges = new List<ChallengeModel>
             {
-                new  { Title = "testChallenge1", Description = "descricao1", Points = 20, Type = "Daily", UserId = 3},
-                new  { Title = "testChallenge2", Description = "descricao2", Points = 20, Type = "Daily", UserId = 3},
-                new  { Title = "testChallenge3", Description = "descricao3", Points = 20, Type = "Daily", UserId = 3},
-                new  { Title = "testChallenge4", Description = "descricao4", Points = 50, Type = "Weekly", MaxProgress = 3, UserId = 3},
-                new  { Title = "testChallenge5", Description = "descricao5", Points = 50, Type = "Weekly", MaxProgress = 4, UserId = 3},
+                new ChallengeModel { Title = "testChallenge1", Description = "descricao1", Points = 20, Type = "Daily", UserId = testUsers[2].Id},
+                new ChallengeModel { Title = "testChallenge2", Description = "descricao2", Points = 20, Type = "Daily", UserId = testUsers[2].Id},
+                new ChallengeModel { Title = "testChallenge3", Description = "descricao3", Points = 20, Type = "Daily", UserId = testUsers[2].Id},
+                new ChallengeModel { Title = "testChallenge4", Description = "descricao4", Points = 50, Type = "Weekly", MaxProgress = 3, UserId = testUsers[2].Id},
+                new ChallengeModel { Title = "testChallenge5", Description = "descricao5", Points = 50, Type = "Weekly", MaxProgress = 4, UserId = testUsers[2].Id},
             };
 
             foreach (var challenge in challenges)
@@ -235,7 +257,6 @@ namespace EcoChallengerTest.Utils
                 if (result == null || !result.Success) 
                     continue;                
             }
-
         }
     }
 }

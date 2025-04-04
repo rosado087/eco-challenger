@@ -23,9 +23,9 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns a list of 
         /// challenges of the user</returns>
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpPost("CreateChallenge")]
-        public async Task<JsonResult> CreateChallengeTest([FromBody] ChallengeModel challengeModel)
+        public async Task<JsonResult> CreateChallenge([FromBody] ChallengeModel challengeModel)
         {
             try{
                 var challenge = await _ctx.Challenges.FirstOrDefaultAsync(c => c.Title == challengeModel.Title || c.Description == challengeModel.Description);
