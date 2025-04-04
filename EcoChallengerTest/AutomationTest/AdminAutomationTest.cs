@@ -62,7 +62,6 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Add_Tag_Success()
         {
-
             var complete = wait.Until(d => d.FindElement(By.Id("addTag")));
             complete.Click();
 
