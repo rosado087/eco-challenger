@@ -26,7 +26,7 @@ import { Router } from '@angular/router'
     selector: 'app-tag-form-modal',
     imports: [ButtonComponent, ReactiveFormsModule, TagComponent],
     templateUrl: './tag-form-modal.component.html',
-    styleUrl: './tag-form-modal.component.css'
+    styleUrl: './tag-form-modal.component.css',
 })
 export class TagFormModalComponent implements OnInit {
     tagModalRef = viewChild('tagModal')
@@ -185,13 +185,10 @@ export class TagFormModalComponent implements OnInit {
         this.netApi.post<SuccessModel>('Tag', 'create', formData).subscribe({
             next: (data) => {
                 if (!data.success)
-                    this.formError =
-                        'Ocorreu um erro desconhecido ao guardar a tag.'
-                else this.closeClick.emit()
+                    this.formError = 'Ocorreu um erro desconhecido ao guardar a tag.'
             },
             error: () => {
-                this.formError =
-                    'Ocorreu um erro desconhecido ao guardar a tag.'
+                this.formError = 'Ocorreu um erro desconhecido ao guardar a tag.'
             }
         })
     }
@@ -209,7 +206,6 @@ export class TagFormModalComponent implements OnInit {
                     if (!data.success)
                         this.formError =
                             'Ocorreu um erro desconhecido ao guardar a tag.'
-                    else this.closeClick.emit()
                 },
                 error: () => {
                     this.formError =

@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Microsoft.Extensions.Configuration;
 using EcoChallengerTest.Utils;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace EcoChallengerTest.AutomationTest
 {
@@ -20,8 +21,18 @@ namespace EcoChallengerTest.AutomationTest
     {
         private IWebDriver driver;
         private WebDriverWait wait;
-        private Mock<IConfiguration> _mockConfig;
-        private AppDbContext _dbContext;
+
+        [OneTimeSetUp]
+        public async Task GlobalSetup()
+        {
+            GenericFunctions.Initialize("http://localhost:4200");
+            await GenericFunctions.SeedTestUsers();
+        }
+
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await GenericFunctions.ResetDatabase();
+        }
 
         [SetUp]
         public void Setup()
@@ -31,9 +42,6 @@ namespace EcoChallengerTest.AutomationTest
             // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
-
-
-
             //Perform Login
             driver.Navigate().GoToUrl("http://localhost:4200/login");
 
@@ -41,7 +49,7 @@ namespace EcoChallengerTest.AutomationTest
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
             string email = "tester1@gmail.com";
-            string password = "12345678";
+            string password = "Password123!";
 
             TypeWithDelay(emailInput, email, 100);
             Thread.Sleep(500);
@@ -53,11 +61,11 @@ namespace EcoChallengerTest.AutomationTest
             loginButton.Click();
             Thread.Sleep(2000);
             
-            // Navigate to the profile page
-            driver.Navigate().GoToUrl("http://localhost:4200/user-profile/1");
+            GenericFunctions.NavigateToProfile(wait);
 
             Thread.Sleep(500);
         }
+        
 
         [Test]
         public void Add_Friend_Success()
@@ -175,7 +183,7 @@ namespace EcoChallengerTest.AutomationTest
         public void View_Friend_Profile_Success()
         {
             //View Friend Profile
-            var removeButton = wait.Until(d => d.FindElement(By.Id("view-Tester2")));
+            var removeButton = wait.Until(d => d.FindElement(By.CssSelector("[data-role='view-profile-button']")));
             removeButton.Click();
 
             wait.Until(d => d.Url.Contains("http://localhost:4200/user-profile"));
@@ -185,7 +193,7 @@ namespace EcoChallengerTest.AutomationTest
         public void Remove_Friend_Success() {
 
             //Remove Friend
-            var removeButton = wait.Until(d => d.FindElement(By.Id("rem-Tester2")));
+            var removeButton = wait.Until(d => d.FindElement(By.Id("rem-Tester3")));
             removeButton.Click();
             Thread.Sleep(500);
 
@@ -200,11 +208,11 @@ namespace EcoChallengerTest.AutomationTest
             okayButton.Click();
         }
 
-        /*[TearDown]
+        [TearDown]
         public void Teardown()
         {
             driver.Quit();
-        }*/
+        }
 
         // Helper method to simulate typing with a delay
         public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)

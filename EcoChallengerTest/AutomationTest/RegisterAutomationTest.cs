@@ -21,6 +21,11 @@ namespace EcoChallengerTest.AutomationTest
             driver.Navigate().GoToUrl("http://localhost:4200/register");
         }
 
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await GenericFunctions.ResetDatabase();
+        }
+
         [Test]
         public void RegisterNewUser_Success()
         {

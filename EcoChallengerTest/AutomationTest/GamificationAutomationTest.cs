@@ -1,14 +1,14 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using OpenQA.Selenium;
-
 using OpenQA.Selenium.Support.UI;
 using EcoChallengerTest.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Castle.Core.Configuration;
+using Moq;
 
 namespace EcoChallengerTest.AutomationTest
 {
-    [TestFixture]
-    public class LoginAutomationTest
+    public class GamificationAutomationTest
     {
         private IWebDriver driver;
         private WebDriverWait wait;
@@ -17,7 +17,6 @@ namespace EcoChallengerTest.AutomationTest
         public async Task GlobalSetup()
         {
             GenericFunctions.Initialize("http://localhost:4200");
-
             await GenericFunctions.SeedTestUsers();
         }
 
@@ -28,16 +27,15 @@ namespace EcoChallengerTest.AutomationTest
 
         [SetUp]
         public void Setup()
-        {   
+        {
             driver = GenericFunctions.SetupSeleniumInstance();
+
+            // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
+            //Perform Login
             driver.Navigate().GoToUrl("http://localhost:4200/login");
-        }
 
-        [Test]
-        public void Login_Success()
-        {
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
@@ -52,42 +50,50 @@ namespace EcoChallengerTest.AutomationTest
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
+            Thread.Sleep(2000);
+            
+            GenericFunctions.NavigateToChallenges(wait);
 
-            wait.Until(d => d.Url.Contains("http://localhost:4200"));
+            Thread.Sleep(500);
+        }
+
+        
+
+        [Test]
+        public void Complete_Challenge_Success()
+        {
+
+            var complete = wait.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-complete-button']")));
+            complete.Click();
+
+            Thread.Sleep(1000);
+
+            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
+            Thread.Sleep(500);
+            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
+
+            okayButton.Click();
+
+            GenericFunctions.NavigateToProfile(wait);
+            Thread.Sleep(1000);
         }
 
         [Test]
-        public void Logout_Success()
+        public void AddProgress_Success()
         {
-            var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
-            var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
-            string email = "testuser@example.com";
-            string password = "Password123!";
+            var complete = wait.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-progress-button']")));
+            complete.Click();
 
-            TypeWithDelay(emailInput, email, 100);
+            Thread.Sleep(1000);
+
+            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
             Thread.Sleep(500);
 
-            TypeWithDelay(passwordInput, password, 100);
-            Thread.Sleep(500);
+            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
+            okayButton.Click();
 
-            var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
-            loginButton.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200"));
-
-            var navbarUserIcon = wait.Until(d => d.FindElement(By.Id("navbar-user-icon")));
-            navbarUserIcon.Click();
-
-            var logout = wait.Until(d => d.FindElement(By.Id("logout")));
-            logout.Click();
-
-            var logoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div")));
-            
-            var yesLogoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div/div/form/app-button[1]")));
-            yesLogoutPopup.Click();
-
-            wait.Until(d => d.Url.Contains("http://localhost:4200/login"));
+            Thread.Sleep(1000);
         }
 
         [TearDown]
@@ -96,13 +102,12 @@ namespace EcoChallengerTest.AutomationTest
             driver.Quit();
         }
 
-        // Helper method to simulate typing with a delay
-        public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
+        private void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
         {
             foreach (var character in text)
             {
                 element.SendKeys(character.ToString());
-                Thread.Sleep(delayMilliseconds); // Delay between each character
+                Thread.Sleep(delayMilliseconds);
             }
         }
     }

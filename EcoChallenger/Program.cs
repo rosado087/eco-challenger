@@ -62,11 +62,17 @@ if (builder.Environment.IsEnvironment("Test"))
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseInMemoryDatabase("TestDatabase"));
+    
+    //
+    builder.Services.AddScoped<IEmailService, FakeEmailService>();
 }
 else
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+    //
+    builder.Services.AddScoped<IEmailService, EmailService>();
 }
 
 //Challenges Rotation
@@ -75,7 +81,7 @@ builder.Services.AddHostedService<WeeklyTaskService>();
 
 // Email Service DI
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 // User Context initialization
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -5,6 +5,10 @@ using OpenQA.Selenium.Support.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using EcoChallengerTest.Utils;
+using EcoChallenger.Utils;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace EcoChallengerTest.AutomationTest 
 {
@@ -13,35 +17,30 @@ namespace EcoChallengerTest.AutomationTest
     {
         private IWebDriver driver;
         private WebDriverWait wait;
-        private AppDbContext dbContext;
-        private IConfiguration configuration;
+
+        [OneTimeSetUp]
+        public async Task OneTimeSetUpAsync() {
+            driver = GenericFunctions.SetupSeleniumInstance();
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+
+            GenericFunctions.Initialize("http://localhost:4200");
+
+            await GenericFunctions.SeedTestUsers();
+        }
+
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await GenericFunctions.ResetDatabase();
+        }
 
         [SetUp]
         public void Setup()
         {
-            driver = GenericFunctions.SetupSeleniumInstance();
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-
-            // Load configuration from appsettings.json
-            var configBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            configuration = configBuilder.Build();
-
-            // Get connection string from configuration
-            string connectionString = configuration.GetConnectionString("Default");
-
-            // Initialize the database context
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseSqlServer(connectionString)
-                .Options;
-            dbContext = new AppDbContext(options);
-
             driver.Navigate().GoToUrl("http://localhost:4200/forgot-password");
         }
 
         [Test]
-        public void RecoverPassword_Success()
+        public async Task RecoverPassword_Success()
         {
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var sendButton = wait.Until(d => d.FindElement(By.XPath("//app-button[@text='Enviar']")));
@@ -56,7 +55,8 @@ namespace EcoChallengerTest.AutomationTest
             var popup = wait.Until(d => d.FindElement(By.CssSelector("app-popup")));
             var okayButton = wait.Until(d => d.FindElement(By.CssSelector(".modal-action button.btn.btn-primary")));
 
-            string token = RetrieveTokenFromDatabase(emailAddress);
+            // Fetch tokens from tests endpoint
+            string token = await GetRecoveryTokenAsync(emailAddress);
 
             driver.Navigate().GoToUrl($"http://localhost:4200/reset-password/{token}");
 
@@ -79,6 +79,22 @@ namespace EcoChallengerTest.AutomationTest
             okayButton2.Click();
         }
 
+        private async Task<string> GetRecoveryTokenAsync(string email) {
+            HttpClient client = new HttpClient();
+
+            var response = await client.GetAsync("http://localhost:4200/api/test/get-recovery-tokens");
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if(result == null) throw new ArgumentException("Could not get recovery token");
+
+            result.TryGetValue(email, out string? token);
+
+            if(string.IsNullOrEmpty(token)) throw new ArgumentException("Recovery token is empty");
+
+            return token;
+        }
+
         [TearDown]
         public void Teardown()
         {
@@ -92,35 +108,6 @@ namespace EcoChallengerTest.AutomationTest
                 element.SendKeys(character.ToString());
                 Thread.Sleep(delayMilliseconds);
             }
-        }
-
-        private string RetrieveTokenFromDatabase(string emailAddress)
-        {
-            string? token = null;
-            int attempts = 10;
-            int delay = 500;
-
-            for (int i = 0; i < attempts; i++)
-            {
-                var userToken = dbContext.UserTokens
-                    .Include(ut => ut.User)
-                    .FirstOrDefault(ut => ut.User.Email == emailAddress && ut.Type == UserToken.TokenType.RECOVERY);
-
-                if (userToken != null)
-                {
-                    token = userToken.Token;
-                    break;
-                }
-
-                Thread.Sleep(delay);
-            }
-
-            if (token == null)
-            {
-                throw new Exception($"No recovery token found for email: {emailAddress}");
-            }
-
-            return token;
         }
     }
 }

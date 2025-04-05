@@ -28,6 +28,11 @@ namespace EcoChallengerTest.AutomationTest
             driver.Navigate().GoToUrl("http://localhost:4200/");
         }
 
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await GenericFunctions.ResetDatabase();
+        }
+
         [Test]
         public void Login_To_Register()
         {

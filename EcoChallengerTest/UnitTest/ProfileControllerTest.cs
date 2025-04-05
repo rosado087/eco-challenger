@@ -560,10 +560,13 @@ namespace EcoChallengerTest.UnitTest
             // Arrange
             var user = new User { Username = "User1", Email = "user1@example.com" };
             var friend = new User { Username = "User2", Email = "user2@example.com" };
-            var friendship = new Friend { UserId = user.Id, FriendId = friend.Id };
-
             _dbContext.Users.Add(user);
             _dbContext.Users.Add(friend);
+            await _dbContext.SaveChangesAsync();
+            
+            var friendship = new Friend { UserId = user.Id, FriendId = friend.Id };
+
+            
             _dbContext.Friendships.Add(friendship);
             await _dbContext.SaveChangesAsync();
 

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium.DevTools.V130.Animation;
 using EcoChallenger.Controllers;
 using EcoChallenger.Utils;
+using Microsoft.AspNetCore.Identity;
 
 namespace EcoChallenger.Controllers
 {
@@ -38,7 +39,6 @@ namespace EcoChallenger.Controllers
                 isAdmin = user.IsAdmin
             }});
         }
-
 
         /// <summary>
         /// Gets the information of the user which the id corresponds.
@@ -196,7 +196,6 @@ namespace EcoChallenger.Controllers
         /// </summary>
         /// <param name="values">Array containing the username of the requester and the friend’s username.</param>
         /// <returns>JSON result indicating success or failure.</returns>
-        
         [HttpPost("AddFriend")]
         public async Task<JsonResult> AddFriend([FromBody] ProfileFriendModel request)
         {
@@ -312,5 +311,61 @@ namespace EcoChallenger.Controllers
                 return StatusCode(500, "An error occurred fetching user points.");
             }
         }
+        
+        [HttpPost("CreateTag")]
+        public async Task<JsonResult> CreateTags([FromBody] TagCRUDModel tagModel){
+            try {
+                Tag tag = new Tag
+                {
+                    Name = tagModel.Name,
+                    BackgroundColor = tagModel.BackgroundColor,
+                    TextColor = tagModel.TextColor,
+                    Style = tagModel.Style,
+                    Price = tagModel.Price
+                };
+                await _ctx.Tags.AddAsync(tag);
+                await _ctx.SaveChangesAsync();
+
+                return new JsonResult(new { success = true, message = "Tag criada com sucesso" });
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return new JsonResult(new {success = false, message = "Erro"});
+            }
+        }
+
+        [HttpPost("CreateTagUser")]
+        public async Task<JsonResult> CreateTagUser([FromBody] TagUsersTestModel tagUsersTest){
+            try {
+                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == tagUsersTest.UserId);
+                var tag = await _ctx.Tags.FirstOrDefaultAsync(t => t.Name == tagUsersTest.TagName);
+
+
+                await _ctx.TagUsers.AddAsync(new TagUsers{User = user, Tag = tag, SelectedTag = tagUsersTest.SelectedTag});
+                await _ctx.SaveChangesAsync();
+
+                return new JsonResult(new { success = true, message = "Tag adicionada ao utilizador com sucesso" });
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return new JsonResult(new {success = false, message = "Erro"});
+            }
+        }
+
+        [HttpGet("GetByEmail")]
+        public async Task<JsonResult> GetUserByEmail(string email)
+        {
+            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return new JsonResult(user);
+        }
+
+        [HttpGet("GetTagByName")]
+        public async Task<JsonResult> GetTagByName(string name)
+        {
+            var tag = await _ctx.Tags.FirstOrDefaultAsync(t => t.Name == name);
+            return new JsonResult(tag);
+        }
+
+        
     }
 }
