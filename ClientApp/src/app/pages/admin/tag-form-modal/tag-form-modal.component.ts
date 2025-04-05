@@ -21,20 +21,17 @@ import { Tag, TagStyle } from '../../../models/tag'
 import { NetApiService } from '../../../services/net-api/net-api.service'
 import { SuccessModel } from '../../../models/success-model'
 import { Router } from '@angular/router'
-import { PopupLoaderService } from '../../../services/popup-loader/popup-loader.service'
 
 @Component({
     selector: 'app-tag-form-modal',
     imports: [ButtonComponent, ReactiveFormsModule, TagComponent],
     templateUrl: './tag-form-modal.component.html',
     styleUrl: './tag-form-modal.component.css',
-    providers:[PopupLoaderService]
 })
 export class TagFormModalComponent implements OnInit {
     tagModalRef = viewChild('tagModal')
     router = inject(Router)
     netApi = inject(NetApiService)
-    popupLoader = inject(PopupLoaderService)
     open = input<boolean>(false)
     tagId = input<number | null>(null)
     isEditMode = input<boolean>(false)
@@ -188,20 +185,10 @@ export class TagFormModalComponent implements OnInit {
         this.netApi.post<SuccessModel>('Tag', 'create', formData).subscribe({
             next: (data) => {
                 if (!data.success)
-                    this.formError =
-                        'Ocorreu um erro desconhecido ao guardar a tag.'
-                else {
-                  this.closeClick.emit()
-                  this.popupLoader.showPopup(
-                    'Successo',
-                    data.message ||
-                    'Criou a Tag com successo.'
-                  )
-                }
+                    this.formError = 'Ocorreu um erro desconhecido ao guardar a tag.'
             },
             error: () => {
-                this.formError =
-                    'Ocorreu um erro desconhecido ao guardar a tag.'
+                this.formError = 'Ocorreu um erro desconhecido ao guardar a tag.'
             }
         })
     }
@@ -219,14 +206,6 @@ export class TagFormModalComponent implements OnInit {
                     if (!data.success)
                         this.formError =
                             'Ocorreu um erro desconhecido ao guardar a tag.'
-                    else {
-                      this.closeClick.emit()
-                      this.popupLoader.showPopup(
-                        'Successo',
-                        data.message ||
-                        'Editou a Tag com successo.'
-                      )
-                    }
                 },
                 error: () => {
                     this.formError =
