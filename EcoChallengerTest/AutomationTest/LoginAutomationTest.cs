@@ -76,11 +76,11 @@ namespace EcoChallengerTest.AutomationTest
 
             wait.Until(d => d.Url.Contains("http://localhost:4200"));
 
-            var logout = wait.Until(d => d.FindElement(By.Id("user-option")));
-            logout.Click();
+            var navbarUserIcon = wait.Until(d => d.FindElement(By.Id("navbar-user-icon")));
+            navbarUserIcon.Click();
 
-            var nextOption = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/div/div[2]/ul/li[2]/button")));
-            nextOption.Click();
+            var logout = wait.Until(d => d.FindElement(By.Id("logout")));
+            logout.Click();
 
             var logoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div")));
             

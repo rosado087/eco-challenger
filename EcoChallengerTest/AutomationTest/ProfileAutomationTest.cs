@@ -65,9 +65,6 @@ namespace EcoChallengerTest.AutomationTest
 
             Thread.Sleep(500);
         }
-
-        
-
         
 
         [Test]
@@ -186,7 +183,7 @@ namespace EcoChallengerTest.AutomationTest
         public void View_Friend_Profile_Success()
         {
             //View Friend Profile
-            var removeButton = wait.Until(d => d.FindElement(By.Id("view-Tester3")));
+            var removeButton = wait.Until(d => d.FindElement(By.CssSelector("[data-role='view-profile-button']")));
             removeButton.Click();
 
             wait.Until(d => d.Url.Contains("http://localhost:4200/user-profile"));
@@ -211,11 +208,11 @@ namespace EcoChallengerTest.AutomationTest
             okayButton.Click();
         }
 
-        /*[TearDown]
+        [TearDown]
         public void Teardown()
         {
             driver.Quit();
-        }*/
+        }
 
         // Helper method to simulate typing with a delay
         public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)

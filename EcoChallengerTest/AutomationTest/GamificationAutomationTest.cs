@@ -82,7 +82,7 @@ namespace EcoChallengerTest.AutomationTest
         public void AddProgress_Success()
         {
 
-            var complete = wait.Until(d => d.FindElement(By.Id("progress-testChallenge4")));
+            var complete = wait.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-progress-button']")));
             complete.Click();
 
             Thread.Sleep(1000);
