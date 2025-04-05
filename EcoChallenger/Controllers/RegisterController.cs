@@ -12,11 +12,15 @@ namespace EcoChallenger.Controllers
     public class RegisterController : BaseApiController
     {
         private readonly AppDbContext _ctx;
+        private readonly DailyTaskService _dailyTaskService;
+        private readonly WeeklyTaskService _weeklyTaskService;
         private Random _random;
 
-        public RegisterController(AppDbContext context)
+        public RegisterController(AppDbContext context, IEnumerable<IHostedService> hostedServices)
         {
             _ctx = context;
+            _dailyTaskService = hostedServices.OfType<DailyTaskService>().FirstOrDefault();
+            _weeklyTaskService = hostedServices.OfType<WeeklyTaskService>().FirstOrDefault();
             _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
         }
 
@@ -45,52 +49,14 @@ namespace EcoChallenger.Controllers
                 // Adiciona um novo utilizador
                 await _ctx.Users.AddAsync(data);
 
+                await _ctx.SaveChangesAsync();
+
                 //Secção de atribuição de desafios
-                var dailyChallenges = await _ctx.Challenges.Where(c => c.Type == "Daily").ToListAsync();
-
-                List<Challenge> challenges = [];
-
-                while (challenges.Count < 3)
-                {
-                    var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
-
-                    if (challenge != null && !challenges.Contains(challenge))
-                    {
-                        await _ctx.UserChallenges.AddAsync(new UserChallenges
-                        {
-                            Challenge = challenge,
-                            User = data,
-                            WasConcluded = false
-                        });
-
-                        challenges.Add(challenge);
-                    }
-                }
-
-                var weeklyChallenges = await _ctx.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
-
-                challenges = [];
-
-                while (challenges.Count < 2)
-                {
-                    var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
-
-                    if (challenge != null && !challenges.Contains(challenge))
-                    {
-                        await _ctx.UserChallenges.AddAsync(new UserChallenges
-                        {
-                            Challenge = challenge,
-                            User = data,
-                            Progress = 0,
-                            WasConcluded = false
-                        });
-                        challenges.Add(challenge);
-                    }
-                }
+                await _dailyTaskService.UpdateUserChallenges(data, false, _ctx);
+                 await _weeklyTaskService.UpdateUserChallenges(data, false, _ctx);
 
                 await _ctx.SaveChangesAsync();
-                
-                
+
 
                 return new JsonResult(new { success = true });
             }
@@ -101,50 +67,6 @@ namespace EcoChallenger.Controllers
             }                
         }
 
-        /*private async void AddChallenges(User user)
-        {
-            var dailyChallenges = await _ctx.Challenges.ToListAsync();
-
-            List<Challenge> challenges = [];
-
-            while (challenges.Count < 3)
-            {
-                var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
-
-                if (challenge != null && !challenges.Contains(challenge))
-                {
-                    await _ctx.UserChallenges.AddAsync(new UserChallenges
-                    {
-                        Challenge = challenge,
-                        User = user,
-                        WasConcluded = false
-                    });
-
-                    challenges.Add(challenge);
-                }
-            }
-
-            var weeklyChallenges = await _ctx.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
-
-            challenges = [];
-
-            while (challenges.Count < 2)
-            {
-                var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
-
-                if (challenge != null && !challenges.Contains(challenge))
-                {
-                    await _ctx.UserChallenges.AddAsync(new UserChallenges
-                    {
-                        Challenge = challenge,
-                        User = user,
-                        Progress = 0,
-                        WasConcluded = false
-                    });
-                    challenges.Add(challenge);
-                }
-            }
-            await _ctx.SaveChangesAsync();
-        }*/
+       
     }
 }

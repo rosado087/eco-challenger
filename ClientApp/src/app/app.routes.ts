@@ -120,7 +120,17 @@ export const routes: Routes = [
                         },
                         canActivate: [authGuard]
                     }
-                ]
+                ],
+            
+            },
+            {
+              path: 'users',
+              loadComponent: () => {
+                return import(
+                  './pages/admin/users-admin/users-admin.component'
+                ).then((m) => m.UsersAdminComponent)
+              },
+              canActivate:[authGuard]
             },
             {
                 path: '**',

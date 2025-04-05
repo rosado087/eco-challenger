@@ -1,0 +1,83 @@
+<main class="container mx-auto px-4 mt-4 pb-4" style="max-width: 50%;align-items:center">
+  <div class="card w-auto bg-base-100 shadow-md border border-base-300 ">
+    <div class="card-body">
+      <div class="flex flex-col">
+        <div class="flex justify-center">
+          <h2 class="text-2xl font-bold">Lista de Utilizadores</h2>
+        </div>
+        <div class="flex flex-row justify-between">
+          <div class="join">
+            <div>
+              <label class="input">
+                <input type="search"
+                       [formControl]="searchControl"
+                       (keydown.enter)="handleSearch()"
+                       class="grow"
+                       placeholder="Pesquisa pelo nome" />
+              </label>
+            </div>
+            <button class="btn btn-primary join-item"
+                    (click)="handleSearch()">
+              <ng-icon name="heroMagnifyingGlass" />
+            </button>
+          </div>
+
+        </div>
+
+        <app-table class="mt-4">
+          <!-- Columns -->
+          <tr columns>
+            <th>Utilizador</th>
+            <!--<th>Função</th>-->
+          </tr>
+
+          <!-- Rows -->
+          @for (user of users; track $index) {
+          <tr row>
+
+
+            <td>
+              <span>
+                {{
+                  user.username
+                }}
+              </span>
+            </td>
+            <!--<th>
+              <div class="flex flex-row gap-1">
+                <button class="btn btn-ghost btn-md border-black"
+                        (click)="changeAdmin(user.id)">
+                <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
+              <!--@if(user.isAdmin){
+                Admin
+                }
+                @else{
+                User
+                }
+                </button>
+              </div>
+            </th>-->
+            <th>
+              <div class="flex flex-row  gap-1">
+                <button class="btn btn-ghost btn-md border-black"
+                        (click)="changeBlock(user.id)">
+                  <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
+                  @if(user.isBlocked){
+                  Desbloquear
+                  }
+                  @else{
+                  Bloquear
+                  }
+                </button>
+
+              </div>
+            </th>
+          </tr>
+          }
+        </app-table>
+      </div>
+    </div>
+  </div>
+
+  
+</main>
