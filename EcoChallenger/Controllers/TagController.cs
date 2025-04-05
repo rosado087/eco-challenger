@@ -172,10 +172,10 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// Gets all the tags available
+        /// Gets the tag by id.
         /// </summary>
         /// <returns>
-        /// Returns the list of tags
+        /// Returns a tag.
         /// </returns>
         [HttpGet]
         [Route("per-id/{id}")]

@@ -85,4 +85,10 @@ public class ChallengeModel
     public string Type { get; set; }
     public int MaxProgress { get; set; } = 1;
     public int UserId {get; set;}
+
+    public void Validate(){
+        if(string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(Type) || Points == 0)
+            throw new ArgumentException("Argumentos inválidos");
+
+    }
 }
