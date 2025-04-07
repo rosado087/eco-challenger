@@ -12,12 +12,16 @@ import { ActivatedRoute, Router, UrlSegment } from '@angular/router'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { User } from '../../../models/user'
 import { SuccessModel } from '../../../models/success-model'
+import { ButtonComponent } from '../../../components/button/button.component'
+import { CommonModule } from '@angular/common'
 
 @Component({
     selector: 'app-users-admin',
   imports: [
         NgIcon,
-        TableComponent,
+    TableComponent,
+    ButtonComponent,
+        CommonModule,
         ReactiveFormsModule
     ],
     providers: [
@@ -35,6 +39,7 @@ export class UsersAdminComponent implements OnInit {
     users: User[] = []
 
     searchControl = new FormControl('')
+    confirmControl = false
 
     ngOnInit(): void {
         

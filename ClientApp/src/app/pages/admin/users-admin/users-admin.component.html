@@ -60,7 +60,7 @@
             <th>
               <div class="flex flex-row  gap-1">
                 <button class="btn btn-ghost btn-md border-black"
-                        (click)="changeBlock(user.id)">
+                        (click)="confirmControl = true">
                   <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
                   @if(user.isBlocked){
                   Desbloquear
@@ -69,7 +69,34 @@
                   Bloquear
                   }
                 </button>
+                <div *ngIf="confirmControl"
+                     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                    <h2 class="text-xl font-semibold text-gray-700 text-center">
+                      @if(user.isBlocked){
+                        Desbloquear Utilizador
+                      }
+                      @else{
+                        Bloquear Utilizador
+                      }
+                    </h2>
+                    <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
 
+                    <!-- Botões -->
+                    <!-- Botões -->
+                    <div class="mt-4 flex justify-evenly">
+                      <app-button id="confirm-rem"
+                                  text="Sim"
+                                  (click)="changeBlock(user.id); confirmControl = false" />
+
+                      <button id="rem-cancel"
+                              class="btn btn-outline btn-error"
+                              (click)="confirmControl = false">
+                        Não
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </th>
           </tr>
