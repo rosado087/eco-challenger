@@ -6,6 +6,9 @@ using EcoChallenger.Controllers;
 using Microsoft.Extensions.Logging;
 using EcoChallenger.Utils;
 using EcoChallenger.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using EcoChallenger.Services;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -27,7 +30,10 @@ namespace EcoChallengerTest.UnitTest
             _dbContext = new AppDbContext(options);
             _mockConfig = new Mock<IConfiguration>();
 
-            _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object);
+            var services = new ServiceCollection();
+            services.AddHostedService<DailyTaskService>();
+            services.AddHostedService<WeeklyTaskService>();
+            _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());
 
             //Setup JWT Settings
             var jwtSettings = new JwtSettings

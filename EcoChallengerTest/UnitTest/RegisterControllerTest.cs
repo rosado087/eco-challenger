@@ -1,7 +1,10 @@
 using EcoChallenger.Controllers;
+using EcoChallenger.Services;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -23,7 +26,10 @@ namespace EcoChallengerTest.UnitTest
         {
             //Arrange
             var context = GetInMemoryDbContext();
-            var controller = new RegisterController(context);
+            var services = new ServiceCollection();
+            services.AddHostedService<DailyTaskService>();
+            services.AddHostedService<WeeklyTaskService>();
+            var controller = new RegisterController(context, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());
             var newUser = new User { Email = "test@gmail.com",
                 Username = "test",
                 Password = PasswordGenerator.GeneratePasswordHash("123")
@@ -54,7 +60,10 @@ namespace EcoChallengerTest.UnitTest
             await context.Users.AddAsync(existingUser);
             await context.SaveChangesAsync();
 
-            var controller = new RegisterController(context);
+            var services = new ServiceCollection();
+            services.AddHostedService<DailyTaskService>();
+            services.AddHostedService<WeeklyTaskService>();
+            var controller = new RegisterController(context, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());
             var newUser = new User { Email = "test@gmail.com",
                 Username = "test",
                 Password = PasswordGenerator.GeneratePasswordHash("123") };
@@ -80,7 +89,10 @@ namespace EcoChallengerTest.UnitTest
             failingContext.Database.EnsureCreated();
             failingContext.Dispose(); // Simulate a failure scenario (DB is closed)
 
-            var controller = new RegisterController(failingContext);
+            var services = new ServiceCollection();
+            services.AddHostedService<DailyTaskService>();
+            services.AddHostedService<WeeklyTaskService>();
+            var controller = new RegisterController(failingContext, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());
             var newUser = new User { 
                 Email = "test@gmail.com",
                 Username = "test", 
