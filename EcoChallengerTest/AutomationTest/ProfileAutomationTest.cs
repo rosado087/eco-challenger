@@ -2,6 +2,9 @@
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium;
 using EcoChallengerTest.Utils;
+using System.Threading;
+using System;
+using System.Threading.Tasks;
 
 namespace EcoChallengerTest.AutomationTest
 {

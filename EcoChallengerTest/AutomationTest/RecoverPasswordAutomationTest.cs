@@ -3,6 +3,11 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using EcoChallengerTest.Utils;
 using System.Text.Json;
+using System;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace EcoChallengerTest.AutomationTest 
 {

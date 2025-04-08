@@ -2,6 +2,9 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using EcoChallengerTest.Utils;
+using System.Threading.Tasks;
+using System;
+using System.Threading;
 
 namespace EcoChallengerTest.AutomationTest
 {
@@ -84,7 +87,7 @@ namespace EcoChallengerTest.AutomationTest
         public void Edit_Tag_Success()
         {
             var editButtons = driver!.FindElements(By.CssSelector("[data-action='editTag']"));
-            if(editButtons.Count() == 0) throw new Exception("There are no tags that can be edited");
+            if(editButtons.Count == 0) throw new Exception("There are no tags that can be edited");
 
             editButtons[0].Click();
             Thread.Sleep(1000);
@@ -110,7 +113,7 @@ namespace EcoChallengerTest.AutomationTest
         public void Remove_Tag_Success()
         {
             var removeButtons = driver!.FindElements(By.CssSelector("[data-action='removeTag']"));
-            if(removeButtons.Count() == 0) throw new Exception("There are no tags that can be removed");
+            if(removeButtons.Count == 0) throw new Exception("There are no tags that can be removed");
 
             removeButtons[0].Click();
 
