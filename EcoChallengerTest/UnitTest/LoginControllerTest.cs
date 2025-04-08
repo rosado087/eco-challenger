@@ -6,16 +6,18 @@ using EcoChallenger.Controllers;
 using Microsoft.Extensions.Logging;
 using EcoChallenger.Utils;
 using EcoChallenger.Models;
+using NUnit.Framework;
 
 namespace EcoChallengerTest.UnitTest
 {
     public class LoginControllerTest
     {
-        private readonly LoginController _controller;
-        private readonly AppDbContext _dbContext;
-        private readonly Mock<IConfiguration> _mockConfig;
+        private LoginController? _controller;
+        private AppDbContext? _dbContext;
+        private Mock<IConfiguration>? _mockConfig;
 
-        public LoginControllerTest()
+        [SetUp]
+        public void Setup()
         {
             var mockLogger = new Mock<ILogger<LoginController>>();
 
@@ -41,7 +43,7 @@ namespace EcoChallengerTest.UnitTest
             TokenManager.Initialize(jwtSettings);
         }
 
-        [Fact]
+        [Test]
         public async Task Login_Returns_Token_When_Credentials_Are_Correct()
         {
             // Arrange
@@ -51,30 +53,30 @@ namespace EcoChallengerTest.UnitTest
                 Password = PasswordGenerator.GeneratePasswordHash("validPassword") 
             };
 
-            _dbContext.Users.Add(testUser);
+            _dbContext!.Users.Add(testUser);
             await _dbContext.SaveChangesAsync();
 
             var loginRequest = new LoginRequestModel { Email = "test@example.com", Password = "validPassword" };
 
             // Act
-            var result = await _controller.Login(loginRequest) as JsonResult;
+            var result = await _controller!.Login(loginRequest) as JsonResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Value);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Value, Is.Not.Null);
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            Assert.NotNull(successProperty);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            Assert.That(successProperty, Is.Not.Null);
 
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            Assert.True(successValue);
+            var successValue = successProperty?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
 
-            var tokenProperty = result.Value.GetType().GetProperty("token");
-            Assert.NotNull(tokenProperty);
-            Assert.NotNull(tokenProperty.GetValue(result.Value));
+            var tokenProperty = result.Value?.GetType().GetProperty("token");
+            Assert.That(tokenProperty, Is.Not.Null);
+            Assert.That(tokenProperty!.GetValue(result.Value), Is.Not.Null);
         }
 
-        [Fact]
+        [Test]
         public async Task Login_Fails_When_Email_Does_Not_Exist()
         {
             // Arrange
@@ -84,23 +86,23 @@ namespace EcoChallengerTest.UnitTest
             };
 
             // Act
-            var result = await _controller.Login(loginRequest) as JsonResult;
+            var result = await _controller!.Login(loginRequest) as JsonResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Value);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Value, Is.Not.Null);
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var messageProperty = result.Value.GetType().GetProperty("message");
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var messageProperty = result.Value?.GetType().GetProperty("message");
 
-            Assert.NotNull(successProperty);
-            Assert.NotNull(messageProperty);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(messageProperty, Is.Not.Null);
 
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            Assert.False(successValue);
+            var successValue = successProperty?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
         }
 
-        [Fact]
+        [Test]
         public async Task Login_Fails_When_Password_Is_Incorrect()
         {
             // Arrange
@@ -110,7 +112,7 @@ namespace EcoChallengerTest.UnitTest
                 Password = PasswordGenerator.GeneratePasswordHash("correctPassword")
             };
 
-            _dbContext.Users.Add(testUser);
+            _dbContext!.Users.Add(testUser);
             await _dbContext.SaveChangesAsync();
 
             var loginRequest = new LoginRequestModel {
@@ -119,43 +121,43 @@ namespace EcoChallengerTest.UnitTest
             };
 
             // Act
-            var result = await _controller.Login(loginRequest) as JsonResult;
+            var result = await _controller!.Login(loginRequest) as JsonResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Value);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Value, Is.Not.Null);
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var messageProperty = result.Value.GetType().GetProperty("message");
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var messageProperty = result.Value?.GetType().GetProperty("message");
 
-            Assert.NotNull(successProperty);
-            Assert.NotNull(messageProperty);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(messageProperty, Is.Not.Null);
 
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            Assert.False(successValue);
+            var successValue = successProperty?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
         }
 
-        [Fact]
+        [Test]
         public async Task Login_Fails_When_Email_Or_Password_Is_Missing()
         {
             // Arrange
             var loginRequest = new LoginRequestModel { Email = "", Password = "" };
 
             // Act
-            var result = await _controller.Login(loginRequest) as JsonResult;
+            var result = await _controller!.Login(loginRequest) as JsonResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Value);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Value, Is.Not.Null);
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var messageProperty = result.Value.GetType().GetProperty("message");
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var messageProperty = result.Value?.GetType().GetProperty("message");
 
-            Assert.NotNull(successProperty);
-            Assert.NotNull(messageProperty);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(messageProperty, Is.Not.Null);
 
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            Assert.False(successValue);
+            var successValue = successProperty?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
         }
     }
 }

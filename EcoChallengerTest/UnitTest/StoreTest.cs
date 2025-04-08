@@ -4,11 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
-using Xunit;
 using EcoChallenger.Controllers;
-using EcoChallenger.Models;
-using System.Threading.Tasks;
-using System.Linq;
+using NUnit.Framework;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -63,7 +60,7 @@ namespace EcoChallengerTest.UnitTest
             _controller = new StoreController(_dbContext, _mockLogger.Object);
         }
 
-        [Fact]
+        [Test]
         public async Task PurchaseTag_Succeeds_When_User_Has_Enough_Points()
         {
             // Arrange
@@ -75,14 +72,15 @@ namespace EcoChallengerTest.UnitTest
             var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            var success = (bool)result.Value.GetType().GetProperty("success").GetValue(result.Value);
-            Assert.True(success);
-            Assert.Equal(1, _dbContext.TagUsers.Count());
-            Assert.Equal(50, _dbContext.Users.First().Points);
+            Assert.That(result, Is.Not.Null);
+            var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            
+            Assert.That(success, Is.True);
+            Assert.That(_dbContext.TagUsers.Count(), Is.EqualTo(1));
+            Assert.That(_dbContext.Users.First().Points, Is.EqualTo(50));
         }
 
-        [Fact]
+        [Test]
         public async Task PurchaseTag_Fails_When_Already_Owned()
         {
             // Arrange
@@ -96,12 +94,12 @@ namespace EcoChallengerTest.UnitTest
             var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            var success = (bool)result.Value.GetType().GetProperty("success").GetValue(result.Value);
-            Assert.False(success);
+            Assert.That(result, Is.Not.Null);
+            var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            Assert.That(success, Is.False);
         }
 
-        [Fact]
+        [Test]
         public async Task PurchaseTag_Fails_When_Not_Enough_Points()
         {
             // Arrange
@@ -113,9 +111,9 @@ namespace EcoChallengerTest.UnitTest
             var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            var success = (bool)result.Value.GetType().GetProperty("success").GetValue(result.Value);
-            Assert.False(success);
+            Assert.That(result, Is.Not.Null);
+            var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            Assert.That(success, Is.False);
         }
     }
 }
