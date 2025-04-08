@@ -1,12 +1,15 @@
 using Newtonsoft.Json;
 using EcoChallengerTest.Utils;
 using NUnit.Framework;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace EcoChallengerTest.IntegrationTest 
 {
     public class ProfileControllerTests
     {
-        private readonly HttpClient? _client;
         private readonly GenericFunctions gf = new GenericFunctions();
         private readonly NetworkClient nc = new NetworkClient();
 
@@ -88,7 +91,7 @@ namespace EcoChallengerTest.IntegrationTest
 
             Assert.That(result, Is.Not.Null);
             Assert.That((bool)result!.success, Is.True, $"API returned failure: {content}");
-            Assert.That(((List<string>)result.list).Contains("Eco-Warrior"), Is.True);
+            Assert.That(((JArray)result.list).ToObject<List<string>>(), Does.Contain("Eco-Warrior"));
         }
 
         [Test]
