@@ -36,13 +36,13 @@ namespace EcoChallengerTest.AutomationTest
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
             var registerButton = wait.Until(d => d.FindElement(By.XPath("//app-button[@text='Registar']")));
             
-            gf.TypeWithDelay(usernameInput, "testuser", 100); 
+            gf.TypeWithDelay(usernameInput, "testuser"); 
             Thread.Sleep(500); 
 
-            gf.TypeWithDelay(emailInput, "testuser@example.com", 100);
+            gf.TypeWithDelay(emailInput, "testuser@example.com");
             Thread.Sleep(500); 
 
-            gf.TypeWithDelay(passwordInput, "Password123!", 100);
+            gf.TypeWithDelay(passwordInput, "Password123!");
             Thread.Sleep(500); 
 
             registerButton.Click();

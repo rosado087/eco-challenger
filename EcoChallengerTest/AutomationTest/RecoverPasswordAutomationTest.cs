@@ -44,7 +44,7 @@ namespace EcoChallengerTest.AutomationTest
             var sendButton = wait.Until(d => d.FindElement(By.XPath("//app-button[@text='Enviar']")));
 
             string emailAddress = "201902087@estudantes.ips.pt";
-            gf.TypeWithDelay(emailInput, emailAddress, 100);
+            gf.TypeWithDelay(emailInput, emailAddress);
             Thread.Sleep(500);
 
             sendButton.Click();
@@ -63,9 +63,9 @@ namespace EcoChallengerTest.AutomationTest
             var submitButton = wait.Until(d => d.FindElement(By.XPath("//app-button[@text='Submeter']")));
 
             string newPassword = "NewPassword123!";
-            gf.TypeWithDelay(newPasswordInput, newPassword, 100);
+            gf.TypeWithDelay(newPasswordInput, newPassword);
             Thread.Sleep(500);
-            gf.TypeWithDelay(confirmPasswordInput, newPassword, 100);
+            gf.TypeWithDelay(confirmPasswordInput, newPassword);
             Thread.Sleep(500);
 
             submitButton.Click();

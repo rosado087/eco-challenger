@@ -33,7 +33,8 @@ namespace EcoChallengerTest.Utils
             // in other words without opening the browser
             // To debug the process, comment these two lines
             var options = new FirefoxOptions();
-            //options.AddArgument("--headless");
+            options.AddArgument("--window-size=1280,800");
+            options.AddArgument("--headless");
 
             // Initialize the Firefox driver
             return new FirefoxDriver(options);
@@ -84,7 +85,7 @@ namespace EcoChallengerTest.Utils
         /// <summary>
         /// Types text in a given HTML element with a small delay
         /// </summary>
-        public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 25)
+        public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 1)
         {
             foreach (var character in text)
             {

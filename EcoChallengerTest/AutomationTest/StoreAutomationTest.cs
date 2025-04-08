@@ -42,10 +42,10 @@ namespace EcoChallengerTest.AutomationTest
             string email = "tester1@gmail.com";
             string password = "Password123!";
 
-            gf.TypeWithDelay(emailInput, email, 100);
+            gf.TypeWithDelay(emailInput, email);
             Thread.Sleep(500);
 
-            gf.TypeWithDelay(passwordInput, password, 100);
+            gf.TypeWithDelay(passwordInput, password);
             Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));

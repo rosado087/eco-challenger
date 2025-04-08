@@ -42,10 +42,10 @@ namespace EcoChallengerTest.AutomationTest
             string email = "tester1@gmail.com";
             string password = "Password123!";
 
-            gf.TypeWithDelay(emailInput, email, 100);
+            gf.TypeWithDelay(emailInput, email);
             Thread.Sleep(500);
 
-            gf.TypeWithDelay(passwordInput, password, 100);
+            gf.TypeWithDelay(passwordInput, password);
             Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
@@ -70,7 +70,7 @@ namespace EcoChallengerTest.AutomationTest
 
             //Input part of username "Tes"
             var inputAdd = wait.Until(d => addPopup.FindElement(By.Id("input-add")));
-            gf.TypeWithDelay(inputAdd, "Tes", 100);
+            gf.TypeWithDelay(inputAdd, "Tes");
 
             //Select a user
             var selectUser = wait.Until(d => addPopup.FindElement(By.Id("pos-Tester2")));
@@ -95,7 +95,7 @@ namespace EcoChallengerTest.AutomationTest
 
             var inputName = wait.Until(d => d.FindElement(By.Id("edit-username")));
             inputName.Clear();
-            gf.TypeWithDelay(inputName, "TestName", 100);
+            gf.TypeWithDelay(inputName, "TestName");
             Thread.Sleep(500);
 
             var saveButton = wait.Until(d => d.FindElement(By.Id("edit-save")));
@@ -116,7 +116,7 @@ namespace EcoChallengerTest.AutomationTest
 
             var inputName = wait.Until(d => d.FindElement(By.Id("edit-username")));
             inputName.Clear();
-            gf.TypeWithDelay(inputName, "Tester2", 100);
+            gf.TypeWithDelay(inputName, "Tester2");
             Thread.Sleep(500);
 
             var saveButton = wait.Until(d => d.FindElement(By.Id("edit-save")));
@@ -138,7 +138,7 @@ namespace EcoChallengerTest.AutomationTest
             var selectTag = wait.Until(d => d.FindElement(By.Id("edit-tag")));
             selectTag.Click();
             
-            var optionTag = wait.Until(d => d.FindElement(By.Id("option-Green Guru")));
+            var optionTag = wait.Until(d => d.FindElement(By.Id("option-NatureLover")));
             optionTag.Click();
             
 
@@ -183,7 +183,7 @@ namespace EcoChallengerTest.AutomationTest
         public void Remove_Friend_Success() {
 
             //Remove Friend
-            var removeButton = wait!.Until(d => d.FindElement(By.Id("rem-Tester3")));
+            var removeButton = wait!.Until(d => d.FindElement(By.Id("rem-tester4")));
             removeButton.Click();
             Thread.Sleep(500);
 
