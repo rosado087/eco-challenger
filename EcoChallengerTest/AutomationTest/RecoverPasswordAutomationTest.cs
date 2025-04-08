@@ -1,52 +1,45 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using EcoChallengerTest.Utils;
-using EcoChallenger.Utils;
-using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace EcoChallengerTest.AutomationTest 
 {
     [TestFixture]
     public class RecoverPasswordAutomationTest
     {
-        private IWebDriver driver;
-        private WebDriverWait wait;
+        private IWebDriver? driver;
+        private WebDriverWait? wait;
+        private readonly GenericFunctions gf = new GenericFunctions();
 
         [OneTimeSetUp]
         public async Task OneTimeSetUpAsync() {
-            driver = GenericFunctions.SetupSeleniumInstance();
+            driver = gf.SetupSeleniumInstance();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
 
-            GenericFunctions.Initialize("http://localhost:4200");
-
-            await GenericFunctions.SeedTestUsers();
+            await gf.SeedDatabase();
         }
 
         [OneTimeTearDown]
         public async Task OneTimeTearDown() {
-            await GenericFunctions.ResetDatabase();
+            await gf.ResetDatabase();
         }
 
         [SetUp]
         public void Setup()
         {
-            driver.Navigate().GoToUrl("http://localhost:4200/forgot-password");
+            driver!.Navigate().GoToUrl(gf.BuildUrl("/forgot-password"));
         }
 
         [Test]
         public async Task RecoverPassword_Success()
         {
-            var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
+            var emailInput = wait!.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var sendButton = wait.Until(d => d.FindElement(By.XPath("//app-button[@text='Enviar']")));
 
             string emailAddress = "201902087@estudantes.ips.pt";
-            TypeWithDelay(emailInput, emailAddress, 100);
+            gf.TypeWithDelay(emailInput, emailAddress, 100);
             Thread.Sleep(500);
 
             sendButton.Click();
@@ -58,16 +51,16 @@ namespace EcoChallengerTest.AutomationTest
             // Fetch tokens from tests endpoint
             string token = await GetRecoveryTokenAsync(emailAddress);
 
-            driver.Navigate().GoToUrl($"http://localhost:4200/reset-password/{token}");
+            driver!.Navigate().GoToUrl(gf.BuildUrl($"/reset-password/{token}"));
 
             var newPasswordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='newPassword']")));
             var confirmPasswordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='confirmPassword']")));
             var submitButton = wait.Until(d => d.FindElement(By.XPath("//app-button[@text='Submeter']")));
 
             string newPassword = "NewPassword123!";
-            TypeWithDelay(newPasswordInput, newPassword, 100);
+            gf.TypeWithDelay(newPasswordInput, newPassword, 100);
             Thread.Sleep(500);
-            TypeWithDelay(confirmPasswordInput, newPassword, 100);
+            gf.TypeWithDelay(confirmPasswordInput, newPassword, 100);
             Thread.Sleep(500);
 
             submitButton.Click();
@@ -82,7 +75,7 @@ namespace EcoChallengerTest.AutomationTest
         private async Task<string> GetRecoveryTokenAsync(string email) {
             HttpClient client = new HttpClient();
 
-            var response = await client.GetAsync("http://localhost:4200/api/test/get-recovery-tokens");
+            var response = await client.GetAsync(gf.BuildUrl("/api/test/get-recovery-tokens"));
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             
@@ -98,16 +91,7 @@ namespace EcoChallengerTest.AutomationTest
         [TearDown]
         public void Teardown()
         {
-            driver.Quit();
-        }
-
-        private void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
-        {
-            foreach (var character in text)
-            {
-                element.SendKeys(character.ToString());
-                Thread.Sleep(delayMilliseconds);
-            }
+            driver?.Quit();
         }
     }
 }

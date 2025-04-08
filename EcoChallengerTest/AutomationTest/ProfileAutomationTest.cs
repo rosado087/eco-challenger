@@ -1,49 +1,37 @@
 ﻿using NUnit.Framework;
-using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EcoChallenger.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using Microsoft.Extensions.Configuration;
 using EcoChallengerTest.Utils;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace EcoChallengerTest.AutomationTest
 {
     public class ProfileAutomationTest
     {
-        private IWebDriver driver;
-        private WebDriverWait wait;
+        private IWebDriver? driver;
+        private WebDriverWait? wait;
+        private readonly GenericFunctions gf = new GenericFunctions();
 
         [OneTimeSetUp]
         public async Task GlobalSetup()
         {
-            GenericFunctions.Initialize("http://localhost:4200");
-            await GenericFunctions.SeedTestUsers();
+            await gf.SeedDatabase();
         }
 
         [OneTimeTearDown]
         public async Task OneTimeTearDown() {
-            await GenericFunctions.ResetDatabase();
+            await gf.ResetDatabase();
         }
 
         [SetUp]
         public void Setup()
         {
-            driver = GenericFunctions.SetupSeleniumInstance();
+            driver = gf.SetupSeleniumInstance();
 
             // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
             //Perform Login
-            driver.Navigate().GoToUrl("http://localhost:4200/login");
+            driver.Navigate().GoToUrl(gf.BuildUrl("/login"));
 
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
@@ -51,17 +39,17 @@ namespace EcoChallengerTest.AutomationTest
             string email = "tester1@gmail.com";
             string password = "Password123!";
 
-            TypeWithDelay(emailInput, email, 100);
+            gf.TypeWithDelay(emailInput, email, 100);
             Thread.Sleep(500);
 
-            TypeWithDelay(passwordInput, password, 100);
+            gf.TypeWithDelay(passwordInput, password, 100);
             Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
             Thread.Sleep(2000);
             
-            GenericFunctions.NavigateToProfile(wait);
+            gf.NavigateToProfile(wait);
 
             Thread.Sleep(500);
         }
@@ -72,15 +60,14 @@ namespace EcoChallengerTest.AutomationTest
         {
 
             //Open Add Friend Card
-            var addButton = wait.Until(d => d.FindElement(By.Id("add-friend-modal")));
+            var addButton = wait!.Until(d => d.FindElement(By.Id("add-friend-modal")));
             addButton.Click();
 
             var addPopup = wait.Until(d => d.FindElement(By.Id("add-div")));
 
-
             //Input part of username "Tes"
             var inputAdd = wait.Until(d => addPopup.FindElement(By.Id("input-add")));
-            TypeWithDelay(inputAdd, "Tes", 100);
+            gf.TypeWithDelay(inputAdd, "Tes", 100);
 
             //Select a user
             var selectUser = wait.Until(d => addPopup.FindElement(By.Id("pos-Tester2")));
@@ -100,12 +87,12 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Username_Profile_Success()
         {
-            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            var editButton = wait!.Until(d => d.FindElement(By.Id("edit-info")));
             editButton.Click();
 
             var inputName = wait.Until(d => d.FindElement(By.Id("edit-username")));
             inputName.Clear();
-            TypeWithDelay(inputName, "TestName", 100);
+            gf.TypeWithDelay(inputName, "TestName", 100);
             Thread.Sleep(500);
 
             var saveButton = wait.Until(d => d.FindElement(By.Id("edit-save")));
@@ -121,12 +108,12 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Username_Profile_Failure()
         {
-            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            var editButton = wait!.Until(d => d.FindElement(By.Id("edit-info")));
             editButton.Click();
 
             var inputName = wait.Until(d => d.FindElement(By.Id("edit-username")));
             inputName.Clear();
-            TypeWithDelay(inputName, "Tester2", 100);
+            gf.TypeWithDelay(inputName, "Tester2", 100);
             Thread.Sleep(500);
 
             var saveButton = wait.Until(d => d.FindElement(By.Id("edit-save")));
@@ -142,7 +129,7 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Tag_Profile_Success()
         {
-            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            var editButton = wait!.Until(d => d.FindElement(By.Id("edit-info")));
             editButton.Click();
 
             var selectTag = wait.Until(d => d.FindElement(By.Id("edit-tag")));
@@ -165,7 +152,7 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Nothing_Profile_Success()
         {
-            var editButton = wait.Until(d => d.FindElement(By.Id("edit-info")));
+            var editButton = wait!.Until(d => d.FindElement(By.Id("edit-info")));
             editButton.Click();
 
             var saveButton = wait.Until(d => d.FindElement(By.Id("edit-save")));
@@ -183,17 +170,17 @@ namespace EcoChallengerTest.AutomationTest
         public void View_Friend_Profile_Success()
         {
             //View Friend Profile
-            var removeButton = wait.Until(d => d.FindElement(By.CssSelector("[data-role='view-profile-button']")));
+            var removeButton = wait!.Until(d => d.FindElement(By.CssSelector("[data-role='view-profile-button']")));
             removeButton.Click();
 
-            wait.Until(d => d.Url.Contains("http://localhost:4200/user-profile"));
+            wait.Until(d => d.Url.Contains(gf.BuildUrl("/user-profile")));
         }
 
         [Test]
         public void Remove_Friend_Success() {
 
             //Remove Friend
-            var removeButton = wait.Until(d => d.FindElement(By.Id("rem-Tester3")));
+            var removeButton = wait!.Until(d => d.FindElement(By.Id("rem-Tester3")));
             removeButton.Click();
             Thread.Sleep(500);
 
@@ -211,17 +198,7 @@ namespace EcoChallengerTest.AutomationTest
         [TearDown]
         public void Teardown()
         {
-            driver.Quit();
-        }
-
-        // Helper method to simulate typing with a delay
-        public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
-        {
-            foreach (var character in text)
-            {
-                element.SendKeys(character.ToString());
-                Thread.Sleep(delayMilliseconds); // Delay between each character
-            }
+            driver?.Quit();
         }
     }
 }
