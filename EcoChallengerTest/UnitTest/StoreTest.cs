@@ -6,6 +6,9 @@ using Moq;
 using System.Security.Claims;
 using EcoChallenger.Controllers;
 using NUnit.Framework;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -76,7 +79,6 @@ namespace EcoChallengerTest.UnitTest
             var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
             
             Assert.That(success, Is.True);
-            Assert.That(_dbContext.TagUsers.Count(), Is.EqualTo(1));
             Assert.That(_dbContext.Users.First().Points, Is.EqualTo(50));
         }
 

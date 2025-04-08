@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using EcoChallenger.Models;
 using EcoChallenger.Utils;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace EcoChallengerTest.UnitTest 
 {

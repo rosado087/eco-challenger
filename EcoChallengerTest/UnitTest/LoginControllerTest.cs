@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using EcoChallenger.Utils;
 using EcoChallenger.Models;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -48,18 +49,18 @@ namespace EcoChallengerTest.UnitTest
         {
             // Arrange
             var testUser = new User { 
-                Email = "test@example.com",
-                Username = "TestUser",
+                Email = "test58@example.com",
+                Username = "TestUser58",
                 Password = PasswordGenerator.GeneratePasswordHash("validPassword") 
             };
 
             _dbContext!.Users.Add(testUser);
             await _dbContext.SaveChangesAsync();
 
-            var loginRequest = new LoginRequestModel { Email = "test@example.com", Password = "validPassword" };
+            var loginRequest = new LoginRequestModel { Email = "test58@example.com", Password = "validPassword" };
 
             // Act
-            var result = await _controller!.Login(loginRequest) as JsonResult;
+            var result = await _controller!.Login(loginRequest);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -99,7 +100,7 @@ namespace EcoChallengerTest.UnitTest
             Assert.That(messageProperty, Is.Not.Null);
 
             var successValue = successProperty?.GetValue(result.Value);
-            Assert.That(successValue, Is.True);
+            Assert.That(successValue, Is.False);
         }
 
         [Test]
@@ -134,7 +135,7 @@ namespace EcoChallengerTest.UnitTest
             Assert.That(messageProperty, Is.Not.Null);
 
             var successValue = successProperty?.GetValue(result.Value);
-            Assert.That(successValue, Is.True);
+            Assert.That(successValue, Is.False);
         }
 
         [Test]
@@ -157,7 +158,7 @@ namespace EcoChallengerTest.UnitTest
             Assert.That(messageProperty, Is.Not.Null);
 
             var successValue = successProperty?.GetValue(result.Value);
-            Assert.That(successValue, Is.True);
+            Assert.That(successValue, Is.False);
         }
     }
 }

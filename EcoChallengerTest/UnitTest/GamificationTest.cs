@@ -10,7 +10,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -104,8 +108,12 @@ namespace EcoChallengerTest.UnitTest
         }
 
         [Test]
-        public async void Rotate_Daily_Challenges_Successfully()
-        {            
+        public async Task Rotate_Daily_Challenges_Successfully()
+        {        
+            // Make sure there are no challenged
+            _dbContext!.UserChallenges.RemoveRange(_dbContext.UserChallenges);
+            _dbContext.SaveChanges();
+                
             var userChallenges = _dbContext!.UserChallenges.ToList();
 
             //Verifica que não existem desafios atribuidos
@@ -158,7 +166,11 @@ namespace EcoChallengerTest.UnitTest
             var cts = new CancellationTokenSource();
             cts.CancelAfter(2000);
 
-            var userChallenges = await _dbContext!.UserChallenges.ToListAsync();
+            // Make sure there are no challenges
+            _dbContext!.UserChallenges.RemoveRange(_dbContext!.UserChallenges);
+            _dbContext.SaveChanges();
+
+            var userChallenges = await _dbContext.UserChallenges.ToListAsync();
 
             //Verifica que não existem desafios atribuidos
             Assert.That(userChallenges.Count, Is.EqualTo(0));

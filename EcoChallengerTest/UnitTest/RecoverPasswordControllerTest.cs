@@ -1,4 +1,6 @@
-﻿using EcoChallenger.Controllers;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using EcoChallenger.Controllers;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -102,7 +104,7 @@ namespace EcoChallengerTest.UnitTest
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(successValue, Is.True);
-            Assert.That(user.Password, Is.EqualTo("oldPassword"));
+            Assert.That(PasswordGenerator.ComparePasswordWithHash("newPassword", user.Password) , Is.True);
         }
     }
 }

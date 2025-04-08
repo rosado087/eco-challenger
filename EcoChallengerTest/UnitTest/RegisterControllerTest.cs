@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using EcoChallenger.Controllers;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +27,8 @@ namespace EcoChallengerTest.UnitTest
             //Arrange
             var context = GetInMemoryDbContext();
             var controller = new RegisterController(context);
-            var newUser = new User { Email = "test@gmail.com",
-                Username = "test",
+            var newUser = new User { Email = "test123@gmail.com",
+                Username = "test123",
                 Password = PasswordGenerator.GeneratePasswordHash("123")
             };
 
