@@ -109,7 +109,11 @@ namespace EcoChallenger.Controllers
 
                     new User { Username = "tester4", Email = "201902087@estudantes.ips.pt", 
                         Password = PasswordGenerator.GeneratePasswordHash("Password123!"), 
-                        IsAdmin = true}
+                        IsAdmin = true},
+
+                    new User { Username = "olduser", Email = "old@example.com", 
+                        Password = PasswordGenerator.GeneratePasswordHash("Password123!"), 
+                        Points = 100 }
                 };
                 _ctx.Users.AddRange(users);
                 _ctx.SaveChanges();
