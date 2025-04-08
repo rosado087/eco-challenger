@@ -82,6 +82,10 @@ namespace EcoChallenger.Controllers
             return Ok();
         }
         
+        /// <summary>
+        /// Fills the database with the default test data.
+        /// WARNING: BEWARE THAT CHANGES HERE MAY AFFECT TESTS
+        /// </summary>
         [AllowAnonymous]
         [HttpPost("seed-db")]
         public IActionResult SeedDatabase() {

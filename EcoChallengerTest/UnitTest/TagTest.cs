@@ -15,10 +15,11 @@ namespace EcoChallengerTest.UnitTest
 {
     public class TagTest
     {
-        private readonly AppDbContext _context;
-        private readonly TagController _controller;
+        private AppDbContext? _context;
+        private TagController? _controller;
 
-        public TagTest()
+        [SetUp]
+        public void Setup()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -49,7 +50,7 @@ namespace EcoChallengerTest.UnitTest
             envMock.Setup(e => e.WebRootPath).Returns(Directory.GetCurrentDirectory());
 
             var loggerMock = new Mock<ILogger<LoginController>>();
-            var controller = new TagController(_context, envMock.Object, loggerMock.Object);
+            var controller = new TagController(_context!, envMock.Object, loggerMock.Object);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
@@ -71,9 +72,9 @@ namespace EcoChallengerTest.UnitTest
 
             var model = new TagCRUDModel
             {
-                Name = "Eco Warrior",
-                BackgroundColor = "#fff",
-                TextColor = "#000",
+                Name = "Eco Warriorsssss",
+                BackgroundColor = "#fffddd",
+                TextColor = "#000000",
                 Style = Tag.TagStyle.NORMAL,
                 Price = 100
             };
@@ -88,7 +89,7 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public async Task Cannot_Add_Duplicate_Tag_Name()
         {
-            _context.Tags.Add(new Tag
+            _context!.Tags.Add(new Tag
             {
                 Name = "Eco Warrior",
                 BackgroundColor = "#000",
@@ -126,7 +127,7 @@ namespace EcoChallengerTest.UnitTest
                 Style = Tag.TagStyle.NORMAL,
                 Price = 10
             };
-            _context.Tags.Add(tag);
+            _context!.Tags.Add(tag);
             await _context.SaveChangesAsync();
 
             var model = new TagCRUDModel
@@ -139,7 +140,7 @@ namespace EcoChallengerTest.UnitTest
             };
 
             // Act
-            var result = await _controller.EditTag(tag.Id, model) as OkObjectResult;
+            var result = await _controller!.EditTag(tag.Id, model) as OkObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -169,11 +170,11 @@ namespace EcoChallengerTest.UnitTest
                 Style = Tag.TagStyle.NORMAL,
                 Price = 15
             };
-            _context.Tags.Add(tag);
+            _context!.Tags.Add(tag);
             _context.SaveChanges();
 
             // Act
-            var result = _controller.RemoveTag(tag.Id) as OkObjectResult;
+            var result = _controller!.RemoveTag(tag.Id) as OkObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -195,11 +196,11 @@ namespace EcoChallengerTest.UnitTest
                 Style = Tag.TagStyle.NORMAL,
                 Price = 30
             };
-            _context.Tags.Add(tag);
+            _context!.Tags.Add(tag);
             _context.SaveChanges();
 
             // Act
-            var result = _controller.GetTag(tag.Id) as OkObjectResult;
+            var result = _controller!.GetTag(tag.Id) as OkObjectResult;
             Assert.That(result, Is.Not.Null);
 
             // Assert

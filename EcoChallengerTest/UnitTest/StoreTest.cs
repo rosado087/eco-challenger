@@ -14,13 +14,14 @@ namespace EcoChallengerTest.UnitTest
 {
     public class StoreControllerTest
     {
-        private readonly StoreController _controller;
-        private readonly AppDbContext _dbContext;
-        private readonly Mock<ILogger<LoginController>> _mockLogger;
-        private readonly Mock<IHttpContextAccessor> _httpContextAccessor;
-        private readonly User _testUser;
+        private StoreController? _controller;
+        private AppDbContext? _dbContext;
+        private Mock<ILogger<LoginController>>? _mockLogger;
+        private Mock<IHttpContextAccessor>? _httpContextAccessor;
+        private User? _testUser;
 
-        public StoreControllerTest()
+        [SetUp]
+        public void Setup()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -68,18 +69,18 @@ namespace EcoChallengerTest.UnitTest
         {
             // Arrange
             var tag = new Tag { Name = "Eco", Price = 50, BackgroundColor = "#000", TextColor = "#fff", Style = Tag.TagStyle.NORMAL };
-            _dbContext.Tags.Add(tag);
+            _dbContext!.Tags.Add(tag);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
+            var result = _controller!.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
             var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
             
             Assert.That(success, Is.True);
-            Assert.That(_dbContext.Users.First().Points, Is.EqualTo(50));
+            Assert.That(_dbContext.Users.FirstOrDefault(u => u.Id == _testUser!.Id)!.Points, Is.EqualTo(50));
         }
 
         [Test]
@@ -88,12 +89,12 @@ namespace EcoChallengerTest.UnitTest
             // Arrange
             var tag = new Tag { Name = "Eco", Price = 30, BackgroundColor = "#000", TextColor = "#fff", Style = Tag.TagStyle.NORMAL };
 
-            _dbContext.Tags.Add(tag);
-            _dbContext.TagUsers.Add(new TagUsers { Tag = tag, User = _testUser, SelectedTag = false });
+            _dbContext!.Tags.Add(tag);
+            _dbContext.TagUsers.Add(new TagUsers { Tag = tag, User = _testUser!, SelectedTag = false });
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
+            var result = _controller!.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -106,11 +107,11 @@ namespace EcoChallengerTest.UnitTest
         {
             // Arrange
             var tag = new Tag { Name = "Expensive", Price = 200, BackgroundColor = "#000", TextColor = "#fff", Style = Tag.TagStyle.NORMAL };
-            _dbContext.Tags.Add(tag);
+            _dbContext!.Tags.Add(tag);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
+            var result = _controller!.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
