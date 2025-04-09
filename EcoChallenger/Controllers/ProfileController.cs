@@ -83,7 +83,13 @@ namespace EcoChallenger.Controllers
             try
             {
                 profile.Validate();
-                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == profile.Id);
+
+                // If no ID is provided, use the current user
+                int id = UserContext.Id;
+                if(profile.Id != null)
+                    id = (int)profile.Id;
+
+                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (user == null)
                     return new JsonResult(new { success = false, message = "O utilizador não existe" });

@@ -1,26 +1,25 @@
 using EcoChallenger.Controllers;
-using EcoChallenger.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Collections.Generic;
+using NUnit.Framework;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace EcoChallengerTest.UnitTest
 {
     public class TagTest
     {
-        private readonly AppDbContext _context;
-        private readonly TagController _controller;
+        private AppDbContext? _context;
+        private TagController? _controller;
 
-        public TagTest()
+        [SetUp]
+        public void Setup()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -51,7 +50,7 @@ namespace EcoChallengerTest.UnitTest
             envMock.Setup(e => e.WebRootPath).Returns(Directory.GetCurrentDirectory());
 
             var loggerMock = new Mock<ILogger<LoginController>>();
-            var controller = new TagController(_context, envMock.Object, loggerMock.Object);
+            var controller = new TagController(_context!, envMock.Object, loggerMock.Object);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
@@ -66,29 +65,31 @@ namespace EcoChallengerTest.UnitTest
             return controller;
         }
 
-        [Fact]
+        [Test]
         public async Task CreateTag_Succeeds_If_Admin()
         {
             var controller = CreateControllerWithContext(isAdmin: true);
 
             var model = new TagCRUDModel
             {
-                Name = "Eco Warrior",
-                BackgroundColor = "#fff",
-                TextColor = "#000",
+                Name = "Eco Warriorsssss",
+                BackgroundColor = "#fffddd",
+                TextColor = "#000000",
                 Style = Tag.TagStyle.NORMAL,
                 Price = 100
             };
 
             var result = await controller.CreateTag(model) as OkObjectResult;
-            Assert.NotNull(result);
-            Assert.True((bool)result.Value.GetType().GetProperty("success")?.GetValue(result.Value));
+            Assert.That(result, Is.Not.Null);
+            
+            var successValue = result?.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
         }
 
-        [Fact]
+        [Test]
         public async Task Cannot_Add_Duplicate_Tag_Name()
         {
-            _context.Tags.Add(new Tag
+            _context!.Tags.Add(new Tag
             {
                 Name = "Eco Warrior",
                 BackgroundColor = "#000",
@@ -110,11 +111,11 @@ namespace EcoChallengerTest.UnitTest
             };
 
             var result = await controller.CreateTag(model);
-            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(400, badRequest.StatusCode);
+            var badRequest = (BadRequestObjectResult)result;
+            Assert.That(badRequest.StatusCode, Is.EqualTo(400));
         }
 
-        [Fact]
+        [Test]
         public async Task EditTag_Updates_Existing_Tag()
         {
             // Arrange
@@ -126,7 +127,7 @@ namespace EcoChallengerTest.UnitTest
                 Style = Tag.TagStyle.NORMAL,
                 Price = 10
             };
-            _context.Tags.Add(tag);
+            _context!.Tags.Add(tag);
             await _context.SaveChangesAsync();
 
             var model = new TagCRUDModel
@@ -139,21 +140,25 @@ namespace EcoChallengerTest.UnitTest
             };
 
             // Act
-            var result = await _controller.EditTag(tag.Id, model) as OkObjectResult;
+            var result = await _controller!.EditTag(tag.Id, model) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.True((bool)result.Value.GetType().GetProperty("success")?.GetValue(result.Value));
+            Assert.That(result, Is.Not.Null);
+
+            var successValue = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
 
             var updatedTag = await _context.Tags.FindAsync(tag.Id);
-            Assert.Equal("UpdatedTag", updatedTag.Name);
-            Assert.Equal("#111111", updatedTag.BackgroundColor);
-            Assert.Equal("#EEEEEE", updatedTag.TextColor);
-            Assert.Equal(20, updatedTag.Price);
-            Assert.Equal(Tag.TagStyle.SOFT, updatedTag.Style);
+
+            Assert.That(updatedTag, Is.Not.Null);
+            Assert.That(updatedTag!.Name, Is.EqualTo("UpdatedTag"));
+            Assert.That(updatedTag.BackgroundColor, Is.EqualTo("#111111"));
+            Assert.That(updatedTag.TextColor, Is.EqualTo("#EEEEEE"));
+            Assert.That(updatedTag.Price, Is.EqualTo(20));
+            Assert.That(updatedTag.Style, Is.EqualTo(Tag.TagStyle.SOFT));
         }
 
-        [Fact]
+        [Test]
         public void RemoveTag_Deletes_Tag()
         {
             // Arrange
@@ -165,19 +170,21 @@ namespace EcoChallengerTest.UnitTest
                 Style = Tag.TagStyle.NORMAL,
                 Price = 15
             };
-            _context.Tags.Add(tag);
+            _context!.Tags.Add(tag);
             _context.SaveChanges();
 
             // Act
-            var result = _controller.RemoveTag(tag.Id) as OkObjectResult;
+            var result = _controller!.RemoveTag(tag.Id) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.True((bool)result.Value.GetType().GetProperty("success")?.GetValue(result.Value));
-            Assert.False(_context.Tags.Any(t => t.Id == tag.Id));
+            Assert.That(result, Is.Not.Null);
+
+            var successValue = result?.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
+            Assert.That(_context.Tags.Any(t => t.Id == tag.Id), Is.False);
         }
 
-        [Fact]
+        [Test]
         public void GetTag_Returns_Tag()
         {
             // Arrange
@@ -189,18 +196,18 @@ namespace EcoChallengerTest.UnitTest
                 Style = Tag.TagStyle.NORMAL,
                 Price = 30
             };
-            _context.Tags.Add(tag);
+            _context!.Tags.Add(tag);
             _context.SaveChanges();
 
             // Act
-            var result = _controller.GetTag(tag.Id) as OkObjectResult;
+            var result = _controller!.GetTag(tag.Id) as OkObjectResult;
+            Assert.That(result, Is.Not.Null);
 
             // Assert
-            Assert.NotNull(result);
-            var returnedTag = result.Value as Tag;
-            Assert.NotNull(returnedTag);
-            Assert.Equal(tag.Name, returnedTag.Name);
-            Assert.Equal(tag.Price, returnedTag.Price);
+            var returnedTag = result!.Value as Tag;
+            Assert.That(returnedTag, Is.Not.Null);
+            Assert.That(tag.Name, Is.EqualTo(returnedTag!.Name));
+            Assert.That(tag.Price, Is.EqualTo(returnedTag.Price));
         }
     }
 }

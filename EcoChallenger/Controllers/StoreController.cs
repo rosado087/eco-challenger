@@ -89,7 +89,7 @@ namespace EcoChallenger.Controllers
 
                 // Make sure the user has enough points
                 if(user.Points < tag.Price)
-                    return Ok(new { success = false, message = "O utilizadore não tem pontos suficientes!"});
+                    return Ok(new { success = false, message = "O utilizador não tem pontos suficientes!"});
 
                 // Attribute the tag to the user
                 TagUsers tu = new TagUsers {

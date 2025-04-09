@@ -2,39 +2,39 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using EcoChallengerTest.Utils;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Castle.Core.Configuration;
-using Moq;
+using System.Threading.Tasks;
+using System;
+using System.Threading;
 
 namespace EcoChallengerTest.AutomationTest
 {
     public class GamificationAutomationTest
     {
-        private IWebDriver driver;
-        private WebDriverWait wait;
+        private IWebDriver? driver;
+        private WebDriverWait? wait;
+        private readonly GenericFunctions gf = new GenericFunctions();
 
         [OneTimeSetUp]
         public async Task GlobalSetup()
         {
-            GenericFunctions.Initialize("http://localhost:4200");
-            await GenericFunctions.SeedTestUsers();
+            await gf.SeedDatabase();
         }
 
         [OneTimeTearDown]
         public async Task OneTimeTearDown() {
-            await GenericFunctions.ResetDatabase();
+            await gf.ResetDatabase();
         }
 
         [SetUp]
         public void Setup()
         {
-            driver = GenericFunctions.SetupSeleniumInstance();
+            driver = gf.SetupSeleniumInstance();
 
             // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
             //Perform Login
-            driver.Navigate().GoToUrl("http://localhost:4200/login");
+            driver.Navigate().GoToUrl(gf.BuildUrl("/login"));
 
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
@@ -42,28 +42,26 @@ namespace EcoChallengerTest.AutomationTest
             string email = "tester1@gmail.com";
             string password = "Password123!";
 
-            TypeWithDelay(emailInput, email, 100);
+            gf.TypeWithDelay(emailInput, email);
             Thread.Sleep(500);
 
-            TypeWithDelay(passwordInput, password, 100);
+            gf.TypeWithDelay(passwordInput, password);
             Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
             Thread.Sleep(2000);
             
-            GenericFunctions.NavigateToChallenges(wait);
+            gf.NavigateToChallenges(wait);
 
             Thread.Sleep(500);
         }
-
-        
 
         [Test]
         public void Complete_Challenge_Success()
         {
 
-            var complete = wait.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-complete-button']")));
+            var complete = wait!.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-complete-button']")));
             complete.Click();
 
             Thread.Sleep(1000);
@@ -74,7 +72,7 @@ namespace EcoChallengerTest.AutomationTest
 
             okayButton.Click();
 
-            GenericFunctions.NavigateToProfile(wait);
+            gf.NavigateToProfile(wait);
             Thread.Sleep(1000);
         }
 
@@ -82,7 +80,7 @@ namespace EcoChallengerTest.AutomationTest
         public void AddProgress_Success()
         {
 
-            var complete = wait.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-progress-button']")));
+            var complete = wait!.Until(d => d.FindElement(By.CssSelector("[data-role='challenge-progress-button']")));
             complete.Click();
 
             Thread.Sleep(1000);
@@ -99,16 +97,7 @@ namespace EcoChallengerTest.AutomationTest
         [TearDown]
         public void Teardown()
         {
-            driver.Quit();
-        }
-
-        private void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
-        {
-            foreach (var character in text)
-            {
-                element.SendKeys(character.ToString());
-                Thread.Sleep(delayMilliseconds);
-            }
+            driver?.Quit();
         }
     }
 }

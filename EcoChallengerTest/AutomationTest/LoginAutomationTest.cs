@@ -1,80 +1,80 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
-
 using OpenQA.Selenium.Support.UI;
 using EcoChallengerTest.Utils;
-using Microsoft.AspNetCore.Mvc.Testing;
+using System.Threading.Tasks;
+using System;
+using System.Threading;
 
 namespace EcoChallengerTest.AutomationTest
 {
     [TestFixture]
     public class LoginAutomationTest
     {
-        private IWebDriver driver;
-        private WebDriverWait wait;
+        private IWebDriver? driver;
+        private WebDriverWait? wait;
+        private readonly GenericFunctions gf = new GenericFunctions();
 
         [OneTimeSetUp]
         public async Task GlobalSetup()
         {
-            GenericFunctions.Initialize("http://localhost:4200");
-
-            await GenericFunctions.SeedTestUsers();
+            await gf.SeedDatabase();
         }
 
         [OneTimeTearDown]
         public async Task OneTimeTearDown() {
-            await GenericFunctions.ResetDatabase();
+            await gf.ResetDatabase();
         }
 
         [SetUp]
         public void Setup()
         {   
-            driver = GenericFunctions.SetupSeleniumInstance();
+            driver = gf.SetupSeleniumInstance();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
-            driver.Navigate().GoToUrl("http://localhost:4200/login");
+            driver.Navigate().GoToUrl(gf.BuildUrl("/login"));
         }
 
         [Test]
         public void Login_Success()
         {
-            var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
+            var emailInput = wait!.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
             string email = "tester1@gmail.com";
             string password = "Password123!";
 
-            TypeWithDelay(emailInput, email, 100);
+            gf.TypeWithDelay(emailInput, email);
             Thread.Sleep(500);
 
-            TypeWithDelay(passwordInput, password, 100);
+            gf.TypeWithDelay(passwordInput, password);
             Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
-            wait.Until(d => d.Url.Contains("http://localhost:4200"));
+            wait.Until(d => d.Url.Contains(GenericFunctions.DEFAULT_TEST_URL));
         }
 
         [Test]
         public void Logout_Success()
         {
-            var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
+            var emailInput = wait!.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
             var passwordInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='password']")));
 
             string email = "testuser@example.com";
             string password = "Password123!";
 
-            TypeWithDelay(emailInput, email, 100);
+            gf.TypeWithDelay(emailInput, email);
             Thread.Sleep(500);
 
-            TypeWithDelay(passwordInput, password, 100);
+            gf.TypeWithDelay(passwordInput, password);
             Thread.Sleep(500);
 
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
 
-            wait.Until(d => d.Url.Contains("http://localhost:4200"));
+            wait.Until(d => d.Url.Contains(GenericFunctions.DEFAULT_TEST_URL));
 
             var navbarUserIcon = wait.Until(d => d.FindElement(By.Id("navbar-user-icon")));
             navbarUserIcon.Click();
@@ -87,23 +87,13 @@ namespace EcoChallengerTest.AutomationTest
             var yesLogoutPopup = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[1]/app-popup/dialog/div/div/form/app-button[1]")));
             yesLogoutPopup.Click();
 
-            wait.Until(d => d.Url.Contains("http://localhost:4200/login"));
+            wait.Until(d => d.Url.Contains(gf.BuildUrl("/login")));
         }
 
         [TearDown]
         public void Teardown()
         {
-            driver.Quit();
-        }
-
-        // Helper method to simulate typing with a delay
-        public void TypeWithDelay(IWebElement element, string text, int delayMilliseconds = 100)
-        {
-            foreach (var character in text)
-            {
-                element.SendKeys(character.ToString());
-                Thread.Sleep(delayMilliseconds); // Delay between each character
-            }
+            driver?.Quit();
         }
     }
 }

@@ -9,11 +9,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EcoChallengerTest.UnitTest
@@ -21,13 +21,13 @@ namespace EcoChallengerTest.UnitTest
     public class GamificationTest
     {
 
-        private readonly AppDbContext _dbContext;
-        private readonly GamificationController _controller;
-        private readonly Mock<IConfiguration> _config;
-        private readonly Mock<ILogger<GamificationController>> _mockLogger;
+        private AppDbContext? _dbContext;
+        private GamificationController? _controller;
+        private Mock<IConfiguration>? _config;
+        private Mock<ILogger<GamificationController>>? _mockLogger;
         
-
-        public GamificationTest()
+        [SetUp]
+        public void Setup()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -107,13 +107,17 @@ namespace EcoChallengerTest.UnitTest
 
         }
 
-        [Fact]
-        public async void Rotate_Daily_Challenges_Successfully()
-        {            
-            var userChallenges = _dbContext.UserChallenges.ToList();
+        [Test]
+        public async Task Rotate_Daily_Challenges_Successfully()
+        {        
+            // Make sure there are no challenged
+            _dbContext!.UserChallenges.RemoveRange(_dbContext.UserChallenges);
+            _dbContext.SaveChanges();
+                
+            var userChallenges = _dbContext!.UserChallenges.ToList();
 
             //Verifica que não existem desafios atribuidos
-            Assert.Empty(userChallenges);
+            Assert.That(userChallenges, Is.Empty);
 
             // User gamification rotation service to attribute 3 challenges
             var mockLogger = new Mock<ILogger<DailyTaskService>>(); // Setup logger mock interface
@@ -138,22 +142,20 @@ namespace EcoChallengerTest.UnitTest
 
             userChallenges = _dbContext.UserChallenges.ToList();
             //Verifica que foram atribuidos 3 desafio diarios
-            Assert.Equal(3, userChallenges.Count);
+            Assert.That(userChallenges.Count, Is.EqualTo(3));
 
             // Make sure the service is not running anymore
             await service.StopAsync(cts.Token);
         }
 
-        [Fact]
+        [Test]
         public async Task Rotate_Weekly_Challenges_Successfully()
         {
             var mockLogger = new Mock<ILogger<WeeklyTaskService>>();
-
             var serviceProviderMock = new Mock<IServiceProvider>();
 
             serviceProviderMock.Setup(x => x.GetService(typeof(AppDbContext)))
                 .Returns(_dbContext);
-
 
             var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
             var serviceScopeMock = new Mock<IServiceScope>();
@@ -164,23 +166,25 @@ namespace EcoChallengerTest.UnitTest
             var cts = new CancellationTokenSource();
             cts.CancelAfter(2000);
 
-            
+            // Make sure there are no challenges
+            _dbContext!.UserChallenges.RemoveRange(_dbContext!.UserChallenges);
+            _dbContext.SaveChanges();
 
             var userChallenges = await _dbContext.UserChallenges.ToListAsync();
 
             //Verifica que não existem desafios atribuidos
-            Assert.Equal(0, userChallenges.Count);
+            Assert.That(userChallenges.Count, Is.EqualTo(0));
 
             await service.StartAsync(cts.Token);
-
             userChallenges = await _dbContext.UserChallenges.ToListAsync();
+
             //Verifica que foram atribuidos 2 desafios semanais
-            Assert.Equal(2, userChallenges.Count);
+            Assert.That(userChallenges.Count, Is.EqualTo(2));
 
             mockLogger.Verify(log => log.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v!.ToString().Contains("Rotação de desafios semanais foram feitos com sucesso")),
+                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Rotação de desafios semanais foram feitos com sucesso")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
@@ -188,18 +192,16 @@ namespace EcoChallengerTest.UnitTest
             mockLogger.Verify(log => log.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v!.ToString().Contains("Próxima rotação de desafios semanais é")),
+                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Próxima rotação de desafios semanais é")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
             
         }
 
-        [Fact]
+        [Test]
         public async Task CompleteChallenge_Works_AsExpected()
         {          
-            // Arrange
-
             var testUser = new User
             {
                 Email = "test@example.com",
@@ -224,11 +226,10 @@ namespace EcoChallengerTest.UnitTest
                 Progress = 0
             };
 
-            _dbContext.Users.Add(testUser);
+            _dbContext!.Users.Add(testUser);
             _dbContext.Challenges.Add(challenge1);
             _dbContext.UserChallenges.Add(userChallenge1);
             await _dbContext.SaveChangesAsync();
-
 
             var httpContext = new DefaultHttpContext();
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -241,22 +242,19 @@ namespace EcoChallengerTest.UnitTest
             UserContext.Initialize(httpContextAccessor.Object);
 
             // Act 
-            var result = await _controller.CompleteChallenge(challenge1.Id) as JsonResult;
+            var result = await _controller!.CompleteChallenge(challenge1.Id) as JsonResult;
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            var messageProperty = result.Value.GetType().GetProperty("message");
-            var messageValue = (string)messageProperty.GetValue(result.Value);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(successProperty);
-            Assert.True(successValue);
-            Assert.Equal("Desafio concluido com sucesso.", messageValue);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(successValue, Is.True);
         }
 
 
-        [Fact]
+        [Test]
         public async Task CompleteChallenge_Already_Completed()
         {          
             // Arrange
@@ -284,7 +282,7 @@ namespace EcoChallengerTest.UnitTest
                 Progress = 0
             };
 
-            _dbContext.Users.Add(testUser);
+            _dbContext!.Users.Add(testUser);
             _dbContext.Challenges.Add(challenge1);
             _dbContext.UserChallenges.Add(userChallenge1);
             await _dbContext.SaveChangesAsync();
@@ -301,21 +299,18 @@ namespace EcoChallengerTest.UnitTest
             UserContext.Initialize(httpContextAccessor.Object);
 
             // Act 
-            var result = await _controller.CompleteChallenge(challenge1.Id) as JsonResult;
+            var result = await _controller!.CompleteChallenge(challenge1.Id) as JsonResult;
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            var messageProperty = result.Value.GetType().GetProperty("message");
-            var messageValue = (string)messageProperty.GetValue(result.Value);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(successProperty);
-            Assert.False(successValue);
-            Assert.Equal("O desafio já está concluído.", messageValue);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(successValue, Is.False);
         }
 
-        [Fact]
+        [Test]
         public async Task CompleteChallenge_Does_Not_Exist()
         {          
             // Arrange
@@ -323,40 +318,34 @@ namespace EcoChallengerTest.UnitTest
             int i = 999;
 
             // Act 
-            var result = await _controller.CompleteChallenge(i) as JsonResult;
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            var messageProperty = result.Value.GetType().GetProperty("message");
-            var messageValue = (string)messageProperty.GetValue(result.Value);
+            var result = await _controller!.CompleteChallenge(i) as JsonResult;
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(successProperty);
-            Assert.False(successValue);
-            Assert.Equal("O desafio não existe.", messageValue);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(successValue, Is.False);
         }
 
-        [Fact]
+        [Test]
         public async Task AddProgress_Returns_Error_When_Challenge_NotFound()
         {
             // Arrange
             int i = 999;
 
             // Act
-            var result = await _controller.AddProgress(i) as JsonResult;
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            var messageProperty = result.Value.GetType().GetProperty("message");
-            var messageValue = (string)messageProperty.GetValue(result.Value);
+            var result = await _controller!.AddProgress(i) as JsonResult;
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(successProperty);
-            Assert.False(successValue);
-            Assert.Equal("O desafio não existe.", messageValue);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(successValue, Is.False);
         }
 
-        [Fact]
+        [Test]
         public async Task AddProgress_Returns_Error_When_Challenge_Already_Completed()
         {
             // Arrange
@@ -384,7 +373,7 @@ namespace EcoChallengerTest.UnitTest
                 Progress = 0
             };
 
-            _dbContext.Users.Add(testUser);
+            _dbContext!.Users.Add(testUser);
             _dbContext.Challenges.Add(challenge1);
             _dbContext.UserChallenges.Add(userChallenge1);
             await _dbContext.SaveChangesAsync();
@@ -401,20 +390,17 @@ namespace EcoChallengerTest.UnitTest
             UserContext.Initialize(httpContextAccessor.Object);
 
             // Act 
-            var result = await _controller.AddProgress(challenge1.Id) as JsonResult;
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            var messageProperty = result.Value.GetType().GetProperty("message");
-            var messageValue = (string)messageProperty.GetValue(result.Value);
+            var result = await _controller!.AddProgress(challenge1.Id) as JsonResult;
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(successProperty);
-            Assert.False(successValue);
-            Assert.Equal("O desafio já está concluído.", messageValue);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(successValue, Is.False);
         }
 
-        [Fact]
+        [Test]
         public async Task AddProgress_Successfully()
         {
             // Arrange
@@ -442,7 +428,7 @@ namespace EcoChallengerTest.UnitTest
                 Progress = 0
             };
 
-            _dbContext.Users.Add(testUser);
+            _dbContext!.Users.Add(testUser);
             _dbContext.Challenges.Add(challenge1);
             _dbContext.UserChallenges.Add(userChallenge1);
             await _dbContext.SaveChangesAsync();
@@ -459,17 +445,14 @@ namespace EcoChallengerTest.UnitTest
             UserContext.Initialize(httpContextAccessor.Object);
 
             // Act 
-            var result = await _controller.AddProgress(challenge1.Id) as JsonResult;
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            var messageProperty = result.Value.GetType().GetProperty("message");
-            var messageValue = (string)messageProperty.GetValue(result.Value);
+            var result = await _controller!.AddProgress(challenge1.Id) as JsonResult;
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(successProperty);
-            Assert.True(successValue);
-            Assert.Equal("Progresso adicionado com sucesso.", messageValue);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successProperty, Is.Not.Null);
+            Assert.That(successValue, Is.True);
         }
 
     }

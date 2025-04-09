@@ -4,23 +4,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
-using Xunit;
 using EcoChallenger.Controllers;
-using EcoChallenger.Models;
+using NUnit.Framework;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace EcoChallengerTest.UnitTest
 {
     public class StoreControllerTest
     {
-        private readonly StoreController _controller;
-        private readonly AppDbContext _dbContext;
-        private readonly Mock<ILogger<LoginController>> _mockLogger;
-        private readonly Mock<IHttpContextAccessor> _httpContextAccessor;
-        private readonly User _testUser;
+        private StoreController? _controller;
+        private AppDbContext? _dbContext;
+        private Mock<ILogger<LoginController>>? _mockLogger;
+        private Mock<IHttpContextAccessor>? _httpContextAccessor;
+        private User? _testUser;
 
-        public StoreControllerTest()
+        [SetUp]
+        public void Setup()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -63,59 +64,59 @@ namespace EcoChallengerTest.UnitTest
             _controller = new StoreController(_dbContext, _mockLogger.Object);
         }
 
-        [Fact]
+        [Test]
         public async Task PurchaseTag_Succeeds_When_User_Has_Enough_Points()
         {
             // Arrange
             var tag = new Tag { Name = "Eco", Price = 50, BackgroundColor = "#000", TextColor = "#fff", Style = Tag.TagStyle.NORMAL };
-            _dbContext.Tags.Add(tag);
+            _dbContext!.Tags.Add(tag);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
+            var result = _controller!.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            var success = (bool)result.Value.GetType().GetProperty("success").GetValue(result.Value);
-            Assert.True(success);
-            Assert.Equal(1, _dbContext.TagUsers.Count());
-            Assert.Equal(50, _dbContext.Users.First().Points);
+            Assert.That(result, Is.Not.Null);
+            var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            
+            Assert.That(success, Is.True);
+            Assert.That(_dbContext.Users.FirstOrDefault(u => u.Id == _testUser!.Id)!.Points, Is.EqualTo(50));
         }
 
-        [Fact]
+        [Test]
         public async Task PurchaseTag_Fails_When_Already_Owned()
         {
             // Arrange
             var tag = new Tag { Name = "Eco", Price = 30, BackgroundColor = "#000", TextColor = "#fff", Style = Tag.TagStyle.NORMAL };
 
-            _dbContext.Tags.Add(tag);
-            _dbContext.TagUsers.Add(new TagUsers { Tag = tag, User = _testUser, SelectedTag = false });
+            _dbContext!.Tags.Add(tag);
+            _dbContext.TagUsers.Add(new TagUsers { Tag = tag, User = _testUser!, SelectedTag = false });
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
+            var result = _controller!.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            var success = (bool)result.Value.GetType().GetProperty("success").GetValue(result.Value);
-            Assert.False(success);
+            Assert.That(result, Is.Not.Null);
+            var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            Assert.That(success, Is.False);
         }
 
-        [Fact]
+        [Test]
         public async Task PurchaseTag_Fails_When_Not_Enough_Points()
         {
             // Arrange
             var tag = new Tag { Name = "Expensive", Price = 200, BackgroundColor = "#000", TextColor = "#fff", Style = Tag.TagStyle.NORMAL };
-            _dbContext.Tags.Add(tag);
+            _dbContext!.Tags.Add(tag);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = _controller.PurchaseTag(tag.Id) as OkObjectResult;
+            var result = _controller!.PurchaseTag(tag.Id) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            var success = (bool)result.Value.GetType().GetProperty("success").GetValue(result.Value);
-            Assert.False(success);
+            Assert.That(result, Is.Not.Null);
+            var success = result!.Value?.GetType().GetProperty("success")?.GetValue(result.Value);
+            Assert.That(success, Is.False);
         }
     }
 }
