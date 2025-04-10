@@ -8,7 +8,7 @@ import {
     heroTrash,
     heroMagnifyingGlass
 } from '@ng-icons/heroicons/outline'
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router'
+import { ActivatedRoute, Router} from '@angular/router'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { User } from '../../../models/user'
 import { SuccessModel } from '../../../models/success-model'
