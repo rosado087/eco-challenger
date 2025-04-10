@@ -4,6 +4,7 @@ using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace EcoChallenger.Controllers
@@ -13,13 +14,17 @@ namespace EcoChallenger.Controllers
         private readonly AppDbContext _ctx;
         private readonly IConfiguration _configuration;
         private readonly ILogger<LoginController> _logger;
+        private readonly DailyTaskService _dailyTaskService;
+        private readonly WeeklyTaskService _weeklyTaskService;
         private Random _random;
 
-        public LoginController(AppDbContext context, IConfiguration configuration, ILogger<LoginController> logger)
+        public LoginController(AppDbContext context, IConfiguration configuration, ILogger<LoginController> logger, IEnumerable<IHostedService> hostedServices)
         {
             _ctx = context;
             _configuration = configuration;
             _logger = logger;
+            while(_dailyTaskService == null) _dailyTaskService = hostedServices.OfType<DailyTaskService>().FirstOrDefault();
+            while(_weeklyTaskService == null) _weeklyTaskService = hostedServices.OfType<WeeklyTaskService>().FirstOrDefault();
             _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
         }
 
@@ -37,7 +42,8 @@ namespace EcoChallenger.Controllers
                 var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Email == data.Email);
                 if (user == null)
                     return new JsonResult(new { success = false, message = "Email ou palavra-passe inválidos." });
-
+                //Verify if user is blocked
+                if(user.IsBlocked) return new JsonResult(new {success = false, message = "Esta conta foi bloqueada."});
                 // Verify the password
                 bool isPasswordValid = PasswordGenerator.ComparePasswordWithHash(data.Password, user.Password);
                 if (!isPasswordValid)
@@ -101,55 +107,14 @@ namespace EcoChallenger.Controllers
                         GoogleToken = data.GoogleToken
                     };
                     await _ctx.Users.AddAsync(newUser);
-
-
-                    //Secção de atribuição de desafios
-                    var dailyChallenges = await _ctx.Challenges.Where(c => c.Type == "Daily").ToListAsync();
-
-                    List<Challenge> challenges = [];
-
-                    while (challenges.Count < 3 && dailyChallenges.Count > 2)
-                    {
-                        var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
-
-                        if (challenge != null && !challenges.Contains(challenge))
-                        {
-                            await _ctx.UserChallenges.AddAsync(new UserChallenges
-                            {
-                                Challenge = challenge,
-                                User = newUser,
-                                WasConcluded = false
-                            });
-
-                            challenges.Add(challenge);
-                        }
-                    }
-
-                    var weeklyChallenges = await _ctx.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
-
-                    challenges = [];
-
-                    while (challenges.Count < 2 && dailyChallenges.Count > 1)
-                    {
-                        var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
-
-                        if (challenge != null && !challenges.Contains(challenge))
-                        {
-                            await _ctx.UserChallenges.AddAsync(new UserChallenges
-                            {
-                                Challenge = challenge,
-                                User = newUser,
-                                Progress = 0,
-                                WasConcluded = false
-                            });
-                            challenges.Add(challenge);
-                        }
-                    }
-
                     await _ctx.SaveChangesAsync();
 
+                    //Secção de atribuição de desafios
 
+                     await _dailyTaskService.UpdateUserChallenges(newUser, false, _ctx);
+                     await _weeklyTaskService.UpdateUserChallenges(newUser, false,_ctx);
 
+                    await _ctx.SaveChangesAsync();
                     token = TokenManager.GenerateJWT(newUser);
                     
                     return new JsonResult(new { success = true, token, user = new {
@@ -166,6 +131,9 @@ namespace EcoChallenger.Controllers
                 if(string.IsNullOrEmpty(user.GoogleToken)) {
                     return new JsonResult(new { success = false, message = "Esta conta não foi criada através do GAuth, por favor faça login pelo form."});
                 }
+
+                //Verify if user is blocked
+                if (user.IsBlocked) return new JsonResult(new { success = false, message = "Esta conta foi bloqueada." });
 
                 // Update user GToken
                 user.GoogleToken = data.GoogleToken;

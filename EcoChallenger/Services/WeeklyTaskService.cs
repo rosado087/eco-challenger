@@ -35,41 +35,11 @@ namespace EcoChallenger.Services
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                        var weeklyChallenges = await dbContext.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
-                        var UsersWeeklyChallenges = await dbContext.UserChallenges.Where(dc => weeklyChallenges.Contains(dc.Challenge)).ToListAsync();
-                        if (UsersWeeklyChallenges != null)
-                        {
-                            dbContext.UserChallenges.RemoveRange(UsersWeeklyChallenges);
-                        }
-
-                        var users = dbContext.Users;
-
-                        foreach (var user in users)
-                        {
-                            List<Challenge> challenges = [];
-
-                            while (challenges.Count < 2)
-                            {
-                                var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
-
-                                if (challenge != null && !challenges.Contains(challenge))
-                                {
-                                    await dbContext.UserChallenges.AddAsync(new UserChallenges
-                                    {
-                                        Challenge = challenge,
-                                        User = user,
-                                        Progress = 0,
-                                        WasConcluded = false
-                                    });
-                                    challenges.Add(challenge);
-                                }
-                            }
-                        }
+                        await UpdateUserChallenges(null, true, dbContext);
                         await dbContext.SaveChangesAsync();
 
-                        _logger.LogInformation("Rotação de desafios semanais foram feitos com sucesso");
-
                     }
+                    _logger.LogInformation("Rotação de desafios semanais foram feitos com sucesso");
                 }
                 catch (Exception ex)
                 {
@@ -82,33 +52,51 @@ namespace EcoChallenger.Services
             }
         }
 
-        public async void UpdateUserChallenges(User user)
+        public async Task UpdateUserChallenges(User? userReceived, bool isRotation, AppDbContext dbContext)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            User[] users = [userReceived];
+
+            //(using (var scope = _serviceScopeFactory.CreateScope())
+            //{
+                //var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var weeklyChallenges = await dbContext.Challenges.Where(c => c.Type == "Weekly").ToListAsync();
 
-                List<Challenge> challenges = [];
 
-                while (challenges.Count < 2)
+                if (isRotation)
                 {
-                    var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
-
-                    if (challenge != null && !challenges.Contains(challenge))
+                    var UsersWeeklyChallenges = await dbContext.UserChallenges.Where(dc => dc.Challenge.Type == "Weekly").ToListAsync();
+                    if (UsersWeeklyChallenges != null)
                     {
-                        await dbContext.UserChallenges.AddAsync(new UserChallenges
+                        dbContext.UserChallenges.RemoveRange(UsersWeeklyChallenges);
+                    }
+                    users = await dbContext.Users.ToArrayAsync();
+                }
+                
+                List<Challenge> challenges = [];
+                foreach (var user in users)
+                {
+                    challenges.Clear();
+                    while (challenges.Count < 2 && weeklyChallenges.Count >= 2)
+                    {
+                        var challenge = weeklyChallenges[_random.Next(weeklyChallenges.Count)];
+
+                        if (challenge != null && !challenges.Contains(challenge))
                         {
-                            Challenge = challenge,
-                            User = user,
-                            Progress = 0,
-                            WasConcluded = false
-                        });
-                        challenges.Add(challenge);
+                            await dbContext.UserChallenges.AddAsync(new UserChallenges
+                            {
+                                Challenge = challenge,
+                                User = user,
+                                WasConcluded = false
+                            });
+
+
+                            challenges.Add(challenge);
+                        }
                     }
                 }
-                await dbContext.SaveChangesAsync();
-            }
+                
+            //}
+
         }
     }
 }

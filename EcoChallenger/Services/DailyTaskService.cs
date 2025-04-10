@@ -3,7 +3,6 @@
 
 using EcoChallenger.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 public class DailyTaskService : BackgroundService
 {
@@ -17,6 +16,8 @@ public class DailyTaskService : BackgroundService
         _logger = logger;
         _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
     }
+
+    
 
     /// <summary>
     /// Rotates Daily Challenges of every user every day
@@ -36,40 +37,12 @@ public class DailyTaskService : BackgroundService
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    var dailyChallenges = await dbContext.Challenges.Where(c => c.Type == "Daily").ToListAsync();
-                    var UsersDailyChallenges = await dbContext.UserChallenges.Where(dc => dailyChallenges.Contains(dc.Challenge)).ToListAsync();
-                    if (UsersDailyChallenges != null)
-                    {
-                        dbContext.UserChallenges.RemoveRange(UsersDailyChallenges);
-                    }
-                    
-                    var users = dbContext.Users;
-
-                    foreach (var user in users)
-                    {
-                        List<Challenge> challenges = new List<Challenge>();
-
-                        while (challenges.Count < 3)
-                        {
-                            var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
-                            
-                            if (challenge != null && !challenges.Contains(challenge))
-                            {
-                                await dbContext.UserChallenges.AddAsync(new UserChallenges
-                                {
-                                    Challenge = challenge,
-                                    User = user,
-                                    WasConcluded = false
-                                });
-
-                                challenges.Add(challenge);
-                            }
-                        }
-                    }
-
+                    await UpdateUserChallenges(null, true, dbContext);
                     await dbContext.SaveChangesAsync();
 
+
                     _logger.LogInformation("Rotação de desafios diários foram feitos com sucesso");
+
 
                 }
             }
@@ -84,33 +57,50 @@ public class DailyTaskService : BackgroundService
         }
     }
 
-    public async void UpdateUserChallenges(User user)
+    public async Task UpdateUserChallenges(User? userReceived, bool isRotation, AppDbContext dbContext)
     {
-        
-        using (var scope = _serviceScopeFactory.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var dailyChallenges = await dbContext.Challenges.ToListAsync();
+        User[] users = [userReceived];
 
-            List<Challenge> challenges = [];
+        //using (var scope = _serviceScopeFactory.CreateScope())
+        //{
+            //var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var dailyChallenges = await dbContext.Challenges.Where(c => c.Type == "Daily").ToListAsync();
+            
 
-            while (challenges.Count < 3)
+            if (isRotation)
             {
-                var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
-
-                if (challenge != null && !challenges.Contains(challenge))
+                var UsersDailyChallenges = await dbContext.UserChallenges.Where(dc => dc.Challenge.Type == "Daily").ToListAsync();
+                if (UsersDailyChallenges != null)
                 {
-                    await dbContext.UserChallenges.AddAsync(new UserChallenges
-                    {
-                        Challenge = challenge,
-                        User = user,
-                        WasConcluded = false
-                    });
+                    dbContext.UserChallenges.RemoveRange(UsersDailyChallenges);
+                }
+                users = await dbContext.Users.ToArrayAsync();
+            }
+            
+            List<Challenge> challenges = [];
+            foreach(var user in users) {
+                challenges.Clear();
+                while (challenges.Count < 3 && dailyChallenges.Count >= 2)
+                {
+                    var challenge = dailyChallenges[_random.Next(dailyChallenges.Count)];
 
-                    challenges.Add(challenge);
+                    if (challenge != null && !challenges.Contains(challenge))
+                    {
+                        await dbContext.UserChallenges.AddAsync(new UserChallenges
+                        {
+                            Challenge = challenge,
+                            User = user,
+                            WasConcluded = false
+                        });
+
+
+                        challenges.Add(challenge);
+                    }
                 }
             }
             await dbContext.SaveChangesAsync();
-        }
+        //}
+
+        
     }
 }

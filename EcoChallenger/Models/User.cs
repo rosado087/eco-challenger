@@ -19,4 +19,6 @@ public class User {
     public int Points { get; set; } = 0;
 
     public bool IsAdmin { get; set; } = false;
+
+    public bool IsBlocked { get; set; } = false;
 }
