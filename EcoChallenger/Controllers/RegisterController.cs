@@ -51,6 +51,7 @@ namespace EcoChallenger.Controllers
 
                 await _ctx.SaveChangesAsync();
 
+
                 //Secção de atribuição de desafios
                 await _dailyTaskService.UpdateUserChallenges(data, false, _ctx);
                  await _weeklyTaskService.UpdateUserChallenges(data, false, _ctx);

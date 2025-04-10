@@ -136,7 +136,6 @@ export class TagsAdminComponent implements OnInit {
                                 data.message ||
                                     'Ocorreu um erro desconhecido ao remover a tag.'
                             )
-
                         this.loadTags()
                     },
                     error: () =>

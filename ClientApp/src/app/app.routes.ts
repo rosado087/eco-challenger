@@ -61,14 +61,6 @@ export const routes: Routes = [
     {
         path: 'challenges/:id',
         loadComponent: () => {
-            return import('./pages/challenges/challenges.component').then (
-                (m) => m.ChallengesComponent
-            )
-        }
-    },
-    {
-        path: 'challenges/:id',
-        loadComponent: () => {
             return import('./pages/challenges/challenges.component').then(
                 (m) => m.ChallengesComponent
             )

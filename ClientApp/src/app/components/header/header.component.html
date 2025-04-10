@@ -3,15 +3,17 @@
         <a routerLink="/" class="text-xl mr-2"><app-logo height="4rem" /></a>
         @if (authService.isLoggedIn()) {
             <ul class="menu menu-horizontal px-1 gap-4">
-                <li><a routerLink="/challenges/{{
-                    this.authService.getUserInfo().id
-                }}">Desafios</a></li>
+                <li>
+                    <a id="challenges-navbar-button" routerLink="/challenges/{{
+                        this.authService.getUserInfo().id
+                    }}">Desafios</a>
+                </li>
                 <li><a routerLink="/store">Loja</a></li>
 
                 @if (authService.getUserInfo().isAdmin) {
                     <li>
                         <div class="dropdown dropdown-end">
-                            <div id="user-option" tabindex="0" role="button">
+                            <div id="navbar-admin-dropdown-button" tabindex="0" role="button">
                                 Admin
                             </div>
                             <div
@@ -20,27 +22,27 @@
                                 <div
                                     class="flex flex-col items-start justify-center">
                                     <a
-                                        id="Utilizadores"
+                                        id="admin-users-navbar-button"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
                                        routerLink="/admin/users"
                                         >Utilizadores</a
                                     >
 
                                     <a
-                                        id="Desafios"
+                                        id="admin-challenges-navbar-button"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
                                         >Desafios</a
                                     >
 
                                     <a
-                                        id="Tags"
+                                        id="admin-tags-navbar-button"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
                                         routerLink="/admin/tags"
                                         >Tags</a
                                     >
 
                                     <a
-                                        id="Estatistica"
+                                        id="admin-stats-navbar-button"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
                                         routerLink="/admin/tags"
                                         >Estatística</a
@@ -65,7 +67,7 @@
         <div class="navbar-end flex gap-2">
             <div class="dropdown dropdown-end">
                 <div
-                    id="user-option"
+                    id="navbar-user-icon"
                     tabindex="0"
                     role="button"
                     class="btn btn-ghost btn-circle avatar">
@@ -89,7 +91,7 @@
                         aria-labelledby="dropdownInformationButton">
                         <li>
                             <a
-                                id="profile"
+                                id="profile-navbar-button"
                                 routerLink="/user-profile/{{
                                     this.authService.getUserInfo().id
                                 }}"
@@ -99,6 +101,7 @@
                         </li>
                         <li>
                             <button
+                                id="logout"
                                 (click)="logout()"
                                 class="block px-4 py-2 hover:bg-gray-100">
                                 Logout

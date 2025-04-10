@@ -10,7 +10,13 @@
             "request": "launch",
             "projectPath": "${workspaceFolder}\\EcoChallenger\\EcoChallenger.csproj",
             "launchConfigurationId": "TargetFramework=;http"
-
+        },
+        {
+            "name": "C#: EcoChallenger [http-test]",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\EcoChallenger\\EcoChallenger.csproj",
+            "launchConfigurationId": "TargetFramework=;http-test"
         }
     ]
 }

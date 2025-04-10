@@ -110,8 +110,10 @@ namespace EcoChallenger.Controllers
                     await _ctx.SaveChangesAsync();
 
                     //Secção de atribuição de desafios
+
                      await _dailyTaskService.UpdateUserChallenges(newUser, false, _ctx);
                      await _weeklyTaskService.UpdateUserChallenges(newUser, false,_ctx);
+
                     await _ctx.SaveChangesAsync();
                     token = TokenManager.GenerateJWT(newUser);
                     

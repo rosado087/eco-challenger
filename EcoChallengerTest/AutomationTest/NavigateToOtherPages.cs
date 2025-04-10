@@ -1,25 +1,22 @@
-﻿using EcoChallengerTest.Utils;
+﻿using System;
+using System.Threading.Tasks;
+using EcoChallengerTest.Utils;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EcoChallengerTest.AutomationTest
 {
     public class NavigateToOtherPages
     {
-        private IWebDriver driver;
-        private WebDriverWait wait;
+        private IWebDriver? driver;
+        private WebDriverWait? wait;
+        private readonly GenericFunctions gf = new GenericFunctions();
 
         [SetUp]
         public void Setup()
         {
-            driver = GenericFunctions.SetupSeleniumInstance();
+            driver = gf.SetupSeleniumInstance();
 
             // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
@@ -28,10 +25,15 @@ namespace EcoChallengerTest.AutomationTest
             driver.Navigate().GoToUrl("http://localhost:4200/");
         }
 
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown() {
+            await gf.ResetDatabase();
+        }
+
         [Test]
         public void Login_To_Register()
         {
-            var registerText = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-login/div/div[3]/a")));
+            var registerText = wait!.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-login/div/div[3]/a")));
             registerText.Click();
 
             wait.Until(d => d.Url.Contains("http://localhost:4200/register"));
@@ -40,7 +42,7 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Login_To_ForgotPassword()
         {
-            var forgotText = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-login/div/div[2]/div[1]/a")));
+            var forgotText = wait!.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-login/div/div[2]/div[1]/a")));
             forgotText.Click();
 
             wait.Until(d => d.Url.Contains("http://localhost:4200/forgot-password"));
@@ -49,7 +51,7 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Register_To_Login()
         {
-            var registerButton = wait.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[2]/a")));
+            var registerButton = wait!.Until(d => d.FindElement(By.XPath("/html/body/app-root/div[2]/app-header/div/div[2]/ul/li[2]/a")));
             registerButton.Click();
 
             wait.Until(d => d.Url.Contains("http://localhost:4200/register"));
@@ -64,7 +66,7 @@ namespace EcoChallengerTest.AutomationTest
         public void Teardown()
         {
             // Close the browser
-            driver.Quit();
+            driver?.Quit();
         }
     }
 }

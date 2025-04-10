@@ -23,7 +23,8 @@
                             <app-store-tag
                                 [bought]="tag.owned || false"
                                 (buyClick)="buyTag(tag.id)"
-                                [price]="tag.price">
+                                [price]="tag.price"
+                                [id]="tag.id">
                                 <app-tag
                                     [backgroundColor]="tag.backgroundColor"
                                     [textColor]="tag.textColor"

@@ -1,5 +1,4 @@
 ﻿using Moq;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using EcoChallenger.Controllers;
@@ -9,16 +8,19 @@ using EcoChallenger.Utils;
 using EcoChallenger.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace EcoChallengerTest.UnitTest 
 {
     public class LoginGoogleTest
     {
-        private readonly LoginController _controller;
-        private readonly Mock<IConfiguration> _mockConfig;
-        private readonly AppDbContext _dbContext;
+        private LoginController? _controller;
+        private Mock<IConfiguration>? _mockConfig;
+        private AppDbContext? _dbContext;
 
-        public LoginGoogleTest()
+        [SetUp]
+        public void Setup()
         {
             var mockLogger = new Mock<ILogger<LoginController>>();
             _mockConfig = new Mock<IConfiguration>();
@@ -49,33 +51,33 @@ namespace EcoChallengerTest.UnitTest
             TokenManager.Initialize(jwtSettings);
         }
 
-        [Fact]
+        [Test]
         public void GetGoogleId_Returns_ClientId_From_Config()
         {
             // Arrange
-            _mockConfig.Setup(c => c["GoogleClient:ClientId"]).Returns("test-client-id");
+            _mockConfig!.Setup(c => c["GoogleClient:ClientId"]).Returns("test-client-id");
 
             // Act
-            var result = _controller.GetGoogleId();
+            var result = _controller!.GetGoogleId();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Value);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Value, Is.Not.Null);
 
-            var successProperty = result.Value.GetType().GetProperty("clientId");
-            Assert.NotNull(successProperty);
+            var successProperty = result.Value?.GetType().GetProperty("clientId");
+            Assert.That(successProperty, Is.Not.Null);
 
-            var successValue = successProperty.GetValue(result.Value) as string;
-            Assert.NotNull(successValue);
-            Assert.Equal("test-client-id", successValue);
+            var successValue = successProperty?.GetValue(result.Value) as string;
+            Assert.That(successValue, Is.Not.Null);
+            Assert.That(successValue, Is.EqualTo("test-client-id"));
         }
 
-        [Fact]
+        [Test]
         public async Task AuthenticateGoogle_Returns_Success_When_User_Exists()
         {
             // Arrange
             var testUser = new User { Email = "test@example.com", Username = "test", Password = "123", GoogleToken = "test-token" };
-            _dbContext.Users.Add(testUser);
+            _dbContext!.Users.Add(testUser);
             await _dbContext.SaveChangesAsync();
 
             GAuthModel model = new GAuthModel {
@@ -84,20 +86,20 @@ namespace EcoChallengerTest.UnitTest
             };
 
             // Act
-            var result = await _controller.AuthenticateGoogle(model);
+            var result = await _controller!.AuthenticateGoogle(model);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Value);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Value, Is.Not.Null);
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            Assert.NotNull(successProperty);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            Assert.That(successProperty, Is.Not.Null);
 
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            Assert.True(successValue);
+            var successValue = successProperty?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
         }
 
-        [Fact]
+        [Test]
         public async Task AuthenticateGoogle_Returns_True_When_User_Does_Not_Exist()
         {
             // Arrange
@@ -107,17 +109,17 @@ namespace EcoChallengerTest.UnitTest
             };
 
             // Act
-            var result = await _controller.AuthenticateGoogle(model);
+            var result = await _controller!.AuthenticateGoogle(model);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Value);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Value, Is.Not.Null);
 
-            var successProperty = result.Value.GetType().GetProperty("success");
-            Assert.NotNull(successProperty);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            Assert.That(successProperty, Is.Not.Null);
 
-            var successValue = (bool)successProperty.GetValue(result.Value);
-            Assert.True(successValue);
+            var successValue = successProperty?.GetValue(result.Value);
+            Assert.That(successValue, Is.True);
         }
     }
 }

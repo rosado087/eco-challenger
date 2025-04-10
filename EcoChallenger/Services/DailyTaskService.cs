@@ -15,9 +15,6 @@ public class DailyTaskService : BackgroundService
         _serviceScopeFactory = serviceScopeFactory;
         _logger = logger;
         _random = new Random(int.Parse(DateTime.Now.ToString("yyyymmdd")));
-        
-
-
     }
 
     
@@ -42,15 +39,19 @@ public class DailyTaskService : BackgroundService
                     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                     await UpdateUserChallenges(null, true, dbContext);
                     await dbContext.SaveChangesAsync();
+
+
+                    _logger.LogInformation("Rota√ß√£o de desafios di√°rios foram feitos com sucesso");
+
+
                 }
-               _logger.LogInformation("RotaÁ„o de desafios di·rios foram feitos com sucesso");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao fazer rotaÁ„o dos desafios di·rios");
+                _logger.LogError(ex, "Erro ao fazer rota√ß√£o dos desafios di√°rios");
             }
 
-            _logger.LogInformation($"PrÛxima rotaÁ„o de desafios di·rios È {nextRun}");
+            _logger.LogInformation($"Pr√≥xima rota√ß√£o de desafios di√°rios √© {nextRun}");
             await Task.Delay(delay, stoppingToken);
             
         }

@@ -1,10 +1,13 @@
-﻿using EcoChallenger.Controllers;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using EcoChallenger.Controllers;
 using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NUnit.Framework;
 
 namespace EcoChallengerTest.UnitTest
 {
@@ -22,7 +25,7 @@ namespace EcoChallengerTest.UnitTest
             return context;
         }
 
-        [Fact]
+        [Test]
         public async Task SendRecoveryEmail_UserExists_EmailSent()
         {
             // Arrange
@@ -30,9 +33,9 @@ namespace EcoChallengerTest.UnitTest
             var mockEmailService = new Mock<IEmailService>();
             var mockLogger = new Mock<ILogger<RecoverPasswordController>>();
 
-            var inMemorySettings = new Dictionary<string, string>
+            List<KeyValuePair<string, string?>> inMemorySettings = new List<KeyValuePair<string, string?>>()
             {
-                { "ApplicationSettings:FrontEndUrl", "http://localhost" }
+                new KeyValuePair<string, string?>("ApplicationSettings:FrontEndUrl", "http://localhost")
             };
 
             var configuration = new ConfigurationBuilder()
@@ -48,17 +51,17 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = await controller.SendRecoveryEmail(request) as JsonResult;
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.True(successValue);
-            mockEmailService.Verify(e => e.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successValue, Is.True);
+            mockEmailService.Verify(e => e.SendRecoveryEmailAsync(It.IsAny<string>(), It.IsAny<string>()),Times.Once);
         }
 
 
-        [Fact]
+        [Test]
         public void CheckToken_ValidToken_ReturnsSuccess()
         {
             // Arrange
@@ -71,15 +74,15 @@ namespace EcoChallengerTest.UnitTest
 
             // Act
             var result = controller.CheckToken(validToken.Token);
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.True(successValue);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successValue, Is.True);
         }
 
-        [Fact]
+        [Test]
         public async Task SetNewPassword_ValidToken_UpdatesPassword()
         {
             // Arrange
@@ -94,14 +97,14 @@ namespace EcoChallengerTest.UnitTest
             var request = new SetNewPasswordModel { Token = validToken.Token, Password = "newPassword" };
 
             // Act
-            var result = await controller.SetNewPassword(request) as JsonResult;
-            var successProperty = result.Value.GetType().GetProperty("success");
-            var successValue = (bool)successProperty.GetValue(result.Value);
+            var result = await controller.SetNewPassword(request);
+            var successProperty = result.Value?.GetType().GetProperty("success");
+            var successValue = successProperty?.GetValue(result.Value);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.True(successValue);
-            Assert.NotEqual("oldPassword", user.Password);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(successValue, Is.True);
+            Assert.That(PasswordGenerator.ComparePasswordWithHash("newPassword", user.Password) , Is.True);
         }
     }
 }
