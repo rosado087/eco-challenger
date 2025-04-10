@@ -6,7 +6,6 @@ import { NetApiService } from '../../../services/net-api/net-api.service'
 import { ChallengeModel } from '../../../models/challenge-model'
 import { PopupLoaderService } from '../../../services/popup-loader/popup-loader.service'
 import { EcoPointsIconComponent } from '../../../components/eco-points-icon/eco-points-icon.component'
-import { ChallengeComponent } from '../../../components/challenge/challenge.component'
 
 import { NgIcon, provideIcons } from '@ng-icons/core'
 import {
@@ -16,7 +15,7 @@ import {
 } from '@ng-icons/heroicons/outline'
 import { SuccessModel } from '../../../models/success-model'
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router'
-import { ChallengeFormModalComponent } from '../challenges-form-modal/challenges-form-modal.component'// alterar aqui
+import { ChallengeFormModalComponent } from '../challenges-form-modal/challenges-form-modal.component'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 
 @Component({
