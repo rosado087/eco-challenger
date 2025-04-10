@@ -96,7 +96,6 @@ export class ChallengesComponent implements OnInit {
                     if (this.selectedChallenge?.challenge.id === id && this.selectedChallenge.progress !== undefined) {
                         this.selectedChallenge.progress++;
             
-                        // If it just reached max progress, we can optionally disable or hide the button too
                         if (this.selectedChallenge.progress >= this.selectedChallenge.challenge.maxProgress) {
                           this.selectedChallenge.wasConcluded = true;
                         }

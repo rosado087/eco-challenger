@@ -1,6 +1,8 @@
 @if (type() === 'Weekly') {
-  <li class="list-row cursor-pointer" tabindex="0" role="button" (click)="openModal.emit()" (keydown.enter)="openModal.emit()"
-  (keydown.space)="openModal.emit()">
+  <li class="list-row cursor-pointer" tabindex="0" role="button"
+      (click)="openModal.emit()" 
+      (keydown.enter)="openModal.emit()" 
+      (keydown.space)="openModal.emit()">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-4">
       <!-- Left: info -->
       <div class="flex flex-col flex-1">
@@ -12,20 +14,24 @@
 
       <!-- Right: progress + buttons -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-end gap-2 w-full sm:w-auto">
-        <progress class="progress progress-success w-full sm:w-56" value="0" max="100"></progress>
+        @if (showProgress() && progress() !== null && maxProgress() !== null) {
+          <progress 
+            class="progress progress-success w-full sm:w-56" 
+            [value]="progress()" 
+            [attr.max]="maxProgress()">
+          </progress>
+        }
         <div class="flex gap-2">
           <button 
-            data-role='challenge-complete-button'
+            data-role="challenge-complete-button"
             class="btn btn-primary btn-sm" 
-            (click)="$event.stopPropagation(); 
-            complete.emit()">
+            (click)="$event.stopPropagation(); complete.emit()">
             Concluir
           </button>
           <button 
-            data-role='challenge-progress-button'
+            data-role="challenge-progress-button"
             class="btn btn-outline btn-primary btn-sm" 
-            (click)="$event.stopPropagation(); 
-            progressClick.emit()">
+            (click)="$event.stopPropagation(); progressClick.emit()">
             + Progresso
           </button>
         </div>
@@ -33,9 +39,11 @@
     </div>
   </li>
 } @else {
-  <li class="list-row cursor-pointer" class="list-row cursor-pointer" tabindex="0" role="button" (click)="openModal.emit()" (keydown.enter)="openModal.emit()"
-  (keydown.space)="openModal.emit()">
-    <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-2 sm:gap-84"></div>
+  <li class="list-row cursor-pointer" tabindex="0" role="button" 
+      (click)="openModal.emit()" 
+      (keydown.enter)="openModal.emit()" 
+      (keydown.space)="openModal.emit()">
+    <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-2 sm:gap-84">
       <!-- Left: Info -->
       <div class="flex flex-col flex-1 min-w-0">
         <div class="font-medium">{{ title() }}</div>
@@ -51,14 +59,14 @@
             <span class="text-green-600 text-xl">Concluído</span>
           } @else {
             <button 
-              data-role='challenge-complete-button'
+              data-role="challenge-complete-button"
               class="btn btn-primary btn-sm" 
-              (click)="$event.stopPropagation(); 
-              complete.emit()">
+              (click)="$event.stopPropagation(); complete.emit()">
               Concluir
             </button>
           }
         </div>
       </div>
+    </div>
   </li>
 }
