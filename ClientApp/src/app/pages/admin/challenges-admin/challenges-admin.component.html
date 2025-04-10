@@ -1,0 +1,118 @@
+<main class="container mx-auto px-4 mt-4 pb-4">
+    <div class="card w-auto bg-base-100 shadow-md border border-base-300">
+      <div class="card-body">
+        <div class="flex flex-col">
+          <div class="flex justify-center">
+            <h2 class="text-2xl font-bold">Lista de Desafios</h2>
+          </div>
+  
+          <div class="flex flex-row justify-between">
+            <div class="join">
+              <div>
+                <label class="input">
+                  <input
+                    type="search"
+                    [formControl]="searchControl"
+                    (keydown.enter)="handleSearch()"
+                    class="grow"
+                    placeholder="Pesquisa pelo nome"
+                  />
+                </label>
+              </div>
+              <button
+                class="btn btn-primary join-item"
+                (click)="handleSearch()"
+              >
+                <ng-icon name="heroMagnifyingGlass" />
+              </button>
+            </div>
+  
+            <app-button
+              text="Adicionar"
+              id="addChallenge"
+              (btnClick)="handleAddChallenge()"
+            />
+          </div>
+  
+          <app-table class="mt-4">
+            <!-- Columns -->
+            <tr columns>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Tipo</th>
+              <th>Pontos</th>
+              <th></th>
+            </tr>
+  
+            <!-- Rows -->
+            @for (challenge of challenges; track $index) {
+              <tr row>
+                <!-- Title -->
+                <td class="whitespace-nowrap font-medium">
+                  {{ challenge.title }}
+                </td>
+  
+                <!-- Description -->
+                <td class="text-gray-500 whitespace-nowrap">
+                  {{ challenge.description }}
+                </td>
+  
+                <!-- Type -->
+                <td>
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-blue-200 text-blue-800': challenge.type === 'Daily',
+                      'bg-purple-200 text-purple-800': challenge.type === 'Weekly'
+                    }"
+                  >
+                    {{ challenge.type === 'Daily' ? 'Diário' : 'Semanal' }}
+                  </span>
+                </td>
+  
+                <!-- Points -->
+                <td class="flex items-center gap-1">
+                  <app-eco-points-icon class="w-4 h-4" />
+                  {{ challenge.points }}
+                </td>
+  
+                <!-- Actions -->
+                <td>
+                  <div class="flex flex-row gap-1">
+                    <button
+                      class="btn btn-ghost btn-md"
+                      data-action="editChallenge"
+                      (click)="handleEditChallenge(challenge.id)"
+                    >
+                      <ng-icon
+                        style="width: 20px; height: 20px"
+                        name="heroPencil"
+                      />
+                    </button>
+                    <button
+                      class="btn btn-ghost btn-md"
+                      data-action="removeChallenge"
+                      (click)="removeChallenge(challenge.id)"
+                    >
+                      <ng-icon
+                        style="width: 20px; height: 20px"
+                        name="heroTrash"
+                      />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </app-table>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Modal -->
+    <app-challenge-form-modal
+      (closeClick)="closeModal()"
+      [challengeId]="modalChallengeId"
+      [isEditMode]="modalIsEditMode"
+      [open]="modalShow"
+    />
+  </main>

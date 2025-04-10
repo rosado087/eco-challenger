@@ -1,8 +1,10 @@
+export type ChallengeType = 'Daily' | 'Weekly'
+
 export interface ChallengeModel {
-    id: number
-    title: string
-    description: string
-    type: 'Daily' | 'Weekly'
-    points: number
-    maxProgress: number
-  }  
+  id: number
+  title: string
+  description: string
+  type: ChallengeType
+  points: number
+  maxProgress: number
+}
