@@ -289,7 +289,7 @@ namespace EcoChallengerTest.UnitTest
 
             await _dbContext.SaveChangesAsync();
             
-            var profileEdit = new ProfileEditModel { Id = user.Id, Username = "NewName", Tag = "Eco-Warrior" };
+            var profileEdit = new ProfileEditModel { Id = user.Id, Username = "NewName" };
 
             // Act
             var result = await _controller!.EditUserInfo(profileEdit) as JsonResult;
@@ -310,7 +310,7 @@ namespace EcoChallengerTest.UnitTest
         public async Task EditUserInfo_Returns_Error_When_User_Not_Found()
         {
             // Arrange
-            var profileEdit = new ProfileEditModel { Id = 999, Username = "NewName", Tag = "EcoWarrior" };
+            var profileEdit = new ProfileEditModel { Id = 999, Username = "NewName" };
 
             // Act
             var result = await _controller!.EditUserInfo(profileEdit) as JsonResult;
@@ -348,107 +348,12 @@ namespace EcoChallengerTest.UnitTest
         public async Task EditUserInfo_Returns_Error_On_Exception()
         {
             // Arrange
-            var profileEdit = new ProfileEditModel { Username = "NewName", Tag = "EcoWarrior" };
+            var profileEdit = new ProfileEditModel { Username = "NewName" };
             
             _dbContext!.Dispose();
 
             // Act
             var result = await _controller!.EditUserInfo(profileEdit) as JsonResult;
-            var successProperty = result.Value?.GetType().GetProperty("success");
-            var successValue = successProperty?.GetValue(result.Value);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(successProperty, Is.Not.Null);
-            Assert.That(successValue, Is.False);
-        }
-
-        [Test]
-        public async Task GetTags_Returns_List_When_User_Has_Tags()
-        {
-            // Arrange
-            var user = new User { Username = "UserWithTags", Email = "user@tags.com" };
-            _dbContext!.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
-
-            var tag1 = new Tag {Name = "EcoWarrior", Price = 10, BackgroundColor = "#355735", TextColor = "#FFFFFF" };
-            var tag2 = new Tag {Name = "Recycler", Price = 10, BackgroundColor = "#355735", TextColor = "#FFFFFF" };
-            _dbContext.Tags.AddRange(tag1, tag2);
-            await _dbContext.SaveChangesAsync();
-
-            _dbContext.TagUsers.AddRange(
-                new TagUsers { User = user, Tag = tag1 },
-                new TagUsers { User = user, Tag = tag2 }
-            );
-            await _dbContext.SaveChangesAsync();
-
-            // Act
-            var result = await _controller!.GetTags(user.Id) as JsonResult;
-            var successProperty = result.Value?.GetType().GetProperty("success");
-            var successValue = successProperty?.GetValue(result.Value);
-
-            var listProperty = result.Value?.GetType().GetProperty("list")?.GetValue(result.Value);
-            var tagList = listProperty as IEnumerable<object>;
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(successProperty, Is.Not.Null);
-            Assert.That(successValue, Is.True);
-            Assert.That(tagList, Is.Not.Null);
-            Assert.That(tagList!.Count(), Is.EqualTo(2));
-        }
-
-        [Test]
-        public async Task GetTags_Returns_Empty_List_When_User_Has_No_Tags()
-        {
-            // Arrange
-            var user = new User { Username = "UserNoTags", Email = "usernotags@tags.com" };
-            _dbContext!.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
-
-            // Act
-            var result = await _controller!.GetTags(user.Id) as JsonResult;
-            var successProperty = result.Value?.GetType().GetProperty("success");
-            var successValue = successProperty?.GetValue(result.Value);
-
-            var listProperty = result.Value?.GetType().GetProperty("list")?.GetValue(result.Value);
-            var tagList = listProperty as IEnumerable<object>;
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(successProperty, Is.Not.Null);
-            Assert.That(successValue, Is.True);
-            Assert.That(tagList, Is.Not.Null);
-            Assert.That(tagList, Is.Empty);
-        }
-
-        [Test]
-        public async Task GetTags_Returns_Error_When_User_Not_Found()
-        {
-            // Arrange
-            var nonExistentUserId = 999;
-
-            // Act
-            var result = await _controller!.GetTags(nonExistentUserId) as JsonResult;
-            var successProperty = result.Value?.GetType().GetProperty("success");
-            var successValue = successProperty?.GetValue(result.Value);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(successProperty, Is.Not.Null);
-            Assert.That(successValue, Is.False);
-        }
-
-        [Test]
-        public async Task GetTags_Returns_Error_On_Exception()
-        {
-            // Arrange
-            var userId = 1;
-
-            _dbContext!.Dispose();
-
-            // Act
-            var result = await _controller!.GetTags(userId) as JsonResult;
             var successProperty = result.Value?.GetType().GetProperty("success");
             var successValue = successProperty?.GetValue(result.Value);
 

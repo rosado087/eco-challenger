@@ -71,13 +71,14 @@
                         <span class="font-medium text-gray-700">Tags:</span>
                         @if (userId === this.id) {
                             <button
+                                id="edit-tags"
                                 (click)="openTagsModal()"
                                 class="cursor-pointer">
-                                <ng-icon id="edit-tags" name="heroPencil" />
+                                <ng-icon name="heroPencil" />
                             </button>
                         }
                     </div>
-                    <div class="flex flex-row gap-1.5 flex-wrap">
+                    <div class="flex flex-row gap-1.5 flex-wrap" id="profile-tag-list">
                         @for (tag of tags; track $index) {
                             @if (tag.isBeingUsed) {
                                 <app-tag
