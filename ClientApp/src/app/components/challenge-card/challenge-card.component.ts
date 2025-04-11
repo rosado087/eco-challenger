@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { ChallengeType } from '../../models/challenge-model'
 
 @Component({
   selector: 'app-challenge-card',
@@ -10,13 +11,13 @@ import { CommonModule } from '@angular/common'
 })
 export class ChallengeCardComponent {
   title = input.required<string>()
-  type = input.required<'Daily' | 'Weekly'>()
+  type = input.required<ChallengeType>()
   points = input<number | null>()
   completed = input<boolean>(false)
   progress = input<number | null>()
   maxProgress = input<number | null>()
   showProgress = input<boolean>(false)
-  complete = output()         // renamed from onComplete
-  progressClick = output()    // renamed from onProgress
-  openModal = output()  
+  complete = output()
+  progressClick = output()
+  openModal = output()
 }

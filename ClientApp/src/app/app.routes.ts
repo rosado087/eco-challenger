@@ -112,17 +112,45 @@ export const routes: Routes = [
                         },
                         canActivate: [authGuard]
                     }
-                ],
-            
+                ]
             },
             {
-              path: 'users',
-              loadComponent: () => {
-                return import(
-                  './pages/admin/users-admin/users-admin.component'
-                ).then((m) => m.UsersAdminComponent)
-              },
-              canActivate:[authGuard]
+                path: 'challenges',
+                loadComponent: () => {
+                    return import(
+                        './pages/admin/challenges-admin/challenges-admin.component'
+                    ).then((m) => m.ChallengesAdminComponent)
+                },
+                canActivate: [authGuard],
+                children: [
+                    {
+                        path: 'create',
+                        loadComponent: () => {
+                            return import(
+                                './pages/admin/challenges-admin/challenges-admin.component'
+                            ).then((m) => m.ChallengesAdminComponent)
+                        },
+                        canActivate: [authGuard]
+                    },
+                    {
+                        path: 'edit/:id',
+                        loadComponent: () => {
+                            return import(
+                                './pages/admin/challenges-admin/challenges-admin.component'
+                            ).then((m) => m.ChallengesAdminComponent)
+                        },
+                        canActivate: [authGuard]
+                    }
+                ]
+            },
+            {
+                path: 'users',
+                loadComponent: () => {
+                  return import(
+                    './pages/admin/users-admin/users-admin.component'
+                  ).then((m) => m.UsersAdminComponent)
+                },
+                canActivate:[authGuard]
             },
             {
                 path: '**',
