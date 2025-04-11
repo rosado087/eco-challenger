@@ -372,6 +372,34 @@ namespace EcoChallenger.Controllers
             return new JsonResult(tag);
         }
 
+
+        /// <summary>
+        /// Retrieves a list of a user's friends.
+        /// </summary>
+        /// <returns>JSON result with the list of friends.</returns>
+        
+        [HttpGet("GetFriendsPodium")]
+        public async Task<JsonResult> GetFriendsPodium()
+        {
+            try{
+                var friendIds = await _ctx.Friendships
+                .Where(f => f.UserId == UserContext.Id)
+                .Select(f => f.FriendId)
+                .ToListAsync();
+
+                var podium = await _ctx.Users
+                    .Where(u => friendIds.Contains(u.Id))
+                    .OrderByDescending(u => u.ChallengesCompleted)
+                    .Take(3)
+                    .ToListAsync();
+
+                return new JsonResult(new { success = true, friends = podium });
+                
+            }catch(Exception e){
+                _logger.LogError(e.Message, e.StackTrace);
+                return new JsonResult(new {success = false, message = "Erro"});
+            }
+        }
         
     }
 }
