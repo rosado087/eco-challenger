@@ -55,6 +55,8 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public void GetUsers_ReturnsAllUsers_ExceptSelf_WhenNoSearch()
         {
+            _dbContext!.Users.RemoveRange(_dbContext.Users);
+
             // Arrange
             var adminUser = new User { Id = 1, Username = "admin", Email="admin@example.com", IsAdmin = true };
             var user1 = new User { Id = 2, Username = "user1", Email="user1@example.com" };
@@ -79,6 +81,8 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public void GetUsers_ReturnsFilteredUsers_ThatContainSearch()
         {
+            _dbContext!.Users.RemoveRange(_dbContext.Users);
+
             // Arrange
             var adminUser = new User { Id = 1, Username = "admin", Email="admin@example.com", IsAdmin = true };
             var user1 = new User { Id = 2, Username = "Diogo", Email="diogo@example.com" };

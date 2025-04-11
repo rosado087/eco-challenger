@@ -35,6 +35,7 @@ namespace EcoChallengerTest.UnitTest
             _mockConfig = new Mock<IConfiguration>();
 
             var services = new ServiceCollection();
+            services.AddLogging();
             services.AddHostedService<DailyTaskService>();
             services.AddHostedService<WeeklyTaskService>();
             _controller = new LoginController(_dbContext, _mockConfig.Object, mockLogger.Object, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());
