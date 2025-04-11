@@ -57,9 +57,13 @@ namespace EcoChallenger.Controllers
             try{
                 var userChallenge = await _ctx.UserChallenges.Include(x => x.Challenge).Include(x => x.User).
                 FirstOrDefaultAsync(x => x.Challenge.Id == id && x.User.Id == UserContext.Id);
+                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == UserContext.Id);
 
                 if (userChallenge == null)
                     return new JsonResult(new {success = false, message = "O desafio não existe." });
+
+                if (user == null)
+                    return new JsonResult(new {success = false, message = "O utilizador não existe." });
 
                 if (userChallenge.WasConcluded == true || userChallenge.Progress == userChallenge.Challenge.MaxProgress)
                     return new JsonResult(new {success = false, message = "O desafio já está concluído." });
@@ -67,6 +71,7 @@ namespace EcoChallenger.Controllers
                 userChallenge.User.Points += userChallenge.Challenge.Points;
                 userChallenge.WasConcluded = true;
                 userChallenge.Progress = userChallenge.Challenge.MaxProgress;
+                user.ChallengesCompleted++;
                 await _ctx.SaveChangesAsync();
 
                 return new JsonResult(new {
@@ -91,6 +96,11 @@ namespace EcoChallenger.Controllers
                 var userChallenge = await _ctx.UserChallenges.Include(x => x.Challenge).Include(x => x.User).
                 FirstOrDefaultAsync(x => x.Challenge.Id == id && x.User.Id == UserContext.Id);
 
+                var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == UserContext.Id);
+
+                if (user == null)
+                    return new JsonResult(new {success = false, message = "O utilizador não existe." });
+
                 if (userChallenge == null)
                     return new JsonResult(new {success = false, message = "O desafio não existe." });
 
@@ -102,6 +112,7 @@ namespace EcoChallenger.Controllers
                 if (userChallenge.Progress == userChallenge.Challenge.MaxProgress){
                     userChallenge.User.Points += userChallenge.Challenge.Points;
                     userChallenge.WasConcluded = true;
+                    user.ChallengesCompleted++;
                     await _ctx.SaveChangesAsync();
 
                     return new JsonResult(new { 

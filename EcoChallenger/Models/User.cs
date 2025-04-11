@@ -21,4 +21,6 @@ public class User {
     public bool IsAdmin { get; set; } = false;
 
     public bool IsBlocked { get; set; } = false;
+
+    public int ChallengesCompleted {get; set; }
 }
