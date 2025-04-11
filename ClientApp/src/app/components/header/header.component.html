@@ -4,16 +4,23 @@
         @if (authService.isLoggedIn()) {
             <ul class="menu menu-horizontal px-1 gap-4">
                 <li>
-                    <a id="challenges-navbar-button" routerLink="/challenges/{{
-                        this.authService.getUserInfo().id
-                    }}">Desafios</a>
+                    <a
+                        id="challenges-navbar-button"
+                        routerLink="/challenges/{{
+                            this.authService.getUserInfo().id
+                        }}"
+                        >Desafios</a
+                    >
                 </li>
                 <li><a routerLink="/store">Loja</a></li>
 
                 @if (authService.getUserInfo().isAdmin) {
                     <li>
                         <div class="dropdown dropdown-end">
-                            <div id="navbar-admin-dropdown-button" tabindex="0" role="button">
+                            <div
+                                id="navbar-admin-dropdown-button"
+                                tabindex="0"
+                                role="button">
                                 Admin
                             </div>
                             <div
@@ -24,7 +31,7 @@
                                     <a
                                         id="admin-users-navbar-button"
                                         class="block px-4 py-2 hover:bg-gray-100 w-[100%]"
-                                       routerLink="/admin/users"
+                                        routerLink="/admin/users"
                                         >Utilizadores</a
                                     >
 

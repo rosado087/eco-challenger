@@ -26,23 +26,23 @@ import {
     AddFriendResponse,
     RemoveFriendResponse
 } from '../../models/user-profile-model'
-import { TagFormModalComponent } from "../profile-tag-selector-modal/profile-tag-selector-modal.component";
+import { TagFormModalComponent } from '../profile-tag-selector-modal/profile-tag-selector-modal.component'
 import { Tag } from '../../models/tag'
-import { TagComponent } from "../../components/tag/tag.component";
+import { TagComponent } from '../../components/tag/tag.component'
 
 @Component({
     selector: 'app-user-profile',
     standalone: true,
     imports: [
-    NgIcon,
-    NgFor,
-    NgIf,
-    ReactiveFormsModule,
-    ButtonComponent,
-    FormsModule,
-    TagFormModalComponent,
-    TagComponent
-],
+        NgIcon,
+        NgFor,
+        NgIf,
+        ReactiveFormsModule,
+        ButtonComponent,
+        FormsModule,
+        TagFormModalComponent,
+        TagComponent
+    ],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],
     providers: [
@@ -90,13 +90,13 @@ export class UserProfileComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.route.url.subscribe(paths => {
+        this.route.url.subscribe((paths) => {
             // Check if we are viewing our own profile or someone else's
-            if(paths[0].path == 'profile')
+            if (paths[0].path == 'profile')
                 this.userId = this.id = this.authService.getUserInfo().id
             else {
                 // The last path should be the ID
-                this.userId = Number(paths[paths.length-1].path)
+                this.userId = Number(paths[paths.length - 1].path)
                 this.id = this.authService.getUserInfo().id
             }
 
@@ -107,7 +107,7 @@ export class UserProfileComponent implements OnInit {
     }
 
     openTagsModal(): void {
-        if(this.tags.length == 0)
+        if (this.tags.length == 0)
             return this.popupLoader.showPopup('Não existem tags para escolher.')
         this.modalShow = true
     }
@@ -120,9 +120,7 @@ export class UserProfileComponent implements OnInit {
     loadUserTags(): void {
         // Load tags
         this.netApi
-            .get<
-                Tag[]
-            >('Tag', 'user', undefined, this.userId.toString())
+            .get<Tag[]>('Tag', 'user', undefined, this.userId.toString())
             .subscribe({
                 next: (data) => {
                     if (!data || data.length == 0) return
@@ -141,7 +139,12 @@ export class UserProfileComponent implements OnInit {
      */
     loadUserProfile() {
         this.netApi
-            .get<UserModel>('Profile', 'GetUserInfo', undefined, this.userId.toString())
+            .get<UserModel>(
+                'Profile',
+                'GetUserInfo',
+                undefined,
+                this.userId.toString()
+            )
             .subscribe({
                 next: (data) => {
                     if (data.success) {

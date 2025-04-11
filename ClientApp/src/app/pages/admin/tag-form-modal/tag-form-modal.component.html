@@ -208,7 +208,10 @@
 
             <div class="card-actions justify-center">
                 <div class="flex flex-col items-center">
-                    <app-button text="Submeter" id="submit" (btnClick)="submitRecord()" />
+                    <app-button
+                        text="Submeter"
+                        id="submit"
+                        (btnClick)="submitRecord()" />
                     @if (formError) {
                         <div class="validator-hint text-red-500">
                             {{ formError }}

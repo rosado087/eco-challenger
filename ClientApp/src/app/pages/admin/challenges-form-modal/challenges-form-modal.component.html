@@ -1,74 +1,76 @@
 <dialog #challengeModal id="challenge_modal" class="modal">
     <div class="modal-box">
-      <form method="dialog">
-        <button
-          (click)="closeClick.emit()"
-          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-          ✕
-        </button>
-      </form>
-  
-      <!-- Modal Header -->
-      <div class="flex flex-col items-center mb-4">
-        <h3 class="text-lg font-bold">
-          {{ isEditMode() ? 'Editar Desafio' : 'Criar Desafio' }}
-        </h3>
-      </div>
-  
-      <!-- Form Content -->
-      <form class="flex flex-col gap-4" [formGroup]="challengeForm">
-        <!-- Title -->
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend">Título</legend>
-          <input
-            type="text"
-            class="input input-bordered w-full"
-            formControlName="title"
-          />
-        </fieldset>
-  
-        <!-- Description -->
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend">Descrição</legend>
-          <textarea
-            class="textarea textarea-bordered w-full"
-            formControlName="description"></textarea>
-        </fieldset>
-  
-        <div class="flex gap-4">
-          <!-- Type -->
-          <fieldset class="fieldset w-full">
-            <legend class="fieldset-legend">Tipo</legend>
-            <select class="select w-full" formControlName="type">
-              <option value="Daily">Diário</option>
-              <option value="Weekly">Semanal</option>
-            </select>
-          </fieldset>
-  
-          <!-- Points -->
-          <fieldset class="fieldset w-full">
-            <legend class="fieldset-legend">Pontos</legend>
-            <input
-              type="number"
-              class="input input-bordered w-full"
-              formControlName="points"/>
-          </fieldset>
+        <form method="dialog">
+            <button
+                (click)="closeClick.emit()"
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+            </button>
+        </form>
+
+        <!-- Modal Header -->
+        <div class="flex flex-col items-center mb-4">
+            <h3 class="text-lg font-bold">
+                {{ isEditMode() ? 'Editar Desafio' : 'Criar Desafio' }}
+            </h3>
         </div>
-      </form>
-  
-      <!-- Submit Button -->
-      <div class="card-actions justify-center mt-6">
-        <div class="flex flex-col items-center">
-          <app-button text="Submeter" id="submit" (btnClick)="submitRecord()" />
-          @if (formError) {
-            <div class="validator-hint text-red-500 mt-2">
-              {{ formError }}
+
+        <!-- Form Content -->
+        <form class="flex flex-col gap-4" [formGroup]="challengeForm">
+            <!-- Title -->
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Título</legend>
+                <input
+                    type="text"
+                    class="input input-bordered w-full"
+                    formControlName="title" />
+            </fieldset>
+
+            <!-- Description -->
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Descrição</legend>
+                <textarea
+                    class="textarea textarea-bordered w-full"
+                    formControlName="description"></textarea>
+            </fieldset>
+
+            <div class="flex gap-4">
+                <!-- Type -->
+                <fieldset class="fieldset w-full">
+                    <legend class="fieldset-legend">Tipo</legend>
+                    <select class="select w-full" formControlName="type">
+                        <option value="Daily">Diário</option>
+                        <option value="Weekly">Semanal</option>
+                    </select>
+                </fieldset>
+
+                <!-- Points -->
+                <fieldset class="fieldset w-full">
+                    <legend class="fieldset-legend">Pontos</legend>
+                    <input
+                        type="number"
+                        class="input input-bordered w-full"
+                        formControlName="points" />
+                </fieldset>
             </div>
-          }
+        </form>
+
+        <!-- Submit Button -->
+        <div class="card-actions justify-center mt-6">
+            <div class="flex flex-col items-center">
+                <app-button
+                    text="Submeter"
+                    id="submit"
+                    (btnClick)="submitRecord()" />
+                @if (formError) {
+                    <div class="validator-hint text-red-500 mt-2">
+                        {{ formError }}
+                    </div>
+                }
+            </div>
         </div>
-      </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-      <button (click)="closeClick.emit()">close</button>
+        <button (click)="closeClick.emit()">close</button>
     </form>
-  </dialog>
+</dialog>

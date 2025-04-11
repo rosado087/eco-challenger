@@ -21,14 +21,14 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms'
 @Component({
     selector: 'app-challenges-admin',
     imports: [
-    NgIcon,
-    CommonModule,
-    TableComponent,
-    ButtonComponent,
-    EcoPointsIconComponent,
-    ChallengeFormModalComponent,
-    ReactiveFormsModule,
-],
+        NgIcon,
+        CommonModule,
+        TableComponent,
+        ButtonComponent,
+        EcoPointsIconComponent,
+        ChallengeFormModalComponent,
+        ReactiveFormsModule
+    ],
     providers: [
         PopupLoaderService,
         provideIcons({ heroPencil, heroTrash, heroMagnifyingGlass })
@@ -127,7 +127,12 @@ export class ChallengesAdminComponent implements OnInit {
     removeChallenge(id: number): void {
         const remove = () => {
             this.netApi
-                .post<SuccessModel>('Challenge', 'DeleteChallenge', undefined, id.toString())
+                .post<SuccessModel>(
+                    'Challenge',
+                    'DeleteChallenge',
+                    undefined,
+                    id.toString()
+                )
                 .subscribe({
                     next: (data) => {
                         if (!data || !data.success)

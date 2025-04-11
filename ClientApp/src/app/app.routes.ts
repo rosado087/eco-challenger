@@ -155,11 +155,11 @@ export const routes: Routes = [
             {
                 path: 'users',
                 loadComponent: () => {
-                  return import(
-                    './pages/admin/users-admin/users-admin.component'
-                  ).then((m) => m.UsersAdminComponent)
+                    return import(
+                        './pages/admin/users-admin/users-admin.component'
+                    ).then((m) => m.UsersAdminComponent)
                 },
-                canActivate:[authGuard]
+                canActivate: [authGuard]
             },
             {
                 path: '**',

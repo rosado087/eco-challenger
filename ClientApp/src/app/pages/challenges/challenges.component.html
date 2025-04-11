@@ -2,143 +2,162 @@
 <section class="max-w-6xl mx-auto mb-16">
     <h2 class="text-2xl font-bold text-center mb-6">Desafios Diários</h2>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      
-      <!-- TO COMPLETE -->
-      <ul class="list bg-base-100 rounded-box shadow-md">
-        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
-      
-        @for (challenge of dailyChallenges; track $index) {
-          @if (!challenge.wasConcluded) {
-            <app-challenge-card
-              (openModal)="selectedChallenge = challenge"
-              [title]="challenge.challenge.title"
-              [type]="challenge.challenge.type"
-              [points]="challenge.challenge.points"
-              [completed]="false"
-              (complete)="completeChallenge(challenge.challenge.id)" />
-          }
-        }
-      </ul>
-  
-      <!-- COMPLETED -->
-      <ul class="list bg-base-100 rounded-box shadow-md">
-        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
-      
-        @for (challenge of dailyChallenges; track $index) {
-          @if (challenge.wasConcluded) {
-            <app-challenge-card
-              (openModal)="selectedChallenge = challenge"
-              [title]="challenge.challenge.title"
-              [type]="challenge.challenge.type"
-              [points]="challenge.challenge.points"
-              [completed]="true" />
-          }
-        }
-      </ul>
+        <!-- TO COMPLETE -->
+        <ul class="list bg-base-100 rounded-box shadow-md">
+            <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">
+                Para Concluir
+            </li>
+
+            @for (challenge of dailyChallenges; track $index) {
+                @if (!challenge.wasConcluded) {
+                    <app-challenge-card
+                        (openModal)="selectedChallenge = challenge"
+                        [title]="challenge.challenge.title"
+                        [type]="challenge.challenge.type"
+                        [points]="challenge.challenge.points"
+                        [completed]="false"
+                        (complete)="
+                            completeChallenge(challenge.challenge.id)
+                        " />
+                }
+            }
+        </ul>
+
+        <!-- COMPLETED -->
+        <ul class="list bg-base-100 rounded-box shadow-md">
+            <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">
+                Concluídos
+            </li>
+
+            @for (challenge of dailyChallenges; track $index) {
+                @if (challenge.wasConcluded) {
+                    <app-challenge-card
+                        (openModal)="selectedChallenge = challenge"
+                        [title]="challenge.challenge.title"
+                        [type]="challenge.challenge.type"
+                        [points]="challenge.challenge.points"
+                        [completed]="true" />
+                }
+            }
+        </ul>
     </div>
-  </section>
-  
-  <!-- WEEKLY CHALLENGES -->
-  <section class="max-w-6xl mx-auto">
+</section>
+
+<!-- WEEKLY CHALLENGES -->
+<section class="max-w-6xl mx-auto">
     <h2 class="text-2xl font-bold text-center mb-6">Desafios Semanais</h2>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      
-      <!-- TO COMPLETE -->
-      <ul class="list bg-base-100 rounded-box shadow-md">
-        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Para Concluir</li>
-      
-        @for (challenge of weeklyChallenges; track $index) {
-          @if (!challenge.wasConcluded) {
-            <app-challenge-card
-              (openModal)="selectedChallenge = challenge"
-              [title]="challenge.challenge.title"
-              [type]="challenge.challenge.type"
-              [points]="challenge.challenge.points"
-              [progress]="challenge.progress"
-              [maxProgress]="challenge.challenge.maxProgress"
-              [completed]="false"
-              [showProgress]="true"
-              (complete)="completeChallenge(challenge.challenge.id)"
-              (progressClick)="addProgress(challenge.challenge.id)"/>
-          }
-        }
-      </ul>
-  
-      <!-- COMPLETED -->
-      <ul class="list bg-base-100 rounded-box shadow-md">
-        <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">Concluídos</li>
-      
-        @for (challenge of weeklyChallenges; track $index) {
-          @if (challenge.wasConcluded) {
-            <app-challenge-card
-              (openModal)="selectedChallenge = challenge"
-              [title]="challenge.challenge.title"
-              [type]="challenge.challenge.type"
-              [points]="challenge.challenge.points"
-              [showProgress]="!challenge.wasConcluded"
-              (complete)="completeChallenge(challenge.challenge.id)"
-              (progressClick)="addProgress(challenge.challenge.id)" />
-          }
-        }
-      </ul>
-    </div>
-  </section>
+        <!-- TO COMPLETE -->
+        <ul class="list bg-base-100 rounded-box shadow-md">
+            <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">
+                Para Concluir
+            </li>
 
-  @if (selectedChallenge) {
-    <div class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div class="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md relative">
-        
-        <!-- Close Button -->
-        <button
-          class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-          (click)="selectedChallenge = null"
-          aria-label="Fechar">
-          ✕
-        </button>
-  
-        <!-- Title & Description -->
-        <h3 class="text-xl font-bold mb-2">{{ selectedChallenge.challenge.title }}</h3>
-        <p class="text-gray-700 mb-4">{{ selectedChallenge.challenge.description }}</p>
-        <p class="text-green-700 font-medium mb-4">
-          Recompensa: {{ selectedChallenge.challenge.points }} pontos
-        </p>
-  
-        <!-- Progress bar only for Weekly and not completed -->
-        @if (
-          selectedChallenge.challenge.type === 'Weekly' &&
-          !selectedChallenge.wasConcluded &&
-          selectedChallenge.progress !== undefined &&
-          selectedChallenge.progress < selectedChallenge.challenge.maxProgress
-        ) {
-          <progress
-            class="progress progress-success w-full mb-4"
-            [value]="selectedChallenge.progress"
-            [attr.max]="selectedChallenge.challenge.maxProgress">
-          </progress>
-        }
-  
-        <!-- Action Buttons -->
-        @if (!selectedChallenge.wasConcluded) {
-          <div class="flex justify-end gap-2">
-            <button
-              class="btn btn-primary btn-sm"
-              (click)="completeChallenge(selectedChallenge.challenge.id)">
-              Concluir
-            </button>
-            @if (
-              selectedChallenge.challenge.type === 'Weekly' &&
-              selectedChallenge.progress !== undefined &&
-              selectedChallenge.progress < selectedChallenge.challenge.maxProgress
-            ) {
-              <button
-                class="btn btn-outline btn-primary btn-sm"
-                (click)="addProgress(selectedChallenge.challenge.id)">
-                + Progresso
-              </button>
+            @for (challenge of weeklyChallenges; track $index) {
+                @if (!challenge.wasConcluded) {
+                    <app-challenge-card
+                        (openModal)="selectedChallenge = challenge"
+                        [title]="challenge.challenge.title"
+                        [type]="challenge.challenge.type"
+                        [points]="challenge.challenge.points"
+                        [progress]="challenge.progress"
+                        [maxProgress]="challenge.challenge.maxProgress"
+                        [completed]="false"
+                        [showProgress]="true"
+                        (complete)="completeChallenge(challenge.challenge.id)"
+                        (progressClick)="addProgress(challenge.challenge.id)" />
+                }
             }
-          </div>
-        }
-      </div>
+        </ul>
+
+        <!-- COMPLETED -->
+        <ul class="list bg-base-100 rounded-box shadow-md">
+            <li class="p-4 pb-2 pl-8 text-xs opacity-60 tracking-wide">
+                Concluídos
+            </li>
+
+            @for (challenge of weeklyChallenges; track $index) {
+                @if (challenge.wasConcluded) {
+                    <app-challenge-card
+                        (openModal)="selectedChallenge = challenge"
+                        [title]="challenge.challenge.title"
+                        [type]="challenge.challenge.type"
+                        [points]="challenge.challenge.points"
+                        [showProgress]="!challenge.wasConcluded"
+                        (complete)="completeChallenge(challenge.challenge.id)"
+                        (progressClick)="addProgress(challenge.challenge.id)" />
+                }
+            }
+        </ul>
     </div>
-  }
-  
+</section>
+
+@if (selectedChallenge) {
+    <div
+        class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+        <div
+            class="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md relative">
+            <!-- Close Button -->
+            <button
+                class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+                (click)="selectedChallenge = null"
+                aria-label="Fechar">
+                ✕
+            </button>
+
+            <!-- Title & Description -->
+            <h3 class="text-xl font-bold mb-2">
+                {{ selectedChallenge.challenge.title }}
+            </h3>
+            <p class="text-gray-700 mb-4">
+                {{ selectedChallenge.challenge.description }}
+            </p>
+            <p class="text-green-700 font-medium mb-4">
+                Recompensa: {{ selectedChallenge.challenge.points }} pontos
+            </p>
+
+            <!-- Progress bar only for Weekly and not completed -->
+            @if (
+                selectedChallenge.challenge.type === 'Weekly' &&
+                !selectedChallenge.wasConcluded &&
+                selectedChallenge.progress !== undefined &&
+                selectedChallenge.progress <
+                    selectedChallenge.challenge.maxProgress
+            ) {
+                <progress
+                    class="progress progress-success w-full mb-4"
+                    [value]="selectedChallenge.progress"
+                    [attr.max]="
+                        selectedChallenge.challenge.maxProgress
+                    "></progress>
+            }
+
+            <!-- Action Buttons -->
+            @if (!selectedChallenge.wasConcluded) {
+                <div class="flex justify-end gap-2">
+                    <button
+                        class="btn btn-primary btn-sm"
+                        (click)="
+                            completeChallenge(selectedChallenge.challenge.id)
+                        ">
+                        Concluir
+                    </button>
+                    @if (
+                        selectedChallenge.challenge.type === 'Weekly' &&
+                        selectedChallenge.progress !== undefined &&
+                        selectedChallenge.progress <
+                            selectedChallenge.challenge.maxProgress
+                    ) {
+                        <button
+                            class="btn btn-outline btn-primary btn-sm"
+                            (click)="
+                                addProgress(selectedChallenge.challenge.id)
+                            ">
+                            + Progresso
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}

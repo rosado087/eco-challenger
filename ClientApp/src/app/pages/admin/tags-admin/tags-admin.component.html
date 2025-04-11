@@ -24,7 +24,10 @@
                         </button>
                     </div>
 
-                    <app-button text="Adicionar" id="addTag" (btnClick)="handleAddTag()" />
+                    <app-button
+                        text="Adicionar"
+                        id="addTag"
+                        (btnClick)="handleAddTag()" />
                 </div>
 
                 <app-table class="mt-4">
@@ -82,7 +85,7 @@
                                             name="heroPencil" />
                                     </button>
                                     <button
-                                        class="btn btn-ghost btn-md" 
+                                        class="btn btn-ghost btn-md"
                                         data-action="removeTag"
                                         (click)="removeTag(tag.id)">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
