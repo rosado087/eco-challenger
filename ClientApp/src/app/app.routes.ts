@@ -59,6 +59,15 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
+        path: 'profile',
+        loadComponent: () => {
+            return import('./pages/user-profile/user-profile.component').then(
+                (m) => m.UserProfileComponent
+            )
+        },
+        canActivate: [authGuard]
+    },
+    {
         path: 'challenges/:id',
         loadComponent: () => {
             return import('./pages/challenges/challenges.component').then(

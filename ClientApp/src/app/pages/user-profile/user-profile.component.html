@@ -8,21 +8,23 @@
                 <h2 class="text-xl font-semibold text-gray-700">
                     Perfil de Utilizador
                 </h2>
-                @if (userId === this.id) {
-                    <ng-icon
-                        id="edit-info"
-                        name="heroPencil"
-                        class="ml-5"
-                        (click)="editProfile()" />
-                }
             </div>
 
             <form [formGroup]="editForm" id="editForm">
                 <!-- Nome de Utilizador -->
                 <div class="mt-4">
-                    <span class="font-medium text-gray-700"
-                        >Nome de Utilizador:</span
-                    >
+                    <div class="flex flex-row gap-1">
+                        <span class="font-medium text-gray-700"
+                            >Nome de Utilizador:</span
+                        >
+                        @if (userId === this.id) {
+                            <button (click)="editProfile()" class="cursor-pointer">
+                                <ng-icon
+                                    id="edit-info"
+                                    name="heroPencil" />
+                            </button>                            
+                        }
+                    </div>
 
                     <div class="flex items-center gap-2">
                         @if (isEditing) {
@@ -64,26 +66,29 @@
                 }
 
                 <!-- Tag -->
-                <div class="mt-4">
-                    <span class="font-medium text-gray-700">Tag:</span>
-                    @if (isEditing) {
-                        <div class="flex items-center gap-2">
-                            <select
-                                id="edit-tag"
-                                [(ngModel)]="tag"
-                                formControlName="tag"
-                                class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator">
-                                <option
-                                    id="option-{{ tagOption }}"
-                                    *ngFor="let tagOption of availableTags"
-                                    [value]="tagOption">
-                                    {{ tagOption }}
-                                </option>
-                            </select>
-                        </div>
-                    } @else {
-                        <p class="text-gray-600">{{ tag }}</p>
-                    }
+                <div class="mt-4 flex flex-col gap-1">
+                    <div class="flex flex-row gap-2 items-center">
+                        <span class="font-medium text-gray-700">Tags:</span>
+                        @if (userId === this.id) {
+                            <button (click)="openTagsModal()" class="cursor-pointer">
+                                <ng-icon
+                                    id="edit-tags"
+                                    name="heroPencil" />
+                            </button>
+                        }
+                    </div>
+                    <div class="flex flex-row gap-1.5 flex-wrap">
+                        @for (tag of tags; track $index) {
+                            @if (tag.isBeingUsed) {
+                                <app-tag
+                                    [backgroundColor]="tag.backgroundColor"
+                                    [textColor]="tag.textColor"
+                                    [text]="tag.name"
+                                    [type]="tag.style"
+                                    [icon]="tag.icon" />
+                            }
+                        }
+                    </div>
                 </div>
 
                 <!-- Pontos -->
@@ -265,4 +270,9 @@
             </div>
         </div>
     </div>
+
+    <app-profile-tag-selector-modal
+        (closeClick)="closeTagsModal()"
+        [tags]="tags"
+        [open]="modalShow" />
 </div>

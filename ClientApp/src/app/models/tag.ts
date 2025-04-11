@@ -9,4 +9,5 @@ export interface Tag {
     icon?: string
     style: TagStyle
     owned?: boolean
+    isBeingUsed?: boolean
 }
