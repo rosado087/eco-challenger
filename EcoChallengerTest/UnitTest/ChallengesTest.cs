@@ -45,7 +45,7 @@ namespace EcoChallengerTest.UnitTest
             var result = await controller.CreateChallenge(model) as JsonResult;
             var (success, message) = ExtractJson(result!);
 
-            //Assert.That(success, Is.True);
+            Assert.That(success, Is.True);
             Assert.That(message, Is.EqualTo("Desafio criado com sucesso"));
         }
 
