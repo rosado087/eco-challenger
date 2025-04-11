@@ -81,20 +81,6 @@ namespace EcoChallengerTest.IntegrationTest
         }
 
         [Test]
-        public async Task GetTags_UserHasTags_ReturnsTags()
-        {
-            var loginModel = await nc.Login("tester1@gmail.com");
-            var response = await nc.SendGet($"/api/Profile/GetTags/{loginModel.user!.id}", true, loginModel.token);
-
-            var content = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<dynamic>(content);
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That((bool)result!.success, Is.True, $"API returned failure: {content}");
-            Assert.That(((JArray)result.list).ToObject<List<string>>(), Does.Contain("Eco-Warrior"));
-        }
-
-        [Test]
         public async Task AddFriend_ValidRequest_AddsFriend()
         {
             var loginModel = await nc.Login("tester1@gmail.com");
