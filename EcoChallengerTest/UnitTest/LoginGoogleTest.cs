@@ -32,6 +32,7 @@ namespace EcoChallengerTest.UnitTest
             _dbContext = new AppDbContext(options);
 
             var services = new ServiceCollection();
+            services.AddLogging();
             services.AddHostedService<DailyTaskService>();
             services.AddHostedService<WeeklyTaskService>();
 

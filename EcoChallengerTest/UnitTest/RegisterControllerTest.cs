@@ -30,6 +30,7 @@ namespace EcoChallengerTest.UnitTest
             //Arrange
             var context = GetInMemoryDbContext();
             var services = new ServiceCollection();
+            services.AddLogging();
             services.AddHostedService<DailyTaskService>();
             services.AddHostedService<WeeklyTaskService>();
             var controller = new RegisterController(context, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());
@@ -64,6 +65,7 @@ namespace EcoChallengerTest.UnitTest
             await context.SaveChangesAsync();
 
             var services = new ServiceCollection();
+            services.AddLogging();
             services.AddHostedService<DailyTaskService>();
             services.AddHostedService<WeeklyTaskService>();
             var controller = new RegisterController(context, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());
@@ -90,6 +92,7 @@ namespace EcoChallengerTest.UnitTest
             failingContext.Dispose(); // Simulate a failure scenario (DB is closed)
 
             var services = new ServiceCollection();
+            services.AddLogging();
             services.AddHostedService<DailyTaskService>();
             services.AddHostedService<WeeklyTaskService>();
             var controller = new RegisterController(failingContext, services.BuildServiceProvider().GetRequiredService<IEnumerable<IHostedService>>());

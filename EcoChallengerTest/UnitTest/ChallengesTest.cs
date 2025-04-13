@@ -39,7 +39,7 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public async Task CreateChallenge_Success()
         {
-            var model = new ChallengeModel { Title = "Test", Description = "Desc", Points = 10, Type = "Daily" };
+            var model = new ChallengeModel { Title = "Test3", Description = "Desc3", Points = 10, Type = "Daily" };
             var controller = new ChallengeController(_dbContext, _loggerMock.Object);
 
             var result = await controller.CreateChallenge(model) as JsonResult;
@@ -52,7 +52,7 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public async Task CreateChallenge_Fails_WhenDuplicate()
         {
-            _dbContext.Challenges.Add(new Challenge { Title = "Dup", Description = "Desc", Type = "Daily", Points = 5 });
+            _dbContext.Challenges.Add(new Challenge { Title = "Dup", Description = "Desc4", Type = "Daily", Points = 5 });
             _dbContext.SaveChanges();
             var model = new ChallengeModel { Title = "Dup", Description = "NewDesc", Type = "Daily", Points = 5 };
 
@@ -67,6 +67,8 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public void GetAllChallenges_ReturnsAll()
         {
+            _dbContext.Challenges.RemoveRange(_dbContext.Challenges);
+
             _dbContext.Challenges.AddRange(
                 new Challenge { Title = "A", Description = "testA", Type = "Daily", Points = 5 },
                 new Challenge { Title = "B", Description = "testB", Type = "Weekly", Points = 25 }
@@ -82,6 +84,8 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public void GetAllChallenges_ReturnsFiltered()
         {
+            _dbContext.Challenges.RemoveRange(_dbContext.Challenges);
+
             _dbContext.Challenges.AddRange(
                 new Challenge { Title = "Test", Description = "test", Points = 5, Type = "Daily" },
                 new Challenge { Title = "Another", Description = "another", Points = 15, Type = "Weekly" }
@@ -97,11 +101,11 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public async Task EditChallenge_Success()
         {
-            var chal = new Challenge { Title = "Old", Description = "Desc", Points = 10, Type = "Daily" };
+            var chal = new Challenge { Title = "Old", Description = "Desc5", Points = 10, Type = "Daily" };
             _dbContext.Challenges.Add(chal);
             _dbContext.SaveChanges();
 
-            var model = new ChallengeModel { Title = "Old", Description = "Desc", Points = 20, Type = "Daily" };
+            var model = new ChallengeModel { Title = "Old", Description = "Desc6", Points = 20, Type = "Daily" };
             var controller = new ChallengeController(_dbContext, _loggerMock.Object);
 
             var result = await controller.EditChallenge(model, chal.Id) as JsonResult;

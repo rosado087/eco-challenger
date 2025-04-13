@@ -110,8 +110,16 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public async Task Rotate_Daily_Challenges_Successfully()
         {        
-            // Make sure there are no challenged
+            // Make sure there are no challenged and users
             _dbContext!.UserChallenges.RemoveRange(_dbContext.UserChallenges);
+            _dbContext!.Users.RemoveRange(_dbContext.Users);
+
+            await _dbContext.Users.AddAsync(new User
+            {
+                Email = "testDaily@example.com",
+                Username = "TestUser58",
+                Password = PasswordGenerator.GeneratePasswordHash("validPassword")
+            });
             _dbContext.SaveChanges();
                 
             var userChallenges = _dbContext!.UserChallenges.ToList();
@@ -139,7 +147,6 @@ namespace EcoChallengerTest.UnitTest
             await service.StartAsync(cts.Token);
 
             Thread.Sleep(3000); // Make sure rotation is done
-
             userChallenges = _dbContext.UserChallenges.ToList();
             //Verifica que foram atribuidos 3 desafio diarios
             Assert.That(userChallenges.Count, Is.EqualTo(3));
@@ -151,6 +158,18 @@ namespace EcoChallengerTest.UnitTest
         [Test]
         public async Task Rotate_Weekly_Challenges_Successfully()
         {
+            // Make sure there are no challenged and users
+            _dbContext!.UserChallenges.RemoveRange(_dbContext.UserChallenges);
+            _dbContext!.Users.RemoveRange(_dbContext.Users);
+
+            await _dbContext.Users.AddAsync(new User
+            {
+                Email = "testDaily@example.com",
+                Username = "TestUser58",
+                Password = PasswordGenerator.GeneratePasswordHash("validPassword")
+            });
+            _dbContext.SaveChanges();
+
             var mockLogger = new Mock<ILogger<WeeklyTaskService>>();
             var serviceProviderMock = new Mock<IServiceProvider>();
 
