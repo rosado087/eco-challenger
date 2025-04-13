@@ -59,6 +59,15 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
+        path: 'profile',
+        loadComponent: () => {
+            return import('./pages/user-profile/user-profile.component').then(
+                (m) => m.UserProfileComponent
+            )
+        },
+        canActivate: [authGuard]
+    },
+    {
         path: 'challenges/:id',
         loadComponent: () => {
             return import('./pages/challenges/challenges.component').then(
@@ -146,11 +155,11 @@ export const routes: Routes = [
             {
                 path: 'users',
                 loadComponent: () => {
-                  return import(
-                    './pages/admin/users-admin/users-admin.component'
-                  ).then((m) => m.UsersAdminComponent)
+                    return import(
+                        './pages/admin/users-admin/users-admin.component'
+                    ).then((m) => m.UsersAdminComponent)
                 },
-                canActivate:[authGuard]
+                canActivate: [authGuard]
             },
             {
                 path: '**',

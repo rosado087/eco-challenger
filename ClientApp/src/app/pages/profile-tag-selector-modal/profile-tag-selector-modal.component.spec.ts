@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { ChallengeCardComponent } from './challenge-card.component'
+import { TagFormModalComponent } from './profile-tag-selector-modal.component'
 
-describe('ChallengeCardComponent', () => {
-    let component: ChallengeCardComponent
-    let fixture: ComponentFixture<ChallengeCardComponent>
+describe('TagFormModalComponent', () => {
+    let component: TagFormModalComponent
+    let fixture: ComponentFixture<TagFormModalComponent>
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ChallengeCardComponent]
+            imports: [TagFormModalComponent]
         }).compileComponents()
 
-        fixture = TestBed.createComponent(ChallengeCardComponent)
+        fixture = TestBed.createComponent(TagFormModalComponent)
         component = fixture.componentInstance
         fixture.detectChanges()
     })

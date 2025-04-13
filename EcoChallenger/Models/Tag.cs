@@ -25,3 +25,7 @@ public class Tag {
 
     public TagStyle Style { get; set; } = TagStyle.NORMAL;
 }
+
+public class UserTag : Tag {
+    public bool IsBeingUsed { get; set; }
+}

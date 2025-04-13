@@ -172,6 +172,41 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
+        /// Gets all the tags for a given user ID
+        /// </summary>
+        /// <returns>
+        /// Returns the list of tags
+        /// </returns>
+        [HttpGet]
+        [Route("user/{id}")]
+        public IActionResult GetAllTags(int id)
+        {
+            try {
+                List<UserTag> tags = _ctx.Tags
+                    .Where(t => _ctx.TagUsers.Any(tu => tu.User.Id == id && tu.Tag.Id == t.Id))
+                    .Select(t => new UserTag
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        Price = t.Price,
+                        BackgroundColor = t.BackgroundColor,
+                        TextColor = t.TextColor,
+                        Icon = t.Icon,
+                        Style = t.Style,
+                        IsBeingUsed = _ctx.TagUsers.Any(tu => tu.User.Id == id && tu.Tag.Id == t.Id && tu.SelectedTag)
+                    })
+                    
+                    .ToList();
+
+                return Ok(tags);
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return StatusCode(500, "An error occurred fetching system tags.");
+            }
+        }
+
+        /// <summary>
         /// Gets all the tags available
         /// </summary>
         /// <returns>

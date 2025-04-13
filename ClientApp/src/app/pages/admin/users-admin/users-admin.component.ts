@@ -2,13 +2,13 @@ import { Component, inject, OnInit } from '@angular/core'
 import { TableComponent } from '../../../components/table/table.component'
 import { NetApiService } from '../../../services/net-api/net-api.service'
 import { PopupLoaderService } from '../../../services/popup-loader/popup-loader.service'
-import {NgIcon, provideIcons } from '@ng-icons/core'
+import { NgIcon, provideIcons } from '@ng-icons/core'
 import {
     heroPencil,
     heroTrash,
     heroMagnifyingGlass
 } from '@ng-icons/heroicons/outline'
-import { ActivatedRoute, Router} from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { User } from '../../../models/user'
 import { SuccessModel } from '../../../models/success-model'
@@ -17,10 +17,10 @@ import { CommonModule } from '@angular/common'
 
 @Component({
     selector: 'app-users-admin',
-  imports: [
+    imports: [
         NgIcon,
-    TableComponent,
-    ButtonComponent,
+        TableComponent,
+        ButtonComponent,
         CommonModule,
         ReactiveFormsModule
     ],
@@ -42,51 +42,48 @@ export class UsersAdminComponent implements OnInit {
     confirmControl = false
 
     ngOnInit(): void {
-        
-      this.loadUsers();
-        
+        this.loadUsers()
     }
 
-    loadUsers(name?: string | null):void {
-      this.netApi.get<User[]>('Users', 'users', name? {q: name}:undefined)
-        .subscribe({
-          next: (data) => {
-            this.users = data
-          },
-          error: () => {
-            this.popupLoader.showPopup(
-              'Erro',
-              'Ocorreu um erro ao carregar a lista de utilizadores'
-            )
-          }
-        })
+    loadUsers(name?: string | null): void {
+        this.netApi
+            .get<User[]>('Users', 'users', name ? { q: name } : undefined)
+            .subscribe({
+                next: (data) => {
+                    this.users = data
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Ocorreu um erro ao carregar a lista de utilizadores'
+                    )
+                }
+            })
     }
-
 
     handleSearch(): void {
-
-      this.loadUsers(this.searchControl.value);
+        this.loadUsers(this.searchControl.value)
     }
 
-    changeBlock(id: number):void {
-      this.netApi.post<SuccessModel>('Users', 'block', undefined, id.toString())
-        .subscribe({
-          next: (data) => {
-            if(data.success) this.handleSearch()
+    changeBlock(id: number): void {
+        this.netApi
+            .post<SuccessModel>('Users', 'block', undefined, id.toString())
+            .subscribe({
+                next: (data) => {
+                    if (data.success) this.handleSearch()
 
-            this.popupLoader.showPopup(
-              data.success ? 'Sucesso' : 'Erro',
-              data.message
-            )
-          },
-          error: () =>{
-            this.popupLoader.showPopup(
-              'Erro',
-              'Erro ao mudar o estado do utilizador'
-            )
-          }
-        }
-      )
+                    this.popupLoader.showPopup(
+                        data.success ? 'Sucesso' : 'Erro',
+                        data.message
+                    )
+                },
+                error: () => {
+                    this.popupLoader.showPopup(
+                        'Erro',
+                        'Erro ao mudar o estado do utilizador'
+                    )
+                }
+            })
     }
     /*
     changeAdmin(id: number): void {

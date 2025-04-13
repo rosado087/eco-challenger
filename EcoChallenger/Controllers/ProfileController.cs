@@ -101,18 +101,6 @@ namespace EcoChallenger.Controllers
                     user.Username = profile.Username;
                 }
 
-                var currentTag = await _ctx.TagUsers
-                    .Where(tg => tg.SelectedTag && tg.User.Id == user.Id)
-                    .FirstOrDefaultAsync();
-                
-                if (currentTag != null)
-                    currentTag.SelectedTag = false;
-
-                var newCurrentTag = await _ctx.TagUsers.Where(tg => tg.Tag.Name == profile.Tag && tg.User.Id == user.Id).FirstOrDefaultAsync();
-                
-                if (newCurrentTag != null)
-                    newCurrentTag.SelectedTag = true;
-
                 await _ctx.SaveChangesAsync();
 
                 var currentTagName = await _ctx.TagUsers
@@ -135,33 +123,41 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// TODO: Remove this from there and replace the frontend call
-        /// Gets all tags that the user owns.
+        /// Updates the selected tags for the current user
+        /// This will set the received tags as selected and all the other
+        /// ones as not selected
         /// </summary>
-        /// <param name="id">Id of the user</param>
-        /// <returns>JSON result containing a list of tags.</returns>
-        
-        [HttpGet("GetTags/{id}")]
-        public async Task<JsonResult> GetTags(int id)
+        [HttpPost("select-tags")]
+        public IActionResult SelectTags([FromBody] SelectedTags data)
         {
             try
             {
-                var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == id);
+                List<TagUsers> tagUsers = _ctx.TagUsers
+                    .Include(tu => tu.Tag)
+                    .Where(tu => tu.User.Id == UserContext.Id)
+                    .ToList();
 
-                if (user == null)
-                    return new JsonResult(new { success = false, message = "O utilizador não existe" });
+                if(tagUsers == null)
+                    return StatusCode(400, "This user has no tags.");
 
-                var tags = await _ctx.TagUsers
-                    .Where(tg => tg.User.Id == user.Id)
-                    .Select(tg => tg.Tag.Name)
-                    .ToListAsync();
+                // Make sure non of the provided Ids is invalid
+                // We use ToHashSet here to reduce the algorithmic complexity and makes this faster
+                // it probably wont make much difference in the end with the amount of data though
+                var invalidIds = data.tagIds.Except(tagUsers.Select(tu => tu.Tag.Id).ToHashSet());
+                if (invalidIds.Any())
+                    return StatusCode(400, new { success = false, message = "At least one of the received tags is invalid." });
 
-                return new JsonResult(new { success = true, list = tags });
+                // Set SelectedTag = true only for those in the list, false otherwise
+                foreach (var tu in tagUsers) tu.SelectedTag = data.tagIds.Contains(tu.Tag.Id);
+
+                _ctx.SaveChanges();
+
+                return Ok(new { success = true });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message, e.StackTrace);
-                return new JsonResult(new { success = false, message = "Não foi possível encontrar as suas tags" });
+                return StatusCode(500, new { success = false, message = "Ocorreu um erro ao atualizar as tags." });
             }
         }
 

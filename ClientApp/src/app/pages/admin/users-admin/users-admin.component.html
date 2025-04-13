@@ -1,54 +1,53 @@
-<main class="container mx-auto px-4 mt-4 pb-4" style="max-width: 50%;align-items:center">
-  <div class="card w-auto bg-base-100 shadow-md border border-base-300 ">
-    <div class="card-body">
-      <div class="flex flex-col">
-        <div class="flex justify-center">
-          <h2 class="text-2xl font-bold">Lista de Utilizadores</h2>
-        </div>
-        <div class="flex flex-row justify-between">
-          <div class="join">
-            <div>
-              <label class="input">
-                <input type="search"
-                       [formControl]="searchControl"
-                       (keydown.enter)="handleSearch()"
-                       class="grow"
-                       placeholder="Pesquisa pelo nome" />
-              </label>
-            </div>
-            <button class="btn btn-primary join-item"
-                    (click)="handleSearch()">
-              <ng-icon name="heroMagnifyingGlass" />
-            </button>
-          </div>
+<main
+    class="container mx-auto px-4 mt-4 pb-4"
+    style="max-width: 50%; align-items: center">
+    <div class="card w-auto bg-base-100 shadow-md border border-base-300">
+        <div class="card-body">
+            <div class="flex flex-col">
+                <div class="flex justify-center">
+                    <h2 class="text-2xl font-bold">Lista de Utilizadores</h2>
+                </div>
+                <div class="flex flex-row justify-between">
+                    <div class="join">
+                        <div>
+                            <label class="input">
+                                <input
+                                    type="search"
+                                    [formControl]="searchControl"
+                                    (keydown.enter)="handleSearch()"
+                                    class="grow"
+                                    placeholder="Pesquisa pelo nome" />
+                            </label>
+                        </div>
+                        <button
+                            class="btn btn-primary join-item"
+                            (click)="handleSearch()">
+                            <ng-icon name="heroMagnifyingGlass" />
+                        </button>
+                    </div>
+                </div>
 
-        </div>
+                <app-table class="mt-4">
+                    <!-- Columns -->
+                    <tr columns>
+                        <th>Utilizador</th>
+                        <!--<th>Função</th>-->
+                    </tr>
 
-        <app-table class="mt-4">
-          <!-- Columns -->
-          <tr columns>
-            <th>Utilizador</th>
-            <!--<th>Função</th>-->
-          </tr>
-
-          <!-- Rows -->
-          @for (user of users; track $index) {
-          <tr row>
-
-
-            <td>
-              <span>
-                {{
-                  user.username
-                }}
-              </span>
-            </td>
-            <!--<th>
+                    <!-- Rows -->
+                    @for (user of users; track $index) {
+                        <tr row>
+                            <td>
+                                <span>
+                                    {{ user.username }}
+                                </span>
+                            </td>
+                            <!--<th>
               <div class="flex flex-row gap-1">
                 <button class="btn btn-ghost btn-md border-black"
                         (click)="changeAdmin(user.id)">
                 <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
-              <!--@if(user.isAdmin){
+                            <!--@if(user.isAdmin){
                 Admin
                 }
                 @else{
@@ -57,54 +56,65 @@
                 </button>
               </div>
             </th>-->
-            <th>
-              <div class="flex flex-row  gap-1">
-                <button class="btn btn-ghost btn-md border-black"
-                        (click)="confirmControl = true">
-                  <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
-                  @if(user.isBlocked){
-                  Desbloquear
-                  }
-                  @else{
-                  Bloquear
-                  }
-                </button>
-                <div *ngIf="confirmControl"
-                     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-                    <h2 class="text-xl font-semibold text-gray-700 text-center">
-                      @if(user.isBlocked){
-                        Desbloquear Utilizador
-                      }
-                      @else{
-                        Bloquear Utilizador
-                      }
-                    </h2>
-                    <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
+                            <th>
+                                <div class="flex flex-row gap-1">
+                                    <button
+                                        class="btn btn-ghost btn-md border-black"
+                                        (click)="confirmControl = true">
+                                        <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
+                                        @if (user.isBlocked) {
+                                            Desbloquear
+                                        } @else {
+                                            Bloquear
+                                        }
+                                    </button>
+                                    <div
+                                        *ngIf="confirmControl"
+                                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                                        <div
+                                            class="bg-white p-6 rounded-lg shadow-lg w-96">
+                                            <h2
+                                                class="text-xl font-semibold text-gray-700 text-center">
+                                                @if (user.isBlocked) {
+                                                    Desbloquear Utilizador
+                                                } @else {
+                                                    Bloquear Utilizador
+                                                }
+                                            </h2>
+                                            <p
+                                                class="text-center text-gray-600 mt-4">
+                                                Tem a certeza?
+                                            </p>
 
-                    <!-- Botões -->
-                    <!-- Botões -->
-                    <div class="mt-4 flex justify-evenly">
-                      <app-button id="confirm-rem"
-                                  text="Sim"
-                                  (click)="changeBlock(user.id); confirmControl = false" />
+                                            <!-- Botões -->
+                                            <!-- Botões -->
+                                            <div
+                                                class="mt-4 flex justify-evenly">
+                                                <app-button
+                                                    id="confirm-rem"
+                                                    text="Sim"
+                                                    (click)="
+                                                        changeBlock(user.id);
+                                                        confirmControl = false
+                                                    " />
 
-                      <button id="rem-cancel"
-                              class="btn btn-outline btn-error"
-                              (click)="confirmControl = false">
-                        Não
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </th>
-          </tr>
-          }
-        </app-table>
-      </div>
+                                                <button
+                                                    id="rem-cancel"
+                                                    class="btn btn-outline btn-error"
+                                                    (click)="
+                                                        confirmControl = false
+                                                    ">
+                                                    Não
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    }
+                </app-table>
+            </div>
+        </div>
     </div>
-  </div>
-
-  
 </main>

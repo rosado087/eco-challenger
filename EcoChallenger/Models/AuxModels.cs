@@ -31,7 +31,6 @@ public class LoginResponseModel
 public class ProfileEditModel{
     public int? Id { get; set; }
     public string Username  {get; set; }
-    public string Tag {get; set;}
 
     public void Validate(){
         if(string.IsNullOrEmpty(Username))
@@ -97,4 +96,8 @@ public class ChallengeModel
             throw new ArgumentException("Argumentos inválidos");
 
     }
+}
+
+public class SelectedTags {
+    public required List<int> tagIds { get; set; }
 }

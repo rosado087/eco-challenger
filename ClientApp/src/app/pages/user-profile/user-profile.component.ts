@@ -26,6 +26,9 @@ import {
     AddFriendResponse,
     RemoveFriendResponse
 } from '../../models/user-profile-model'
+import { TagFormModalComponent } from '../profile-tag-selector-modal/profile-tag-selector-modal.component'
+import { Tag } from '../../models/tag'
+import { TagComponent } from '../../components/tag/tag.component'
 
 @Component({
     selector: 'app-user-profile',
@@ -36,7 +39,9 @@ import {
         NgIf,
         ReactiveFormsModule,
         ButtonComponent,
-        FormsModule
+        FormsModule,
+        TagFormModalComponent,
+        TagComponent
     ],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],
@@ -57,10 +62,9 @@ export class UserProfileComponent implements OnInit {
     email: string = ''
     id: number = 0
     points: string = ''
-    tag: string = ''
+    tags: Tag[] = []
     friendsList: { username: string; id: number }[] = []
     isEditing: boolean = false
-    availableTags: string[] = []
     userList: string[] = []
     showAddFriendModal: boolean = false
     showRemoveFriendModal: boolean = false
@@ -68,9 +72,13 @@ export class UserProfileComponent implements OnInit {
     searchUsername: string = ''
     selectedUser: string = ''
 
+    // Tag modal form props
+    modalIsEditMode: boolean = false
+    modalTagId: number | null = null
+    modalShow: boolean = false
+
     editForm = new FormGroup({
-        editUserName: new FormControl('', [Validators.required]),
-        tag: new FormControl('')
+        editUserName: new FormControl('', [Validators.required])
     })
 
     getUserName() {
@@ -81,35 +89,68 @@ export class UserProfileComponent implements OnInit {
         return this.editForm.get('tag')
     }
 
-    /*ngOnInit(): void {
-        this.userId = Number(this.route.snapshot.paramMap.get('id'))
-        this.id = this.authService.getUserInfo().id
-        this.loadUserProfile(this.userId)
-        this.loadUserFriends(this.userId)
-    }*/
-
     ngOnInit(): void {
-        this.route.paramMap.subscribe((params) => {
-            this.userId = Number(params.get('id'))
-            this.id = this.authService.getUserInfo().id
-            this.loadUserProfile(this.userId)
-            this.loadUserFriends(this.userId)
+        this.route.url.subscribe((paths) => {
+            // Check if we are viewing our own profile or someone else's
+            if (paths[0].path == 'profile')
+                this.userId = this.id = this.authService.getUserInfo().id
+            else {
+                // The last path should be the ID
+                this.userId = Number(paths[paths.length - 1].path)
+                this.id = this.authService.getUserInfo().id
+            }
+
+            this.loadUserProfile()
+            this.loadUserFriends()
+            this.loadUserTags()
         })
+    }
+
+    openTagsModal(): void {
+        if (this.tags.length == 0)
+            return this.popupLoader.showPopup('Não existem tags para escolher.')
+        this.modalShow = true
+    }
+
+    closeTagsModal(): void {
+        this.modalShow = false
+        this.loadUserTags()
+    }
+
+    loadUserTags(): void {
+        // Load tags
+        this.netApi
+            .get<Tag[]>('Tag', 'user', undefined, this.userId.toString())
+            .subscribe({
+                next: (data) => {
+                    if (!data || data.length == 0) return
+                    this.tags = data
+                },
+                error: () =>
+                    this.popupLoader.showPopup(
+                        'Erro!',
+                        'Ocorreu um erro desconhecido ao carregar as tags.'
+                    )
+            })
     }
 
     /**
      * Load user profile details from API.
      */
-    loadUserProfile(id: number) {
+    loadUserProfile() {
         this.netApi
-            .get<UserModel>('Profile', 'GetUserInfo', undefined, id.toString())
+            .get<UserModel>(
+                'Profile',
+                'GetUserInfo',
+                undefined,
+                this.userId.toString()
+            )
             .subscribe({
                 next: (data) => {
                     if (data.success) {
                         this.username = data.username
                         this.email = data.email
                         this.points = data.points
-                        this.tag = data.tag
                     } else {
                         this.popupLoader.showPopup(
                             'Erro',
@@ -128,27 +169,6 @@ export class UserProfileComponent implements OnInit {
 
     editProfile() {
         this.isEditing = true
-
-        this.netApi
-            .get<UserModel>('Profile', 'GetTags', undefined, this.id.toString())
-            .subscribe({
-                next: (data) => {
-                    if (data.success) {
-                        this.availableTags = data.list
-                    } else {
-                        this.popupLoader.showPopup(
-                            'Erro',
-                            data.message || 'Ocorreu um erro!'
-                        )
-                    }
-                },
-                error: () => {
-                    this.popupLoader.showPopup(
-                        'Erro',
-                        'Não foi possível carregar as tags do perfil.'
-                    )
-                }
-            })
     }
 
     confirmEdit() {
@@ -169,7 +189,6 @@ export class UserProfileComponent implements OnInit {
                         this.username = data.username
                         this.email = data.email
                         this.points = data.points
-                        this.tag = data.tag
                         this.popupLoader.showPopup(
                             'Alteração dos dados',
                             'Os dados foram alterados com sucesso.'
@@ -200,7 +219,7 @@ export class UserProfileComponent implements OnInit {
                 next: (data: LoginResponseModel) => {
                     if (data.success) {
                         this.authService.updateToken(data.user, data.token)
-                        this.loadUserProfile(this.userId)
+                        this.loadUserProfile()
                     } else {
                         this.popupLoader.showPopup(
                             'Alteração dos dados',
@@ -216,16 +235,16 @@ export class UserProfileComponent implements OnInit {
 
     cancelEdit() {
         this.isEditing = false
-        this.loadUserProfile(this.userId)
+        this.loadUserProfile()
     }
 
-    loadUserFriends(id: number) {
+    loadUserFriends() {
         this.netApi
             .get<FriendsResponse>(
                 'Profile',
                 'GetFriends',
                 undefined,
-                id.toString()
+                this.userId.toString()
             )
             .subscribe({
                 next: (data: FriendsResponse) => {

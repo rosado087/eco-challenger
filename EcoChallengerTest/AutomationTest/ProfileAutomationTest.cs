@@ -132,24 +132,23 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void Edit_Tag_Profile_Success()
         {
-            var editButton = wait!.Until(d => d.FindElement(By.Id("edit-info")));
+            var editButton = wait!.Until(d => d.FindElement(By.Id("edit-tags")));
             editButton.Click();
-
-            var selectTag = wait.Until(d => d.FindElement(By.Id("edit-tag")));
-            selectTag.Click();
             
-            var optionTag = wait.Until(d => d.FindElement(By.Id("option-NatureLover")));
-            optionTag.Click();
+            var tagList = wait.Until(d => d.FindElements(By.CssSelector("[data-action='tag-check-option']")));
+            Assert.That(tagList.Count(), Is.GreaterThanOrEqualTo(2));
             
+            tagList[1].Click();
 
-            var saveButton = wait.Until(d => d.FindElement(By.Id("edit-save")));
-            saveButton.Click();
+            var submitButton = wait.Until(d => d.FindElement(By.Id("tag-select-submit")));
+            submitButton.Click();
 
-            var popup = wait.Until(d => d.FindElement(By.CssSelector("div[class*='modal-action']")));
-            Thread.Sleep(500);
-            var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
+            Thread.Sleep(200);
 
-            okayButton.Click();
+            var profileTagListContainer = wait.Until(d => d.FindElement(By.Id("profile-tag-list")));
+            Assert.That(profileTagListContainer.FindElements(
+                    By.CssSelector("[role='button']")).Count(), 
+                    Is.EqualTo(2));
         }
 
         [Test]

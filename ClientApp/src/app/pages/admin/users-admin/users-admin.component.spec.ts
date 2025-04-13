@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import {UsersAdminComponent } from './users-admin.component'
+import { UsersAdminComponent } from './users-admin.component'
 
 describe('TagsAdminComponent', () => {
     let component: UsersAdminComponent
-  let fixture: ComponentFixture<UsersAdminComponent>
+    let fixture: ComponentFixture<UsersAdminComponent>
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-          imports: [UsersAdminComponent]
+            imports: [UsersAdminComponent]
         }).compileComponents()
 
-      fixture = TestBed.createComponent(UsersAdminComponent)
+        fixture = TestBed.createComponent(UsersAdminComponent)
         component = fixture.componentInstance
         fixture.detectChanges()
     })
