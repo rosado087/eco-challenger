@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TopPurchasedTagsComponent } from './top-completed-challenges.component';
+import { TopCompletedChallengesComponent } from './top-completed-challenges.component';
 
-describe('TopPurchasedTagsComponent', () => {
-  let component: TopPurchasedTagsComponent;
-  let fixture: ComponentFixture<TopPurchasedTagsComponent>;
+describe('TopCompletedChallengesComponent', () => {
+  let component: TopCompletedChallengesComponent;
+  let fixture: ComponentFixture<TopCompletedChallengesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TopPurchasedTagsComponent]
+      imports: [TopCompletedChallengesComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TopPurchasedTagsComponent);
+    fixture = TestBed.createComponent(TopCompletedChallengesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

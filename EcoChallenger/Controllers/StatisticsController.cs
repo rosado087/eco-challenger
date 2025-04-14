@@ -53,7 +53,7 @@ namespace EcoChallenger.Controllers
         /// Gets a list with the 10 most completed challenges
         /// </summary>
         /// <returns>
-        /// List of objects with challenge name and ID, and the completion count
+        /// List of objects with challenge name, and the completion count
         /// </returns>
         [Authorize(Roles = "Admin")]
         [HttpGet]
@@ -76,6 +76,35 @@ namespace EcoChallenger.Controllers
             catch(Exception e) {
                 _logger.LogError(e.Message, e.StackTrace);
                 return StatusCode(500, "An error occurred fethcing the top challenges.");
+            }
+        }
+
+        /// <summary>
+        /// Gets a list with the 5 users with the most points
+        /// </summary>
+        /// <returns>
+        /// List of objects with username, and point count
+        /// </returns>
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("top-users-most-points")]
+        public IActionResult GetTopUsersMostPoints()
+        {
+            try {
+                var userPointsCount = _ctx.Users
+                    .Select(u => new {
+                        u.Username,
+                        u.Points
+                    })
+                    .OrderByDescending(x => x.Points)
+                    .Take(5)
+                    .ToList();
+
+                return Ok(new { users = userPointsCount });
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return StatusCode(500, "An error occurred fethcing the top users with most points.");
             }
         }
 
