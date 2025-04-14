@@ -1,0 +1,1 @@
+export type TopPurchasedTags = {tagName: string, count: number} 
