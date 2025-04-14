@@ -25,9 +25,8 @@ This is example is for Linux:
 
 `dotnet ef database update`
 
-In case you want to rebuild the migrations script (this shouldn't be needed), you can do it with the following commands:
-`dotnet ef migrations remove`
-`dotnet ef migrations add Inital`
+In case you want to add a new migration, you can do it with the following command:
+`dotnet ef migrations add <name of migration>`
 
 
 ## SMTP Configuration

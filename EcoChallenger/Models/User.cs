@@ -22,5 +22,7 @@ public class User {
 
     public bool IsBlocked { get; set; } = false;
 
-    public int ChallengesCompleted {get; set; }
+    public int ChallengesCompleted { get; set; }
+
+    public DateTime LastLogin { get; set; } = DateTime.UtcNow;
 }

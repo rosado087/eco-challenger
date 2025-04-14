@@ -2,6 +2,15 @@
     <div class="container">
         <app-top-purchased-tags />
         <app-top-completed-challenges />
-        <app-top-users-most-points />
+        
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="col-span-1">
+                <app-top-users-most-points />            
+            </div>
+            <div class="md:col-span-2 col-span-1">
+                <app-monthly-active-users />
+            </div>
+        </div>
     </div>
 </main>

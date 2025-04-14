@@ -49,13 +49,7 @@ export class TopCompletedChallengesComponent implements OnInit {
   }
 
   loadChartData(data: TopCompletedChallenges[]): void {
-    // Order from highest to lowest
-    data.sort((a, b) => b.count - a.count)
-
     this.option = {
-      title: {
-        text: 'Top 10 Desafios Completados'
-      },
       tooltip: {
         trigger: 'axis',
         axisPointer: {

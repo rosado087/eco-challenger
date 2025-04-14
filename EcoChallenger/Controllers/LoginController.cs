@@ -56,6 +56,9 @@ namespace EcoChallenger.Controllers
                 // Generate the token
                 string token = TokenManager.GenerateJWT(user);
 
+                user.LastLogin = DateTime.UtcNow;
+                _ctx.SaveChanges();
+
                 // Return the token in the response
                 return new JsonResult(new
                 {
@@ -65,7 +68,8 @@ namespace EcoChallenger.Controllers
                         id = user.Id,
                         username = user.Username,
                         email = user.Email,
-                        isAdmin = user.IsAdmin
+                        isAdmin = user.IsAdmin,
+                        lastLogin = user.LastLogin
                     }
                 });
             }
@@ -121,7 +125,8 @@ namespace EcoChallenger.Controllers
                         id = newUser.Id,
                         username = newUser.Username,
                         email = newUser.Email,
-                        isAdmin = newUser.IsAdmin
+                        isAdmin = newUser.IsAdmin,
+                        lastLogin = newUser.LastLogin
                     }});
                 }
                 
@@ -135,8 +140,9 @@ namespace EcoChallenger.Controllers
                 //Verify if user is blocked
                 if (user.IsBlocked) return new JsonResult(new { success = false, message = "Esta conta foi bloqueada." });
 
-                // Update user GToken
-                user.GoogleToken = data.GoogleToken;
+                
+                user.GoogleToken = data.GoogleToken; // Update user gtoken
+                user.LastLogin = DateTime.UtcNow; // Update last login
                 _ctx.Users.Update(user);
                 await _ctx.SaveChangesAsync();
 

@@ -34,14 +34,19 @@ export class TopUserMostPointsComponent implements OnInit {
   popupLoader = inject(PopupLoaderService)
   option: EChartsCoreOption | null = null
   height = input<string>('300px')
+  friendsOnly = input<boolean>(false)
+  labelPosition = input<'top' | 'bottom'>('bottom')
 
   ngOnInit(): void {
     this.fetchChartData()
   }
 
   fetchChartData(): void {
+    let action = 'top-users-most-points'
+    if(this.friendsOnly()) action = 'top-friends-most-points'
+
     this.netApi
-    .get<{users: TopUserMostPoints[]}>('Statistics', 'top-users-most-points')
+    .get<{users: TopUserMostPoints[]}>('Statistics', action)
     .subscribe({
         next: (r) => this.loadChartData(r.users),
         error: () => this.popupLoader.showPopup('Erro ao carregar top utilizadores com mais pontos.')
@@ -53,16 +58,15 @@ export class TopUserMostPointsComponent implements OnInit {
     data.sort((a, b) => b.points - a.points)
 
     this.option = {
-      title: {
-        text: 'Top 5 Users with Most Points'
-      },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow'
         }
       },
-      legend: {},
+      legend: {
+        top: this.labelPosition()
+      },
       grid: {
         left: '3%',
         right: '4%',

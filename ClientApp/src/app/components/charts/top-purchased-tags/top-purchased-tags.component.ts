@@ -49,13 +49,11 @@ export class TopPurchasedTagsComponent implements OnInit {
   }
 
   loadChartData(data: TopPurchasedTags[]): void {
-    // Order from highest to lowest
-    data.sort((a, b) => b.count - a.count)
+    // Order from lowest to highest
+    // for some reason the chart will invert the data when displaying it
+    data.sort((a, b) => a.count - b.count)
 
     this.option = {
-      title: {
-        text: 'Top 10 Tags Compradas'
-      },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
