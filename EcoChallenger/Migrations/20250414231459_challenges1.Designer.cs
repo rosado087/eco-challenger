@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoChallenger.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250414231459_challenges1")]
+    partial class challenges1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,9 +352,6 @@ namespace EcoChallenger.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastLogin")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -374,7 +374,6 @@ namespace EcoChallenger.Migrations
                             Email = "tester1@gmail.com",
                             IsAdmin = false,
                             IsBlocked = false,
-                            LastLogin = new DateTime(2025, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
                             Points = 0,
                             Username = "Tester1"
@@ -386,7 +385,6 @@ namespace EcoChallenger.Migrations
                             Email = "tester2@gmail.com",
                             IsAdmin = false,
                             IsBlocked = false,
-                            LastLogin = new DateTime(2025, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
                             Points = 0,
                             Username = "Tester2"
@@ -398,7 +396,6 @@ namespace EcoChallenger.Migrations
                             Email = "tester3@gmail.com",
                             IsAdmin = false,
                             IsBlocked = false,
-                            LastLogin = new DateTime(2025, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
                             Points = 0,
                             Username = "Tester3"

@@ -71,7 +71,7 @@ namespace EcoChallenger.Controllers
                     .FirstOrDefault();
 
                 if(ownedTag != null)
-                    return Ok(new {success = false, message = "O utilizadore já comprou esta tag."});
+                    return Ok(new {success = false, message = "O utilizador já comprou esta tag."});
 
                 var tag = _ctx.Tags
                     .Where(t => t.Id == id)

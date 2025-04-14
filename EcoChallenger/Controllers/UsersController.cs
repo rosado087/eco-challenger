@@ -27,17 +27,19 @@ namespace EcoChallenger.Controllers
         [Authorize(Roles = "Admin")]
         [HttpGet("users")]
         public IActionResult GetUsers([FromQuery]string? searchedName)
-        {
-            
-            
+        {          
             if(searchedName == null)
             {
-                var users = _ctx.Users.Where(u => u.Id != UserContext.Id).Select(u => new { id = u.Id, username = u.Username, isBlocked = u.IsBlocked, isAdmin = u.IsAdmin}).ToList();
+                var users = _ctx.Users.Where(u => u.Id != UserContext.Id)
+                .Select(u => new { id = u.Id, username = u.Username, isBlocked = u.IsBlocked, isAdmin = u.IsAdmin})
+                .ToList();
                 return Ok(users);
             }
             else
             {
-                var users = _ctx.Users.Where(u => u.Username.Contains(searchedName) && u.Id != UserContext.Id).Select(u => new { id = u.Id, username = u.Username, isBlocked = u.IsBlocked, isAdmin = u.IsAdmin }).ToList();
+                var users = _ctx.Users.Where(u => u.Username.Contains(searchedName) && u.Id != UserContext.Id)
+                .Select(u => new { id = u.Id, username = u.Username, isBlocked = u.IsBlocked, isAdmin = u.IsAdmin })
+                .ToList();
                 return Ok(users);
             }
 

@@ -18,6 +18,6 @@ namespace EcoChallenger.Models
 
         [Required]
         public string Type { get; set; }
-        public int MaxProgress { get; set; }
+        public int MaxProgress { get; set; } = 1;
     }
 }
