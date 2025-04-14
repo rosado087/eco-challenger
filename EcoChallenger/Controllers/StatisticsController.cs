@@ -20,15 +20,11 @@ namespace EcoChallenger.Controllers
         }
 
         /// <summary>
-        /// Creates a new tag with the given data, including an optional image or GIF icon.
+        /// Gets a list with the 10 most purchased tags
         /// </summary>
-        /// <param name="tagModel">The tag data sent via multipart/form-data.</param>
         /// <returns>
-        /// Returns the created tag
+        /// List of objects with tag name and ID, and the purchase count
         /// </returns>
-        /// <remarks>
-        /// The uploaded icon is saved to the wwwroot/tag-images/ folder, and the generated file path is stored.
-        /// </remarks>
         [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("top-purchased-tags")]
@@ -42,13 +38,44 @@ namespace EcoChallenger.Controllers
                         Count = g.Count()
                     })
                     .OrderByDescending(x => x.Count)
+                    .Take(10)
                     .ToList();
 
                 return Ok(new { tags = tagCounts });
             }
             catch(Exception e) {
                 _logger.LogError(e.Message, e.StackTrace);
-                return StatusCode(500, "An error occurred fethcing the tags.");
+                return StatusCode(500, "An error occurred fethcing the top tags.");
+            }
+        }
+
+        /// <summary>
+        /// Gets a list with the 10 most completed challenges
+        /// </summary>
+        /// <returns>
+        /// List of objects with challenge name and ID, and the completion count
+        /// </returns>
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("top-completed-challenges")]
+        public IActionResult GetTopCompletedChallenges()
+        {
+            try {
+                var challengeCounts = _ctx.UserChallenges
+                    .GroupBy(uc => uc.Challenge)
+                    .Select(g => new {
+                        ChallengeName = g.Key.Title,
+                        Count = g.Count()
+                    })
+                    .OrderByDescending(x => x.Count)
+                    .Take(10)
+                    .ToList();
+
+                return Ok(new { challenges = challengeCounts });
+            }
+            catch(Exception e) {
+                _logger.LogError(e.Message, e.StackTrace);
+                return StatusCode(500, "An error occurred fethcing the top challenges.");
             }
         }
 

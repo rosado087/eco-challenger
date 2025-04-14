@@ -8,7 +8,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components'
 import { NetApiService } from '../../../services/net-api/net-api.service';
 import { PopupLoaderService } from '../../../services/popup-loader/popup-loader.service';
-import { TopPurchasedTags } from '../../../models/stats-models';
+import { TopCompletedChallenges } from '../../../models/stats-models';
 
 echarts.use([
   TitleComponent,
@@ -20,16 +20,16 @@ echarts.use([
 ])
 
 @Component({
-  selector: 'app-top-purchased-tags',
+  selector: 'app-top-completed-challenges',
   imports: [NgxEchartsDirective],
-  templateUrl: './top-purchased-tags.component.html',
-  styleUrl: './top-purchased-tags.component.css',
+  templateUrl: './top-completed-challenges.component.html',
+  styleUrl: './top-completed-challenges.component.css',
   providers: [
     provideEchartsCore({ echarts }),
     PopupLoaderService
   ]
 })
-export class TopPurchasedTagsComponent implements OnInit {
+export class TopCompletedChallengesComponent implements OnInit {
   netApi = inject(NetApiService)
   popupLoader = inject(PopupLoaderService)
   option: EChartsCoreOption | null = null
@@ -41,20 +41,20 @@ export class TopPurchasedTagsComponent implements OnInit {
 
   fetchChartData(): void {
     this.netApi
-    .get<{tags: TopPurchasedTags[]}>('Statistics', 'top-purchased-tags')
+    .get<{challenges: TopCompletedChallenges[]}>('Statistics', 'top-completed-challenges')
     .subscribe({
-        next: (r) => this.loadChartData(r.tags),
-        error: () => this.popupLoader.showPopup('Erro ao carregar top tags compradas.')
+        next: (r) => this.loadChartData(r.challenges),
+        error: () => this.popupLoader.showPopup('Erro ao carregar top desafios completados.')
     })
   }
 
-  loadChartData(data: TopPurchasedTags[]): void {
+  loadChartData(data: TopCompletedChallenges[]): void {
     // Order from highest to lowest
     data.sort((a, b) => b.count - a.count)
 
     this.option = {
       title: {
-        text: 'Top 10 Tags Compradas'
+        text: 'Top 10 Desafios Completados'
       },
       tooltip: {
         trigger: 'axis',
@@ -70,19 +70,25 @@ export class TopPurchasedTagsComponent implements OnInit {
         containLabel: true
       },
       xAxis: {
-        type: 'value',
-        boundaryGap: [0, 0.01],
-        minInterval: 1,
+        type: 'category',
+        data: data.map(c => c.challengeName),
+        axisLabel: {
+          rotate: 45,
+          interval: 0
+        }
       },
       yAxis: {
-        type: 'category',
-        data: data.map(t => t.tagName)
-      },
+        type: 'value',
+        minInterval: 1,
+      },      
       series: [
         {
-          name: 'Tag + ID',
+          name: 'Desafios',
           type: 'bar',
-          data: data.map(t => t.count)
+          data: data.map(c => c.count),
+          itemStyle: {
+            color: '#ed8355'
+          },
         }
       ]
     }
