@@ -93,7 +93,8 @@ namespace EcoChallenger.Controllers
                 // Add test users
                 List<User> users = new List<User>() {
                     new User { Username = "testuser", Email = "testuser@example.com", 
-                        Password = PasswordGenerator.GeneratePasswordHash("Password123!") },
+                        Password = PasswordGenerator.GeneratePasswordHash("Password123!"),
+                        Points = 300 },
 
                     new User { Username = "testuserpasswordrecover", 
                         Email = "testuserpasswordrecover@example.com", 
@@ -101,7 +102,7 @@ namespace EcoChallenger.Controllers
 
                     new User { Username = "Tester1", Email = "tester1@gmail.com", 
                         Password = PasswordGenerator.GeneratePasswordHash("Password123!"), 
-                        IsAdmin = true, Points = 100 },
+                        IsAdmin = true, Points = 300 },
 
                     new User { Username = "Tester2", Email = "tester2@gmail.com", 
                         Password = PasswordGenerator.GeneratePasswordHash("Password123!"), 
@@ -141,6 +142,16 @@ namespace EcoChallenger.Controllers
                     new TagUsers() {
                         User = users[2],
                         Tag = tags[1],
+                        SelectedTag = false
+                    },
+                    new TagUsers() {
+                        User = users[0],
+                        Tag = tags[2],
+                        SelectedTag = true
+                    },
+                    new TagUsers() {
+                        User = users[0],
+                        Tag = tags[0],
                         SelectedTag = false
                     }
                 });

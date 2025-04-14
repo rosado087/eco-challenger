@@ -3,6 +3,7 @@ using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenQA.Selenium;
 
 namespace EcoChallenger.Controllers
 {
@@ -42,6 +43,9 @@ namespace EcoChallenger.Controllers
                     Type = challengeModel.Type,
                     MaxProgress = challengeModel.MaxProgress
                 };
+                
+                if(newChallenge.Points == 0)
+                    return new JsonResult(new { success = false, message = "Não é possível criar um desafio com zero pontos"});
 
                 await _ctx.Challenges.AddAsync(newChallenge);
                 await _ctx.SaveChangesAsync();
@@ -67,7 +71,6 @@ namespace EcoChallenger.Controllers
                 _logger.LogError(e.Message, e.StackTrace);
                 return new JsonResult(new { success = false, message = "Ocorreu um erro ao adicionar o desafio." });
             }
-            
         }
 
         /// <summary>
@@ -142,12 +145,10 @@ namespace EcoChallenger.Controllers
             
         }
 
-
-
         /// <summary>
         /// Creates a new challenge.
         /// </summary>
-        /// <param name="challengeModel">The challenge data sent via multipart/form-data.</param>
+        /// <param name="id">The challenge data sent via multipart/form-data.</param>
         /// <returns>JSON result indicating success or failure. If failure also returns a message, if success also returns a list of 
         /// challenges of the user</returns>
         [Authorize(Roles = "Admin")]
@@ -195,7 +196,5 @@ namespace EcoChallenger.Controllers
                 return new JsonResult(new { success = false, message = "Ocorreu um erro ao encontrar o desafio" });
             }
         }
-
-
     }
 }

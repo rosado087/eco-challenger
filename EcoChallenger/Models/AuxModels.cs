@@ -1,3 +1,5 @@
+using EcoChallenger.Models;
+
 public class SendRecoveryEmailModel {
     public string Email { get; set; }
 }
@@ -67,6 +69,7 @@ public class TagCRUDModel {
  public class ResponseModel
 {
     public bool Success { get; set; }
+    public string? Message { get; set; }
 }
 
 public class TagUsersTestModel
@@ -100,4 +103,26 @@ public class ChallengeModel
 
 public class SelectedTags {
     public required List<int> tagIds { get; set; }
+}
+
+public class ChallengesResponse
+{
+    public bool Success { get; set; }
+    public string? Message {get; set; }
+    public List<DailyChallengeResponse> DailyChallenges { get; set; } = [];
+    public List<WeeklyChallengeResponse> WeeklyChallenges { get; set; } = [];
+    
+}
+
+public class DailyChallengeResponse
+{
+    public Challenge Challenge { get; set; } = null!;
+    public bool WasConcluded { get; set; }
+}
+
+public class WeeklyChallengeResponse
+{
+    public Challenge Challenge { get; set; } = null!;
+    public int Progress { get; set; }
+    public bool WasConcluded { get; set; }
 }

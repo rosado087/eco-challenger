@@ -78,5 +78,19 @@ namespace EcoChallengerTest.Utils
             
             return await _client.PostAsJsonAsync(url, data);
         }
+
+        public async Task<HttpResponseMessage> SendFormPost(string path, MultipartFormDataContent form, bool needsAuth = true, string? authToken = null)
+        {
+            string url = gf.BuildUrl(path);
+
+            if (needsAuth)
+            {
+                string token = !string.IsNullOrEmpty(authToken) ? authToken : await GetLoginToken();
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            return await _client.PostAsync(url, form);
+        }
+
     }
 }
