@@ -2,9 +2,13 @@
     <div class="card-body gap-4">
         <div class="card-title">Utilizadores Ativos por Mês</div>
         <div class="flex flex-row justify-between">
-            <button class="btn btn-circle btn-xs" (click)="previousMonth()"> <ng-icon name="heroArrowLeft" /> </button>
+            <button class="btn btn-circle btn-xs" (click)="previousMonth()">
+                <ng-icon name="heroArrowLeft" />
+            </button>
             <span>{{ getMonthName() }} de {{ year }}</span>
-            <button class="btn btn-circle btn-xs" (click)="nextMonth()"> <ng-icon name="heroArrowRight" /> </button>
+            <button class="btn btn-circle btn-xs" (click)="nextMonth()">
+                <ng-icon name="heroArrowRight" />
+            </button>
         </div>
         <div echarts [options]="option" [style.height]="height()"></div>
     </div>

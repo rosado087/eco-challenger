@@ -9,7 +9,7 @@
                         Perfil de Utilizador
                     </h2>
                 </div>
-    
+
                 <form [formGroup]="editForm" id="editForm">
                     <!-- Nome de Utilizador -->
                     <div class="mt-4">
@@ -25,7 +25,7 @@
                                 </button>
                             }
                         </div>
-    
+
                         <div class="flex items-center gap-2">
                             @if (isEditing) {
                                 <input
@@ -36,17 +36,20 @@
                                     class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator" />
                                 @if (
                                     getUserName()?.invalid &&
-                                    (getUserName()?.dirty || getUserName()?.touched)
+                                    (getUserName()?.dirty ||
+                                        getUserName()?.touched)
                                 ) {
                                     @if (getUserName()?.hasError('required')) {
-                                        <div class="validator-hint text-red-500">
+                                        <div
+                                            class="validator-hint text-red-500">
                                             Este campo é obrigatório!
                                         </div>
                                     } @else if (
                                         getUserName()?.value ===
                                         authService.getUserInfo().username
                                     ) {
-                                        <div class="validator-hint text-red-500">
+                                        <div
+                                            class="validator-hint text-red-500">
                                             O nome tem que ser diferente!
                                         </div>
                                     }
@@ -56,15 +59,17 @@
                             }
                         </div>
                     </div>
-    
+
                     @if (userId === this.id) {
                         <!-- Email -->
                         <div class="mt-4">
-                            <span class="font-medium text-gray-700">Email:</span>
+                            <span class="font-medium text-gray-700"
+                                >Email:</span
+                            >
                             <p class="text-gray-600">{{ email }}</p>
                         </div>
                     }
-    
+
                     <!-- Tag -->
                     <div class="mt-4 flex flex-col gap-1">
                         <div class="flex flex-row gap-2 items-center">
@@ -78,7 +83,9 @@
                                 </button>
                             }
                         </div>
-                        <div class="flex flex-row gap-1.5 flex-wrap" id="profile-tag-list">
+                        <div
+                            class="flex flex-row gap-1.5 flex-wrap"
+                            id="profile-tag-list">
                             @for (tag of tags; track $index) {
                                 @if (tag.isBeingUsed) {
                                     <app-tag
@@ -91,15 +98,15 @@
                             }
                         </div>
                     </div>
-    
+
                     <!-- Pontos -->
                     <div class="mt-4">
                         <span class="font-medium text-gray-700">Pontos:</span>
                         <p class="text-gray-600">{{ points }}</p>
                     </div>
-    
+
                     <!-- Botões -->
-    
+
                     @if (isEditing) {
                         <div class="mt-4 flex justify-evenly">
                             <button
@@ -108,7 +115,7 @@
                                 (click)="cancelEdit()">
                                 Cancelar
                             </button>
-    
+
                             <app-button
                                 id="edit-save"
                                 text="Editar"
@@ -117,9 +124,10 @@
                     }
                 </form>
             </div>
-    
+
             <!-- Seção Lista de Amigos -->
-            <div class="bg-white p-6 rounded-lg shadow-md w-full col-span-1 md:col-span-2">
+            <div
+                class="bg-white p-6 rounded-lg shadow-md w-full col-span-1 md:col-span-2">
                 <div class="flex items-center gap-2 mb-4">
                     <h2 class="text-xl font-semibold text-gray-700">
                         Lista de amigos
@@ -133,13 +141,16 @@
                         </button>
                     }
                 </div>
-    
+
                 <!-- Lista de amigos -->
                 <div class="border rounded-lg max-h-60 overflow-y-auto">
                     <table class="w-full text-left">
                         <tbody>
                             <tr
-                                *ngFor="let friend of friendsList; let i = index"
+                                *ngFor="
+                                    let friend of friendsList;
+                                    let i = index
+                                "
                                 class="border-b">
                                 <td class="p-2">{{ friend.username }}</td>
                                 <td class="p-2">
@@ -150,7 +161,9 @@
                                         Ver perfil
                                     </button>
                                 </td>
-                                @if (userId === this.authService.getUserInfo().id) {
+                                @if (
+                                    userId === this.authService.getUserInfo().id
+                                ) {
                                     <td class="p-2">
                                         <button
                                             id="rem-{{ friend.username }}"
@@ -175,9 +188,11 @@
                     </table>
                 </div>
             </div>
-    
+
             <div class="col-span-1 md:col-span-3">
-                <app-top-users-most-points [friendsOnly]="true" labelPosition="top" />
+                <app-top-users-most-points
+                    [friendsOnly]="true"
+                    labelPosition="top" />
             </div>
         </div>
     </div>
@@ -188,8 +203,8 @@
     [tags]="tags"
     [open]="modalShow" />
 
-    <!-- MODAL: ADICIONAR AMIGO -->
-    <div
+<!-- MODAL: ADICIONAR AMIGO -->
+<div
     id="add-div"
     *ngIf="showAddFriendModal"
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -200,9 +215,7 @@
 
         <!-- Campo de Nome -->
         <div class="mt-4">
-            <label
-                for="input-add"
-                class="block text-gray-700 font-medium mb-1"
+            <label for="input-add" class="block text-gray-700 font-medium mb-1"
                 >Nome de utilizador:</label
             >
             <input
@@ -224,12 +237,8 @@
                         <td
                             id="pos-{{ username }}"
                             class="p-2 cursor-pointer"
-                            [class.bg-green-600]="
-                                username === selectedUser
-                            "
-                            [class.text-white]="
-                                username === selectedUser
-                            "
+                            [class.bg-green-600]="username === selectedUser"
+                            [class.text-white]="username === selectedUser"
                             (click)="selectUser(username)">
                             {{ username }}
                         </td>

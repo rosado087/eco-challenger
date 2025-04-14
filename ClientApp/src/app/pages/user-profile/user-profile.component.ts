@@ -29,22 +29,22 @@ import {
 import { TagFormModalComponent } from '../profile-tag-selector-modal/profile-tag-selector-modal.component'
 import { Tag } from '../../models/tag'
 import { TagComponent } from '../../components/tag/tag.component'
-import { TopUserMostPointsComponent } from "../../components/charts/top-users-most-points/top-users-most-points.component";
+import { TopUserMostPointsComponent } from '../../components/charts/top-users-most-points/top-users-most-points.component'
 
 @Component({
     selector: 'app-user-profile',
     standalone: true,
     imports: [
-    NgIcon,
-    NgFor,
-    NgIf,
-    ReactiveFormsModule,
-    ButtonComponent,
-    FormsModule,
-    TagFormModalComponent,
-    TagComponent,
-    TopUserMostPointsComponent
-],
+        NgIcon,
+        NgFor,
+        NgIf,
+        ReactiveFormsModule,
+        ButtonComponent,
+        FormsModule,
+        TagFormModalComponent,
+        TagComponent,
+        TopUserMostPointsComponent
+    ],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],
     providers: [
