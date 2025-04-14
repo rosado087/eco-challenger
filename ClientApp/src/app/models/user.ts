@@ -3,4 +3,5 @@ export interface User {
     username: string
     isBlocked: boolean
     isAdmin: boolean
+    lastLogin?: Date
 }

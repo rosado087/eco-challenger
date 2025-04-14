@@ -22,7 +22,8 @@ public class AppDbContext : DbContext
             Username = "Tester1",
             Email = "tester1@gmail.com",
             Password = PasswordGenerator.GeneratePasswordHash("12345678"),
-            Points = 0
+            Points = 0,
+            LastLogin = new DateTime(2025, 04, 14)
         };
 
         User u2 = new User
@@ -31,7 +32,8 @@ public class AppDbContext : DbContext
             Username = "Tester2",
             Email = "tester2@gmail.com",
             Password = PasswordGenerator.GeneratePasswordHash("12345678"),
-            Points = 0
+            Points = 0,
+            LastLogin = new DateTime(2025, 04, 14)
         };
 
         User u3 = new User
@@ -40,7 +42,8 @@ public class AppDbContext : DbContext
             Username = "Tester3",
             Email = "tester3@gmail.com",
             Password = PasswordGenerator.GeneratePasswordHash("12345678"),
-            Points = 0
+            Points = 0,
+            LastLogin = new DateTime(2025, 04, 14)
         };
 
         modelBuilder.Entity<User>().HasData(u1, u2, u3);
@@ -204,41 +207,5 @@ public class AppDbContext : DbContext
                 Type = "Weekly"
             }
         );
-
-        /*TagUsers tu1 = new TagUsers
-        {
-            Id = 1,
-            User = u1,
-            Tag = t1,
-            SelectedTag = false
-        };
-
-        TagUsers tu2 = new TagUsers
-        {
-            Id = 2,
-            User = u1,
-            Tag = t2,
-            SelectedTag = false
-        };
-
-        TagUsers tu3 = new TagUsers
-        {
-            Id = 3,
-            User = u1,
-            Tag = t3,
-            SelectedTag = false
-        };
-        TagUsers tu4 = new TagUsers
-        {
-            Id = 4,
-            User = u3,
-            Tag = t2,
-            SelectedTag = true
-
-
-        };
-
-        modelBuilder.Entity<TagUsers>().HasData(tu1,tu2,tu3,tu4);*/
-
     }
 }

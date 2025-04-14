@@ -1,279 +1,293 @@
-<div class="min-h-screen bg-gray-50 flex flex-col items-center py-10">
-    <!-- Conteúdo -->
-    <div
-        class="container mx-auto px-4 md:px-8 flex flex-col md:flex-row gap-8 mt-6">
-        <!-- Seção Esquerda: Informações do Utilizador -->
-        <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3">
-            <div class="flex items-center justify-center gap-2">
-                <h2 class="text-xl font-semibold text-gray-700">
-                    Perfil de Utilizador
-                </h2>
-            </div>
+<main class="flex flex-row justify-center">
+    <div class="container my-6">
+        <!-- Conteúdo -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Seção Esquerda: Informações do Utilizador -->
+            <div class="bg-white p-6 rounded-lg shadow-md w-full col-span-1">
+                <div class="flex items-center justify-center gap-2">
+                    <h2 class="text-xl font-semibold text-gray-700">
+                        Perfil de Utilizador
+                    </h2>
+                </div>
 
-            <form [formGroup]="editForm" id="editForm">
-                <!-- Nome de Utilizador -->
-                <div class="mt-4">
-                    <div class="flex flex-row gap-1">
-                        <span class="font-medium text-gray-700"
-                            >Nome de Utilizador:</span
-                        >
-                        @if (userId === this.id) {
-                            <button
-                                (click)="editProfile()"
-                                class="cursor-pointer">
-                                <ng-icon id="edit-info" name="heroPencil" />
-                            </button>
-                        }
+                <form [formGroup]="editForm" id="editForm">
+                    <!-- Nome de Utilizador -->
+                    <div class="mt-4">
+                        <div class="flex flex-row gap-1">
+                            <span class="font-medium text-gray-700"
+                                >Nome de Utilizador:</span
+                            >
+                            @if (userId === this.id) {
+                                <button
+                                    (click)="editProfile()"
+                                    class="cursor-pointer">
+                                    <ng-icon id="edit-info" name="heroPencil" />
+                                </button>
+                            }
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            @if (isEditing) {
+                                <input
+                                    id="edit-username"
+                                    type="text"
+                                    [(ngModel)]="username"
+                                    formControlName="editUserName"
+                                    class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator" />
+                                @if (
+                                    getUserName()?.invalid &&
+                                    (getUserName()?.dirty ||
+                                        getUserName()?.touched)
+                                ) {
+                                    @if (getUserName()?.hasError('required')) {
+                                        <div
+                                            class="validator-hint text-red-500">
+                                            Este campo é obrigatório!
+                                        </div>
+                                    } @else if (
+                                        getUserName()?.value ===
+                                        authService.getUserInfo().username
+                                    ) {
+                                        <div
+                                            class="validator-hint text-red-500">
+                                            O nome tem que ser diferente!
+                                        </div>
+                                    }
+                                }
+                            } @else {
+                                <p class="text-gray-600">{{ username }}</p>
+                            }
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        @if (isEditing) {
-                            <input
-                                id="edit-username"
-                                type="text"
-                                [(ngModel)]="username"
-                                formControlName="editUserName"
-                                class="border rounded-lg p-2 w-full focus:ring focus:ring-green-200 validator" />
-                            @if (
-                                getUserName()?.invalid &&
-                                (getUserName()?.dirty || getUserName()?.touched)
-                            ) {
-                                @if (getUserName()?.hasError('required')) {
-                                    <div class="validator-hint text-red-500">
-                                        Este campo é obrigatório!
-                                    </div>
-                                } @else if (
-                                    getUserName()?.value ===
-                                    authService.getUserInfo().username
-                                ) {
-                                    <div class="validator-hint text-red-500">
-                                        O nome tem que ser diferente!
-                                    </div>
+                    @if (userId === this.id) {
+                        <!-- Email -->
+                        <div class="mt-4">
+                            <span class="font-medium text-gray-700"
+                                >Email:</span
+                            >
+                            <p class="text-gray-600">{{ email }}</p>
+                        </div>
+                    }
+
+                    <!-- Tag -->
+                    <div class="mt-4 flex flex-col gap-1">
+                        <div class="flex flex-row gap-2 items-center">
+                            <span class="font-medium text-gray-700">Tags:</span>
+                            @if (userId === this.id) {
+                                <button
+                                    id="edit-tags"
+                                    (click)="openTagsModal()"
+                                    class="cursor-pointer">
+                                    <ng-icon name="heroPencil" />
+                                </button>
+                            }
+                        </div>
+                        <div
+                            class="flex flex-row gap-1.5 flex-wrap"
+                            id="profile-tag-list">
+                            @for (tag of tags; track $index) {
+                                @if (tag.isBeingUsed) {
+                                    <app-tag
+                                        [backgroundColor]="tag.backgroundColor"
+                                        [textColor]="tag.textColor"
+                                        [text]="tag.name"
+                                        [type]="tag.style"
+                                        [icon]="tag.icon" />
                                 }
                             }
-                        } @else {
-                            <p class="text-gray-600">{{ username }}</p>
-                        }
+                        </div>
                     </div>
-                </div>
 
-                @if (userId === this.id) {
-                    <!-- Email -->
+                    <!-- Pontos -->
                     <div class="mt-4">
-                        <span class="font-medium text-gray-700">Email:</span>
-                        <p class="text-gray-600">{{ email }}</p>
+                        <span class="font-medium text-gray-700">Pontos:</span>
+                        <p class="text-gray-600">{{ points }}</p>
                     </div>
-                }
 
-                <!-- Tag -->
-                <div class="mt-4 flex flex-col gap-1">
-                    <div class="flex flex-row gap-2 items-center">
-                        <span class="font-medium text-gray-700">Tags:</span>
-                        @if (userId === this.id) {
+                    <!-- Botões -->
+
+                    @if (isEditing) {
+                        <div class="mt-4 flex justify-evenly">
                             <button
-                                id="edit-tags"
-                                (click)="openTagsModal()"
-                                class="cursor-pointer">
-                                <ng-icon name="heroPencil" />
+                                id="edit-cancel"
+                                class="btn btn-outline btn-error"
+                                (click)="cancelEdit()">
+                                Cancelar
                             </button>
-                        }
-                    </div>
-                    <div class="flex flex-row gap-1.5 flex-wrap" id="profile-tag-list">
-                        @for (tag of tags; track $index) {
-                            @if (tag.isBeingUsed) {
-                                <app-tag
-                                    [backgroundColor]="tag.backgroundColor"
-                                    [textColor]="tag.textColor"
-                                    [text]="tag.name"
-                                    [type]="tag.style"
-                                    [icon]="tag.icon" />
-                            }
-                        }
-                    </div>
-                </div>
 
-                <!-- Pontos -->
-                <div class="mt-4">
-                    <span class="font-medium text-gray-700">Pontos:</span>
-                    <p class="text-gray-600">{{ points }}</p>
-                </div>
+                            <app-button
+                                id="edit-save"
+                                text="Editar"
+                                (btnClick)="confirmEdit()" />
+                        </div>
+                    }
+                </form>
+            </div>
 
-                <!-- Botões -->
-
-                @if (isEditing) {
-                    <div class="mt-4 flex justify-evenly">
+            <!-- Seção Lista de Amigos -->
+            <div
+                class="bg-white p-6 rounded-lg shadow-md w-full col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-4">
+                    <h2 class="text-xl font-semibold text-gray-700">
+                        Lista de amigos
+                    </h2>
+                    @if (userId === this.authService.getUserInfo().id) {
                         <button
-                            id="edit-cancel"
-                            class="btn btn-outline btn-error"
-                            (click)="cancelEdit()">
-                            Cancelar
+                            id="add-friend-modal"
+                            (click)="showAddFriendModal = true"
+                            class="text-green-600 hover:text-green-800 text-lg font-bold cursor-pointer">
+                            +
                         </button>
-
-                        <app-button
-                            id="edit-save"
-                            text="Editar"
-                            (btnClick)="confirmEdit()" />
-                    </div>
-                }
-            </form>
-        </div>
-
-        <!-- Seção Lista de Amigos -->
-        <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
-            <div class="flex items-center gap-2 mb-4">
-                <h2 class="text-xl font-semibold text-gray-700">
-                    Lista de amigos
-                </h2>
-                @if (userId === this.authService.getUserInfo().id) {
-                    <button
-                        id="add-friend-modal"
-                        (click)="showAddFriendModal = true"
-                        class="text-green-600 hover:text-green-800 text-lg font-bold">
-                        +
-                    </button>
-                }
-            </div>
-
-            <!-- Lista de amigos -->
-            <div class="border rounded-lg max-h-60 overflow-y-auto">
-                <table class="w-full text-left">
-                    <tbody>
-                        <tr
-                            *ngFor="let friend of friendsList; let i = index"
-                            class="border-b">
-                            <td class="p-2">{{ friend.username }}</td>
-                            <td class="p-2">
-                                <button
-                                    data-role="view-profile-button"
-                                    (click)="viewProfile(friend.id)"
-                                    class="text-green-600 hover:text-green-800">
-                                    Ver perfil
-                                </button>
-                            </td>
-                            @if (userId === this.authService.getUserInfo().id) {
-                                <td class="p-2">
-                                    <button
-                                        id="rem-{{ friend.username }}"
-                                        (click)="
-                                            selectedFriendIndex = i;
-                                            showRemoveFriendModal = true
-                                        "
-                                        class="text-red-600 hover:text-red-800">
-                                        Remover
-                                    </button>
-                                </td>
-                            }
-                        </tr>
-                        <tr *ngIf="friendsList.length === 0">
-                            <td
-                                colspan="3"
-                                class="p-4 text-gray-500 text-center">
-                                Nenhum amigo encontrado.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- MODAL: ADICIONAR AMIGO -->
-        <div
-            id="add-div"
-            *ngIf="showAddFriendModal"
-            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h2 class="text-xl font-semibold text-gray-700 text-center">
-                    Adicionar amigo
-                </h2>
-
-                <!-- Campo de Nome -->
-                <div class="mt-4">
-                    <label
-                        for="input-add"
-                        class="block text-gray-700 font-medium mb-1"
-                        >Nome de utilizador:</label
-                    >
-                    <input
-                        id="input-add"
-                        type="text"
-                        (input)="findUser()"
-                        class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
+                    }
                 </div>
 
-                <!-- Lista de Utilizadores -->
-                <div
-                    class="mt-4 border rounded-lg p-2 h-32 overflow-y-auto text-gray-600">
-                    Lista de utilizadores
+                <!-- Lista de amigos -->
+                <div class="border rounded-lg max-h-60 overflow-y-auto">
                     <table class="w-full text-left">
                         <tbody>
                             <tr
-                                *ngFor="let username of userList; let i = index"
+                                *ngFor="
+                                    let friend of friendsList;
+                                    let i = index
+                                "
                                 class="border-b">
+                                <td class="p-2">{{ friend.username }}</td>
+                                <td class="p-2">
+                                    <button
+                                        data-role="view-profile-button"
+                                        (click)="viewProfile(friend.id)"
+                                        class="text-green-600 hover:text-green-800">
+                                        Ver perfil
+                                    </button>
+                                </td>
+                                @if (
+                                    userId === this.authService.getUserInfo().id
+                                ) {
+                                    <td class="p-2">
+                                        <button
+                                            id="rem-{{ friend.username }}"
+                                            (click)="
+                                                selectedFriendIndex = i;
+                                                showRemoveFriendModal = true
+                                            "
+                                            class="text-red-600 hover:text-red-800">
+                                            Remover
+                                        </button>
+                                    </td>
+                                }
+                            </tr>
+                            <tr *ngIf="friendsList.length === 0">
                                 <td
-                                    id="pos-{{ username }}"
-                                    class="p-2 cursor-pointer"
-                                    [class.bg-green-600]="
-                                        username === selectedUser
-                                    "
-                                    [class.text-white]="
-                                        username === selectedUser
-                                    "
-                                    (click)="selectUser(username)">
-                                    {{ username }}
+                                    colspan="3"
+                                    class="p-4 text-gray-500 text-center">
+                                    Nenhum amigo encontrado.
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Botões -->
-                <div class="mt-4 flex justify-evenly">
-                    <app-button
-                        id="add-friend-modal"
-                        text="Adicionar"
-                        (btnClick)="addFriend()" />
-
-                    <button
-                        id="add-cancel"
-                        class="btn btn-outline btn-error"
-                        (click)="showAddFriendModal = false">
-                        Cancelar
-                    </button>
-                </div>
             </div>
-        </div>
 
-        <!-- MODAL: REMOVER AMIGO -->
-        <div
-            *ngIf="showRemoveFriendModal"
-            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h2 class="text-xl font-semibold text-gray-700 text-center">
-                    Remover Amigo
-                </h2>
-                <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
-
-                <!-- Botões -->
-                <!-- Botões -->
-                <div class="mt-4 flex justify-evenly">
-                    <app-button
-                        id="confirm-rem"
-                        text="Sim"
-                        (click)="removeFriend(selectedFriendIndex)" />
-
-                    <button
-                        id="rem-cancel"
-                        class="btn btn-outline btn-error"
-                        (click)="showRemoveFriendModal = false">
-                        Não
-                    </button>
-                </div>
+            <div class="col-span-1 md:col-span-3">
+                <app-top-users-most-points
+                    [friendsOnly]="true"
+                    labelPosition="top" />
             </div>
         </div>
     </div>
+</main>
 
-    <app-profile-tag-selector-modal
-        (closeClick)="closeTagsModal()"
-        [tags]="tags"
-        [open]="modalShow" />
+<app-profile-tag-selector-modal
+    (closeClick)="closeTagsModal()"
+    [tags]="tags"
+    [open]="modalShow" />
+
+<!-- MODAL: ADICIONAR AMIGO -->
+<div
+    id="add-div"
+    *ngIf="showAddFriendModal"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold text-gray-700 text-center">
+            Adicionar amigo
+        </h2>
+
+        <!-- Campo de Nome -->
+        <div class="mt-4">
+            <label for="input-add" class="block text-gray-700 font-medium mb-1"
+                >Nome de utilizador:</label
+            >
+            <input
+                id="input-add"
+                type="text"
+                (input)="findUser()"
+                class="w-full border rounded-lg p-2 focus:ring focus:ring-green-200" />
+        </div>
+
+        <!-- Lista de Utilizadores -->
+        <div
+            class="mt-4 border rounded-lg p-2 h-32 overflow-y-auto text-gray-600">
+            Lista de utilizadores
+            <table class="w-full text-left">
+                <tbody>
+                    <tr
+                        *ngFor="let username of userList; let i = index"
+                        class="border-b">
+                        <td
+                            id="pos-{{ username }}"
+                            class="p-2 cursor-pointer"
+                            [class.bg-green-600]="username === selectedUser"
+                            [class.text-white]="username === selectedUser"
+                            (click)="selectUser(username)">
+                            {{ username }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Botões -->
+        <div class="mt-4 flex justify-evenly">
+            <app-button
+                id="add-friend-modal"
+                text="Adicionar"
+                (btnClick)="addFriend()" />
+
+            <button
+                id="add-cancel"
+                class="btn btn-outline btn-error"
+                (click)="showAddFriendModal = false">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: REMOVER AMIGO -->
+<div
+    *ngIf="showRemoveFriendModal"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold text-gray-700 text-center">
+            Remover Amigo
+        </h2>
+        <p class="text-center text-gray-600 mt-4">Tem a certeza?</p>
+
+        <!-- Botões -->
+        <!-- Botões -->
+        <div class="mt-4 flex justify-evenly">
+            <app-button
+                id="confirm-rem"
+                text="Sim"
+                (click)="removeFriend(selectedFriendIndex)" />
+
+            <button
+                id="rem-cancel"
+                class="btn btn-outline btn-error"
+                (click)="showRemoveFriendModal = false">
+                Não
+            </button>
+        </div>
+    </div>
 </div>

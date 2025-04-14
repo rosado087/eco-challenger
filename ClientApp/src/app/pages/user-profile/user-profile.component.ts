@@ -29,6 +29,7 @@ import {
 import { TagFormModalComponent } from '../profile-tag-selector-modal/profile-tag-selector-modal.component'
 import { Tag } from '../../models/tag'
 import { TagComponent } from '../../components/tag/tag.component'
+import { TopUserMostPointsComponent } from '../../components/charts/top-users-most-points/top-users-most-points.component'
 
 @Component({
     selector: 'app-user-profile',
@@ -41,7 +42,8 @@ import { TagComponent } from '../../components/tag/tag.component'
         ButtonComponent,
         FormsModule,
         TagFormModalComponent,
-        TagComponent
+        TagComponent,
+        TopUserMostPointsComponent
     ],
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.css'],

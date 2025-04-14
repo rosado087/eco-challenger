@@ -162,6 +162,15 @@ export const routes: Routes = [
                 canActivate: [authGuard]
             },
             {
+                path: 'stats',
+                loadComponent: () => {
+                    return import(
+                        './pages/admin/stats-admin/stats-admin.component'
+                    ).then((m) => m.StatsAdminComponent)
+                },
+                canActivate: [authGuard]
+            },
+            {
                 path: '**',
                 redirectTo: '/404' // Send the other unknown URLS to the 404
             }
