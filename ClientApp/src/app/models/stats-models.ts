@@ -1,4 +1,4 @@
-export type TopPurchasedTags = {tagName: string, count: number} 
-export type TopCompletedChallenges = {challengeName: string, count: number} 
-export type TopUserMostPoints = {username: string, points: number}
-export type MonthlyActiveUsers = {date: string, count: number}
+export interface TopPurchasedTags {tagName: string, count: number} 
+export interface TopCompletedChallenges {challengeName: string, count: number} 
+export interface TopUserMostPoints {username: string, points: number}
+export interface MonthlyActiveUsers {date: string, count: number}

@@ -6,7 +6,6 @@ import { NgxEchartsDirective } from 'ngx-echarts';
 import { provideEchartsCore } from 'ngx-echarts'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers';
-import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components'
 import { NetApiService } from '../../../services/net-api/net-api.service';
 import { PopupLoaderService } from '../../../services/popup-loader/popup-loader.service';
 import { MonthlyActiveUsers } from '../../../models/stats-models';
