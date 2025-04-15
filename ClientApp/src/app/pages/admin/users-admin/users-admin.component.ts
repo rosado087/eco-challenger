@@ -40,6 +40,7 @@ export class UsersAdminComponent implements OnInit {
 
     searchControl = new FormControl('')
     confirmControl = false
+    blockId = 0;
 
     ngOnInit(): void {
         this.loadUsers()
@@ -65,9 +66,9 @@ export class UsersAdminComponent implements OnInit {
         this.loadUsers(this.searchControl.value)
     }
 
-    changeBlock(id: number): void {
+  changeBlock(): void {
         this.netApi
-            .post<SuccessModel>('Users', 'block', undefined, id.toString())
+            .post<SuccessModel>('Users', 'block', undefined, this.blockId.toString())
             .subscribe({
                 next: (data) => {
                     if (data.success) this.handleSearch()

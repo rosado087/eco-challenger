@@ -61,7 +61,8 @@
                                     <button
                                         data-action="block-user"
                                         class="btn btn-ghost btn-md border-black"
-                                        (click)="confirmControl = true">
+                                        (click)="blockId = user.id;
+                                            confirmControl = true">
                                         <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
                                         @if (user.isBlocked) {
                                             Desbloquear
@@ -95,7 +96,7 @@
                                                     id="confirm-rem"
                                                     text="Sim"
                                                     (click)="
-                                                        changeBlock(user.id);
+                                                        changeBlock();
                                                         confirmControl = false
                                                     " />
 
