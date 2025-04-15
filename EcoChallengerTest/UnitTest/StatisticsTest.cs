@@ -92,8 +92,12 @@ namespace EcoChallengerTest.UnitTest
             _dbContext.SaveChanges();
 
             _dbContext.Users.AddRange(
-                new User { Username = "User1", Email = "testuser1@example.com", Points = 10 },
-                new User { Username = "User2", Email = "testuser2@example.com", Points = 20 }
+                new User { Username = "User1", Email = "u1@example.com", Points = 10 },
+                new User { Username = "User2", Email = "u2@example.com", Points = 20 },
+                new User { Username = "User3", Email = "u3@example.com", Points = 30 },
+                new User { Username = "User4", Email = "u4@example.com", Points = 40 },
+                new User { Username = "User5", Email = "u5@example.com", Points = 50 },
+                new User { Username = "User6", Email = "u6@example.com", Points = 60 }
             );
             _dbContext.SaveChanges();
 
@@ -106,7 +110,7 @@ namespace EcoChallengerTest.UnitTest
 
             Assert.That(result, Is.Not.Null);
             Assert.That(users, Is.Not.Null);
-            Assert.That(users!.Count(), Is.EqualTo(2));
+            Assert.That(users!.Count(), Is.EqualTo(5));
         }
 
         [Test]
