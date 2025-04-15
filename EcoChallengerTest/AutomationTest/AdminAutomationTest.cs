@@ -30,10 +30,8 @@ namespace EcoChallengerTest.AutomationTest
         {
             driver = gf.SetupSeleniumInstance();
 
-            // Set up explicit wait (up to 100 seconds)
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
-            //Perform Login
             driver.Navigate().GoToUrl(gf.BuildUrl("/login"));
 
             var emailInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='email']")));
@@ -51,16 +49,19 @@ namespace EcoChallengerTest.AutomationTest
             var loginButton = wait.Until(d => d.FindElement(By.CssSelector("button[type='submit']")));
             loginButton.Click();
             Thread.Sleep(2000);
-            
-            // Navigate to the profile page
-            driver.Navigate().GoToUrl(gf.BuildUrl("/admin/tags"));
-
-            Thread.Sleep(500);
         }
 
         [Test]
-        public void Add_Tag_Success()
+        public void Add_Tag()
         {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var tagsButton = wait!.Until(a => a.FindElement(By.Id("admin-tags-navbar-button")));
+            tagsButton.Click();
+            Thread.Sleep(500);
+
             var complete = wait!.Until(d => d.FindElement(By.Id("addTag")));
             complete.Click();
 
@@ -83,9 +84,18 @@ namespace EcoChallengerTest.AutomationTest
             var button = wait.Until(d => d.FindElement(By.Id("submit")));
             button.Click();
         }
+
         [Test]
-        public void Edit_Tag_Success()
+        public void Edit_Tag()
         {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var tagsButton = wait!.Until(a => a.FindElement(By.Id("admin-tags-navbar-button")));
+            tagsButton.Click();
+            Thread.Sleep(500);
+
             var editButtons = driver!.FindElements(By.CssSelector("[data-action='editTag']"));
             if(editButtons.Count == 0) throw new Exception("There are no tags that can be edited");
 
@@ -110,8 +120,16 @@ namespace EcoChallengerTest.AutomationTest
             button.Click();
         }
         [Test]
-        public void Remove_Tag_Success()
+        public void Remove_Tag()
         {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var tagsButton = wait!.Until(a => a.FindElement(By.Id("admin-tags-navbar-button")));
+            tagsButton.Click();
+            Thread.Sleep(500);
+
             var removeButtons = driver!.FindElements(By.CssSelector("[data-action='removeTag']"));
             if(removeButtons.Count == 0) throw new Exception("There are no tags that can be removed");
 
@@ -123,6 +141,156 @@ namespace EcoChallengerTest.AutomationTest
             Thread.Sleep(500);
             var okayButton = wait.Until(d => popup.FindElement(By.CssSelector("button.btn.btn-primary")));
             okayButton.Click();
+            Thread.Sleep(1000);
+        }
+
+        [Test]
+        public void Block_User()
+        {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var tagsButton = wait!.Until(a => a.FindElement(By.Id("admin-users-navbar-button")));
+            tagsButton.Click();
+            Thread.Sleep(500);
+            
+            var blockButtons = driver!.FindElements(By.CssSelector("[data-action='block-user']"));
+            if(blockButtons.Count == 0) throw new Exception("There are no tags that can be removed");
+
+            blockButtons[1].Click();
+
+            Thread.Sleep(1000);
+
+            var confirmButton = wait!.Until(d => d.FindElement(By.Id("confirm-rem")));
+            confirmButton.Click();
+            Thread.Sleep(1000);
+        }
+
+        [Test]
+        public void Unblock_User()
+        {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var tagsButton = wait!.Until(a => a.FindElement(By.Id("admin-users-navbar-button")));
+            tagsButton.Click();
+            Thread.Sleep(500);
+            
+            var blockButtons = driver!.FindElements(By.CssSelector("[data-action='block-user']"));
+            if(blockButtons.Count == 0) throw new Exception("There are no tags that can be removed");
+
+            blockButtons[1].Click();
+
+            Thread.Sleep(1000);
+
+            var confirmButton = wait!.Until(d => d.FindElement(By.CssSelector("[data-action= 'confirm-block']")));
+            confirmButton.Click();
+            Thread.Sleep(1000);
+
+
+            blockButtons[1].Click();
+            Thread.Sleep(1000);
+            confirmButton.Click();
+            Thread.Sleep(1000);
+        }
+
+        [Test]
+        public void Add_Challenge()
+        {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var challengesButton = wait!.Until(a => a.FindElement(By.Id("admin-challenges-navbar-button")));
+            challengesButton.Click();
+            Thread.Sleep(500);
+
+            var add = wait!.Until(d => d.FindElement(By.Id("addChallenge")));
+            add.Click();
+
+            Thread.Sleep(1000);
+
+            string title = "title test";
+            string description = "description test";
+            string points = "60";
+
+            var titleInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='title']")));
+            var descriptionInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='description']")));
+            var pointsInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='points']")));
+
+            titleInput.Clear();
+            descriptionInput.Clear();
+            pointsInput.Clear();
+
+            gf.TypeWithDelay(titleInput, title);
+            Thread.Sleep(500);
+
+            gf.TypeWithDelay(descriptionInput, description);
+            Thread.Sleep(500);
+
+            gf.TypeWithDelay(pointsInput, points);
+            Thread.Sleep(500);
+
+            var button = wait.Until(d => d.FindElement(By.Id("submit")));
+            button.Click();
+        }
+
+        [Test]
+        public void Edit_Challenge()
+        {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var challengesButton = wait!.Until(a => a.FindElement(By.Id("admin-challenges-navbar-button")));
+            challengesButton.Click();
+            Thread.Sleep(500);
+
+            var edit = wait!.Until(d => d.FindElement(By.CssSelector("[data-action='editChallenge']")));
+            edit.Click();
+
+            Thread.Sleep(1000);
+
+            string title = "title test";
+            string description = "description test";
+            string points = "60";
+
+            var titleInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='title']")));
+            var descriptionInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='description']")));
+            var pointsInput = wait.Until(d => d.FindElement(By.CssSelector("input[formControlName='points']")));
+
+            titleInput.Clear();
+            descriptionInput.Clear();
+            pointsInput.Clear();
+
+            gf.TypeWithDelay(titleInput, title);
+            Thread.Sleep(500);
+
+            gf.TypeWithDelay(descriptionInput, description);
+            Thread.Sleep(500);
+
+            gf.TypeWithDelay(pointsInput, points);
+            Thread.Sleep(500);
+
+            var button = wait.Until(d => d.FindElement(By.Id("submit")));
+            button.Click();
+        }
+
+        [Test]
+        public void Remove_Challenge()
+        {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+
+            var challengesButton = wait!.Until(a => a.FindElement(By.Id("admin-challenges-navbar-button")));
+            challengesButton.Click();
+            Thread.Sleep(500);
+
+            var remove = wait!.Until(d => d.FindElement(By.CssSelector("[data-action='removeChallenge']")));
+            remove.Click();
             Thread.Sleep(1000);
         }
 
