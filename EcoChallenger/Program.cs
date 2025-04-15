@@ -14,19 +14,19 @@ var options = new WebApplicationOptions
 };
 var builder = WebApplication.CreateBuilder(options);
 
-/*if (builder.Environment.IsProduction())
+if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowSpecificOrigin", buildr =>
         {
-            buildr.WithOrigins("https://ecochallengerapi.azurewebsites.net")
+            buildr.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
         });
     });
-}*/
+}
 
     // Set up JWT authentication
     var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
@@ -67,6 +67,7 @@ builder.Services.AddControllers(options =>
         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
     );
 });
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -130,7 +131,9 @@ app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
-//app.UseCors("AllowSpecificOrigin");
+
+
+if (app.Environment.IsDevelopment()) app.UseCors("AllowSpecificOrigin");
 
 app.MapControllers();
 
