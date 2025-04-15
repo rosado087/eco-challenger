@@ -93,7 +93,6 @@ export class ChallengesAdminComponent implements OnInit {
     }
 
     loadChallenges(searchQuery?: string | null): void {
-        // Load tags
         this.netApi
             .get<
                 ChallengeModel[]

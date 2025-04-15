@@ -12,7 +12,6 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { User } from '../../../models/user'
 import { SuccessModel } from '../../../models/success-model'
-import { ButtonComponent } from '../../../components/button/button.component'
 import { CommonModule } from '@angular/common'
 
 @Component({
@@ -20,7 +19,6 @@ import { CommonModule } from '@angular/common'
     imports: [
         NgIcon,
         TableComponent,
-        ButtonComponent,
         CommonModule,
         ReactiveFormsModule
     ],
@@ -66,7 +64,7 @@ export class UsersAdminComponent implements OnInit {
         this.loadUsers(this.searchControl.value)
     }
 
-  changeBlock(): void {
+    changeBlock(): void {
         this.netApi
             .post<SuccessModel>('Users', 'block', undefined, this.blockId.toString())
             .subscribe({
@@ -86,25 +84,4 @@ export class UsersAdminComponent implements OnInit {
                 }
             })
     }
-    /*
-    changeAdmin(id: number): void {
-      this.netApi.post <SuccessModel>('Users', 'admin',undefined, id.toString())
-        .subscribe({
-          next: (data) => {
-            if (data.success) this.handleSearch()
-            
-            this.popupLoader.showPopup(
-              data.success ?'Sucesso' : 'Erro',
-              data.message
-            )
-          },
-          error: () => {
-            this.popupLoader.showPopup(
-              'Erro',
-              'Erro ao mudar o estado do utilizador'
-            )
-          }
-        }
-        )
-    }*/
 }
