@@ -14,8 +14,22 @@ var options = new WebApplicationOptions
 };
 var builder = WebApplication.CreateBuilder(options);
 
-// Set up JWT authentication
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+/*if (builder.Environment.IsProduction())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigin", buildr =>
+        {
+            buildr.WithOrigins("https://ecochallengerapi.azurewebsites.net")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+        });
+    });
+}*/
+
+    // Set up JWT authentication
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 if(jwtSettings == null)
     throw new InvalidOperationException("JWT settings are missing in the configuration.");
 
@@ -111,10 +125,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 //app.UseHttpsRedirection();
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
+//app.UseCors("AllowSpecificOrigin");
 
 app.MapControllers();
 
