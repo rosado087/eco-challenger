@@ -7,10 +7,14 @@ import { ChallengeListModel } from '../../models/gamification-model'
 import { ChallengeCardComponent } from '../../components/challenge-card/challenge-card.component'
 import { ChallengeModel } from '../../models/challenge-model'
 import { SuccessModel } from '../../models/success-model'
+import { TopUserMostPointsComponent } from '../../components/charts/top-users-most-points/top-users-most-points.component'
 
 @Component({
     selector: 'app-challenges',
-    imports: [ChallengeCardComponent],
+    imports: [
+        ChallengeCardComponent,
+        TopUserMostPointsComponent
+    ],
     templateUrl: './challenges.component.html',
     styleUrl: './challenges.component.css',
     providers: [PopupLoaderService]
