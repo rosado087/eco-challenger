@@ -126,3 +126,58 @@ public class WeeklyChallengeResponse
     public int Progress { get; set; }
     public bool WasConcluded { get; set; }
 }
+
+public class TopInfoTagResponse
+{
+    public List<InfoTagTest> Tags { get; set; } = [];
+}
+
+public class InfoTagTest
+{
+    public string TagName { get; set; }
+    public int Count { get; set; }
+}
+
+public class TopInfoChallengeResponse
+{
+    public List<InfoChallengeTest> Challenges { get; set; } = [];
+}
+
+public class InfoChallengeTest
+{
+    public string ChallengeName { get; set; }
+    public int Count { get; set; }
+}
+
+public class TopInfoUserResponse
+{
+    public List<InfoUserTest> Users { get; set; } = [];
+}
+
+public class InfoUserTest
+{
+    public string UserName { get; set; }
+    public int Points { get; set; }
+}
+
+public class TopInfoFriendResponse
+{
+    public List<InfoFriendTest> Users { get; set; } = [];
+}
+
+public class InfoFriendTest
+{
+    public string UserName { get; set; }
+    public int Points { get; set; }
+}
+
+public class TopInfoMonthlyResponse
+{
+    public List<InfoMonthlyTest> Logins { get; set; } = [];
+}
+
+public class InfoMonthlyTest
+{
+    public string Date { get; set; }
+    public int Counts { get; set; }
+}
