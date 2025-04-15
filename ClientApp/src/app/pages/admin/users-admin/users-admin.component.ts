@@ -12,7 +12,6 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { User } from '../../../models/user'
 import { SuccessModel } from '../../../models/success-model'
-import { ButtonComponent } from '../../../components/button/button.component'
 import { CommonModule } from '@angular/common'
 
 @Component({
@@ -20,7 +19,6 @@ import { CommonModule } from '@angular/common'
     imports: [
         NgIcon,
         TableComponent,
-        ButtonComponent,
         CommonModule,
         ReactiveFormsModule
     ],
