@@ -66,7 +66,7 @@ export class UsersAdminComponent implements OnInit {
         this.loadUsers(this.searchControl.value)
     }
 
-  changeBlock(): void {
+    changeBlock(): void {
         this.netApi
             .post<SuccessModel>('Users', 'block', undefined, this.blockId.toString())
             .subscribe({
@@ -86,25 +86,4 @@ export class UsersAdminComponent implements OnInit {
                 }
             })
     }
-    /*
-    changeAdmin(id: number): void {
-      this.netApi.post <SuccessModel>('Users', 'admin',undefined, id.toString())
-        .subscribe({
-          next: (data) => {
-            if (data.success) this.handleSearch()
-            
-            this.popupLoader.showPopup(
-              data.success ?'Sucesso' : 'Erro',
-              data.message
-            )
-          },
-          error: () => {
-            this.popupLoader.showPopup(
-              'Erro',
-              'Erro ao mudar o estado do utilizador'
-            )
-          }
-        }
-        )
-    }*/
 }

@@ -54,6 +54,10 @@ namespace EcoChallengerTest.AutomationTest
         [Test]
         public void View_Admin_Statistics()
         {
+            var admin = wait!.Until(a => a.FindElement(By.Id("navbar-admin-dropdown-button")));
+            admin.Click();
+            Thread.Sleep(500);
+            
             var stats = wait!.Until(a => a.FindElement(By.Id("admin-stats-navbar-button")));
             stats.Click();
             Thread.Sleep(500);
