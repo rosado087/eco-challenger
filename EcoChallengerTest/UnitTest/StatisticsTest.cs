@@ -111,6 +111,13 @@ namespace EcoChallengerTest.UnitTest
             Assert.That(result, Is.Not.Null);
             Assert.That(users, Is.Not.Null);
             Assert.That(users!.Count(), Is.EqualTo(5));
+
+            var pointsList = users!
+                .Select(u => (int)u!.GetType().GetProperty("Points")!.GetValue(u)!)
+                .ToList();
+
+            var isDescending = pointsList.SequenceEqual(pointsList.OrderByDescending(p => p));
+            Assert.That(isDescending, Is.True, "Users are not ordered by descending points");
         }
 
         [Test]
@@ -120,7 +127,12 @@ namespace EcoChallengerTest.UnitTest
             _dbContext.SaveChanges();
 
             var now = DateTime.Now;
-            _dbContext.Users.Add(new User { Username = "ActiveUser", Email = "activeuser@example.com", LastLogin = now });
+
+            _dbContext.Users.AddRange(
+                new User { Username = "ActiveUser", Email = "active@example.com", LastLogin = now },               
+                new User { Username = "OldUser", Email = "old@example.com", LastLogin = now.AddMonths(-2) },      
+                new User { Username = "FutureUser", Email = "future@example.com", LastLogin = now.AddMonths(1) }  
+            );
             _dbContext.SaveChanges();
 
             var controller = new StatisticsController(_dbContext, _envMock.Object, _loggerMock.Object);
