@@ -191,7 +191,7 @@ namespace EcoChallengerTest.IntegrationTest
             var jsonChallenges = await responseChallenges.Content.ReadAsStringAsync();
             var challenges = JsonConvert.DeserializeObject<List<Challenge>>(jsonChallenges);
 
-            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![0].Id}", form, true, login.token);
+            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![1].Id}", form, true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject<dynamic>(json)!;
 
@@ -217,7 +217,7 @@ namespace EcoChallengerTest.IntegrationTest
             var jsonChallenges = await responseChallenges.Content.ReadAsStringAsync();
             var challenges = JsonConvert.DeserializeObject<List<Challenge>>(jsonChallenges);
 
-            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![0].Id}", form, true, login.token);
+            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![1].Id}", form, true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject<dynamic>(json)!;
 

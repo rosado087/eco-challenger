@@ -1,11 +1,11 @@
 import { Component, inject} from '@angular/core'
 import { PopupLoaderService } from '../../services/popup-loader/popup-loader.service'
-import { ActivatedRoute, Router, RouterLink } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { AuthService } from '../../services/auth/auth.service'
 
 @Component({
     selector: 'app-home',
-    imports: [RouterLink],
+    imports: [],
     providers: [PopupLoaderService],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
