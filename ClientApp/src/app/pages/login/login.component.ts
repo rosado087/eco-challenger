@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
                     if (response.success) {
                         // Init user auth service
                         this.authService.login(response.user, response.token)
-                        this.router.navigate(['/'])
+                      this.router.navigate(['/challenges/' + this.authService.getUserInfo().id.toString()])
                         return
                     }
 

@@ -1,6 +1,9 @@
 <div class="navbar bg-secondary">
     <div class="navbar-start flex">
-        <a routerLink="/" class="text-xl mr-2"><app-logo height="4rem" /></a>
+        <a routerLink="/challenges/{{
+                            this.authService.getUserInfo().id
+                        }}"
+           class="text-xl mr-2"><app-logo height="4rem" /></a>
         @if (authService.isLoggedIn()) {
             <ul class="menu menu-horizontal px-1 gap-4">
                 <li>
