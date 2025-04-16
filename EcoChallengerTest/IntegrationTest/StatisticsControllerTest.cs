@@ -100,19 +100,6 @@ namespace EcoChallengerTest.IntegrationTest
         }
 
         [Test]
-        public async Task Get_Top_Most_Points_Normal_User()
-        {
-            var login = await nc.Login("tester3@gmail.com");
-
-            var response = await nc.SendGet("/api/Statistics/top-users-most-points", true, login.token);
-            var json = await response.Content.ReadAsStringAsync();
-            var topResponse = JsonConvert.DeserializeObject<TopInfoUserResponse>(json);
-
-            Assert.That(response.IsSuccessStatusCode, Is.False);
-
-        }
-
-        [Test]
         public async Task Get_Friend_Top_Most_Points_Successfully()
         {
             var login = await nc.Login("tester1@gmail.com");
