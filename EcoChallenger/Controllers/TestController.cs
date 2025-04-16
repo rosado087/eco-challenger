@@ -132,6 +132,7 @@ namespace EcoChallenger.Controllers
                     new Tag { Name = "Eco-Warrior", Price = 40, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
                     new Tag { Name = "NatureLover", Price = 50, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
                     new Tag { Name ="Green Guru", Price = 30, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
+                    new Tag { Name ="RatazanaVelha", Price = 1, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
                 };
                 _ctx.Tags.AddRange(tags);
                 _ctx.SaveChanges();

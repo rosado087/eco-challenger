@@ -148,7 +148,7 @@ namespace EcoChallengerTest.AutomationTest
             var profileTagListContainer = wait.Until(d => d.FindElement(By.Id("profile-tag-list")));
             Assert.That(profileTagListContainer.FindElements(
                     By.CssSelector("[role='button']")).Count(), 
-                    Is.EqualTo(2));
+                    Is.EqualTo(3));
         }
 
         [Test]
