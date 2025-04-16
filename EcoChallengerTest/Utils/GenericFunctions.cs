@@ -34,7 +34,7 @@ namespace EcoChallengerTest.Utils
             // To debug the process, comment these two lines
             var options = new FirefoxOptions();
             options.AddArgument("--window-size=1280,800");
-            //options.AddArgument("--headless");
+            options.AddArgument("--headless");
 
             // Initialize the Firefox driver
             return new FirefoxDriver(options);
