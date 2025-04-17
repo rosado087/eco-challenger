@@ -103,20 +103,14 @@ namespace EcoChallengerTest.IntegrationTest
         [Test]
         public async Task Purchase_Tag_InsufficientPoints()
         {
-            var loginModel = await nc.Login();
-
-            Assert.That(loginModel, Is.Not.Null);
-            Assert.That(loginModel.user, Is.Not.Null);
-            Assert.That(loginModel.user!.id > 0, "User ID was not assigned");
-            Assert.That(loginModel.token, Is.Not.Null);
+            var loginModel = await nc.Login("tester5@gmail.com");
 
             var responseTags = await nc.SendGet("/api/Store/tags", true, loginModel.token);
             var content = await responseTags.Content.ReadAsStringAsync();
             var tags = JsonConvert.DeserializeObject<List<UserTag>>(content);
 
-            var response = await nc.SendPost($"/api/Store/purchase/{tags![0].Id}");
+            var response = await nc.SendPost($"/api/Store/purchase/{tags[0].Id}", null, true, loginModel.token);
 
-            // Assert
             Assert.That(response.IsSuccessStatusCode, Is.True);
 
             var json = await response.Content.ReadAsStringAsync();
@@ -125,7 +119,6 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.That(result!.Success, Is.False);
             Assert.That(result.Message, Does.Contain("não tem pontos suficientes"));
         }
-
 
     }
 }

@@ -109,8 +109,8 @@ namespace EcoChallenger.Controllers
                         Points = 100 },
 
                     new User { Username = "Tester3", Email = "tester3@gmail.com", 
-                        Password = PasswordGenerator.GeneratePasswordHash("Password123!"), 
-                        Points = 100 },
+                        Password = PasswordGenerator.GeneratePasswordHash("Password123!"),
+                        Points = 10 },
 
                     new User { Username = "tester4", Email = "201902087@estudantes.ips.pt", 
                         Password = PasswordGenerator.GeneratePasswordHash("Password123!"), 
@@ -118,7 +118,11 @@ namespace EcoChallenger.Controllers
 
                     new User { Username = "olduser", Email = "old@example.com", 
                         Password = PasswordGenerator.GeneratePasswordHash("Password123!"), 
-                        Points = 100 }
+                        Points = 100 },
+                        
+                    new User { Username = "tester5", Email = "tester5@gmail.com",
+                        Password = PasswordGenerator.GeneratePasswordHash("Password123!"),
+                        Points = 5}
                 };
                 _ctx.Users.AddRange(users);
                 _ctx.SaveChanges();
@@ -128,6 +132,7 @@ namespace EcoChallenger.Controllers
                     new Tag { Name = "Eco-Warrior", Price = 40, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
                     new Tag { Name = "NatureLover", Price = 50, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
                     new Tag { Name ="Green Guru", Price = 30, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
+                    new Tag { Name ="RatazanaVelha", Price = 1, BackgroundColor = "#355735", TextColor = "#FFFFFF"},
                 };
                 _ctx.Tags.AddRange(tags);
                 _ctx.SaveChanges();
@@ -145,7 +150,7 @@ namespace EcoChallenger.Controllers
                         SelectedTag = false
                     },
                     new TagUsers() {
-                        User = users[0],
+                        User = users[2],
                         Tag = tags[2],
                         SelectedTag = true
                     },

@@ -28,10 +28,8 @@
                 </div>
 
                 <app-table class="mt-4">
-                    <!-- Columns -->
                     <tr columns>
                         <th>Utilizador</th>
-                        <!--<th>Função</th>-->
                     </tr>
 
                     <!-- Rows -->
@@ -42,26 +40,14 @@
                                     {{ user.username }}
                                 </span>
                             </td>
-                            <!--<th>
-              <div class="flex flex-row gap-1">
-                <button class="btn btn-ghost btn-md border-black"
-                        (click)="changeAdmin(user.id)">
-                <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
-                            <!--@if(user.isAdmin){
-                Admin
-                }
-                @else{
-                User
-                }
-                </button>
-              </div>
-            </th>-->
                             <th>
                                 <div class="flex flex-row gap-1">
                                     <button
+                                        data-action="block-user"
+                                        id="status-{{user.username}}"
                                         class="btn btn-ghost btn-md border-black"
-                                        (click)="confirmControl = true">
-                                        <!-- This has to use style to overlap the CSS that comes in the NGIcon component -->
+                                        (click)="blockId = user.id;
+                                            confirmControl = true">
                                         @if (user.isBlocked) {
                                             Desbloquear
                                         } @else {
@@ -86,17 +72,18 @@
                                                 Tem a certeza?
                                             </p>
 
-                                            <!-- Botões -->
-                                            <!-- Botões -->
                                             <div
                                                 class="mt-4 flex justify-evenly">
-                                                <app-button
-                                                    id="confirm-rem"
-                                                    text="Sim"
+                                                <button
+                                                    id="confirm-block"
+                                                    data-action="confirm-block"
+                                                    class="btn btn-outline btn-success"
                                                     (click)="
-                                                        changeBlock(user.id);
+                                                        changeBlock();
                                                         confirmControl = false
-                                                    " />
+                                                    ">
+                                                    Sim
+                                                </button>
 
                                                 <button
                                                     id="rem-cancel"

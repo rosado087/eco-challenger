@@ -86,7 +86,6 @@ namespace EcoChallenger.Controllers
         /// <returns>
         /// List of objects with username, and point count
         /// </returns>
-        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("top-users-most-points")]
         public IActionResult GetTopUsersMostPoints()

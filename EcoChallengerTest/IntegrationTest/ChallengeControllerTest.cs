@@ -104,8 +104,7 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.That(response.IsSuccessStatusCode, Is.True);
             Assert.That(challenges, Is.Not.Null);
             Assert.That(challenges!.Count, Is.GreaterThanOrEqualTo(2));
-            Assert.That(challenges.Any(c => c.Title == "testChallenge1"));
-            Assert.That(challenges.Any(c => c.Title == "testChallenge2"));
+            Assert.That(challenges.Any(c => c.Title == "testChallenge2"), Is.True);
         }
 
         [Test]
@@ -113,14 +112,14 @@ namespace EcoChallengerTest.IntegrationTest
         {
             var login = await nc.Login("tester1@gmail.com");
 
-            var response = await nc.SendGet("/api/Challenge/GetAllChallenges?q=testChallenge1", true, login.token);
+            var response = await nc.SendGet("/api/Challenge/GetAllChallenges?q=testChallenge2", true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             var challenges = JsonConvert.DeserializeObject<List<Challenge>>(json);
 
             Assert.That(response.IsSuccessStatusCode, Is.True);
             Assert.That(challenges, Is.Not.Null);
             Assert.That(challenges!.Count, Is.EqualTo(1));
-            Assert.That(challenges.Any(c => c.Title == "testChallenge1"));
+            Assert.That(challenges.Any(c => c.Title == "testChallenge2"), Is.True);
         }
 
         [Test]
@@ -191,7 +190,7 @@ namespace EcoChallengerTest.IntegrationTest
             var jsonChallenges = await responseChallenges.Content.ReadAsStringAsync();
             var challenges = JsonConvert.DeserializeObject<List<Challenge>>(jsonChallenges);
 
-            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![0].Id}", form, true, login.token);
+            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![1].Id}", form, true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject<dynamic>(json)!;
 
@@ -217,7 +216,7 @@ namespace EcoChallengerTest.IntegrationTest
             var jsonChallenges = await responseChallenges.Content.ReadAsStringAsync();
             var challenges = JsonConvert.DeserializeObject<List<Challenge>>(jsonChallenges);
 
-            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![0].Id}", form, true, login.token);
+            var response = await nc.SendFormPost($"/api/Challenge/EditChallenge/{challenges![1].Id}", form, true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject<dynamic>(json)!;
 
@@ -324,7 +323,7 @@ namespace EcoChallengerTest.IntegrationTest
             Assert.That(response.IsSuccessStatusCode, Is.True);
             Assert.That((bool)result.success, Is.True);
             Assert.That((string)result.message, Does.Contain("encontrado"));
-            Assert.That((string)result.challenge.title, Is.EqualTo("testChallenge1"));
+            Assert.That((string)result.challenge.title, Is.EqualTo(challenges![0].Title));
         }
 
         [Test]

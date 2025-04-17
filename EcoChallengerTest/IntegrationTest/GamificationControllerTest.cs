@@ -65,7 +65,7 @@ namespace EcoChallengerTest.IntegrationTest
             var jsonChallenges = await responseChallenges.Content.ReadAsStringAsync();
             var challengesResponse = JsonConvert.DeserializeObject<ChallengesResponse>(jsonChallenges);
 
-            var response = await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[0].Challenge.Id}", true, login.token);
+            var response = await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[1].Challenge.Id}", true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject<dynamic>(json)!;
 
@@ -97,9 +97,9 @@ namespace EcoChallengerTest.IntegrationTest
             var jsonChallenges = await responseChallenges.Content.ReadAsStringAsync();
             var challengesResponse = JsonConvert.DeserializeObject<ChallengesResponse>(jsonChallenges);
 
-            var responseComplete = await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[0].Challenge.Id}", true, login.token);
+            await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[2].Challenge.Id}", true, login.token);
 
-            var response = await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[0].Challenge.Id}", true, login.token);
+            var response = await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[2].Challenge.Id}", true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject<dynamic>(json)!;
 
@@ -151,9 +151,9 @@ namespace EcoChallengerTest.IntegrationTest
             var jsonChallenges = await responseChallenges.Content.ReadAsStringAsync();
             var challengesResponse = JsonConvert.DeserializeObject<ChallengesResponse>(jsonChallenges);
 
-            var responseComplete = await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[0].Challenge.Id}", true, login.token);
+            var responseComplete = await nc.SendGet($"/api/Gamification/CompleteChallenge/{challengesResponse!.DailyChallenges[2].Challenge.Id}", true, login.token);
 
-            var response = await nc.SendGet($"/api/Gamification/AddProgress/{challengesResponse!.DailyChallenges[0].Challenge.Id}", true, login.token);
+            var response = await nc.SendGet($"/api/Gamification/AddProgress/{challengesResponse!.DailyChallenges[2].Challenge.Id}", true, login.token);
             var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject<dynamic>(json)!;
 

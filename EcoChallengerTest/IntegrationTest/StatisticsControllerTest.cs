@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EcoChallengerTest.IntegrationTest
 {
-    public class StatisticsControllerTest 
+    public class StatisticsControllerTest
     {
         private readonly GenericFunctions gf = new GenericFunctions();
         private readonly NetworkClient nc = new NetworkClient();

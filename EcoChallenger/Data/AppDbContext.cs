@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
             Email = "tester1@gmail.com",
             Password = PasswordGenerator.GeneratePasswordHash("12345678"),
             Points = 0,
+            IsAdmin = true,
             LastLogin = new DateTime(2025, 04, 14)
         };
 
