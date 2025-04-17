@@ -5,7 +5,7 @@ using EcoChallenger.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+ 
 namespace EcoChallenger.Controllers
 {
     public class TestController : BaseApiController

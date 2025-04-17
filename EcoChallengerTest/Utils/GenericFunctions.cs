@@ -9,7 +9,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace EcoChallengerTest.Utils
 {
-    public class GenericFunctions {
+    public class GenericFunctions { 
         public static readonly string DEFAULT_TEST_URL = "http://localhost:4200";
         private HttpClient _client = new HttpClient();
         private string _baseUrl = "";

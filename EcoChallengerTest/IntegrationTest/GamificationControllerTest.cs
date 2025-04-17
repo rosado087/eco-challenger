@@ -11,7 +11,7 @@ using EcoChallenger.Models;
 
 namespace EcoChallengerTest.IntegrationTest 
 {
-    public class GamificationControllerTest
+    public class GamificationControllerTest 
     {
         private readonly GenericFunctions gf = new GenericFunctions();
         private readonly NetworkClient nc = new NetworkClient();

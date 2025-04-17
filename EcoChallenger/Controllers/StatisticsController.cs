@@ -177,7 +177,7 @@ namespace EcoChallenger.Controllers
                         g.Count
                     })
                     .ToList();
-
+                 
                 return Ok(new { logins = monthlyLogins });
             }
             catch(Exception e) {

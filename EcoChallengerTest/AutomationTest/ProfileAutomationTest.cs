@@ -6,7 +6,7 @@ using System.Threading;
 using System;
 using System.Threading.Tasks;
 
-namespace EcoChallengerTest.AutomationTest
+namespace EcoChallengerTest.AutomationTest 
 {
     public class ProfileAutomationTest
     {
