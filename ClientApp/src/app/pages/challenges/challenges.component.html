@@ -13,6 +13,7 @@
                     <app-challenge-card
                         (openModal)="selectedChallenge = challenge"
                         [title]="challenge.challenge.title"
+                        [description]="challenge.challenge.description"
                         [type]="challenge.challenge.type"
                         [points]="challenge.challenge.points"
                         [completed]="false"
@@ -34,6 +35,7 @@
                     <app-challenge-card
                         (openModal)="selectedChallenge = challenge"
                         [title]="challenge.challenge.title"
+                        [description]="challenge.challenge.description"
                         [type]="challenge.challenge.type"
                         [points]="challenge.challenge.points"
                         [completed]="true" />
@@ -58,6 +60,7 @@
                     <app-challenge-card
                         (openModal)="selectedChallenge = challenge"
                         [title]="challenge.challenge.title"
+                        [description]="challenge.challenge.description"
                         [type]="challenge.challenge.type"
                         [points]="challenge.challenge.points"
                         [progress]="challenge.progress"
@@ -81,6 +84,7 @@
                     <app-challenge-card
                         (openModal)="selectedChallenge = challenge"
                         [title]="challenge.challenge.title"
+                        [description]="challenge.challenge.description"
                         [type]="challenge.challenge.type"
                         [points]="challenge.challenge.points"
                         [showProgress]="!challenge.wasConcluded"
