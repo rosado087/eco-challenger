@@ -86,7 +86,7 @@ namespace EcoChallenger.Controllers
 
                 // If no ID is provided, use the current user
                 int id = UserContext.Id;
-                if(profile.Id != null)
+                if(profile.Id != null && (int)profile.Id == UserContext.Id)
                     id = (int)profile.Id;
 
                 var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == id);
