@@ -5,9 +5,8 @@
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-4">
       
       <!-- Left: info -->
-      <div class="flex flex-col flex-1">
+      <div class="flex flex-col flex-1 min-w-0">
         <div class="font-medium">{{ title() }}</div>
-        <div class="text-sm text-gray-600 mt-1">{{ description() }}</div>
         <div class="text-sm text-green-700 mt-1">{{ points() }} pontos</div>
       </div>
 
@@ -32,39 +31,39 @@
           </div>
         </div>
       } @else {
-        <div class="sm:translate-x-[291px]">
-          <span class="text-green-600 text-xl">Concluído</span>
+        <div class="flex justify-end flex-1 sm:flex-none">
+          <div class="flex items-center">
+            <button class="btn btn-primary btn-sm"
+                    (click)="$event.stopPropagation(); complete.emit()">
+              Concluir
+            </button>
+          </div>
         </div>
-      }
+      }      
 
     </div>
   </li>
 } @else {
   <li class="list-row cursor-pointer" tabindex="0" role="button"
-      (click)="openModal.emit()" (keydown.enter)="openModal.emit()" (keydown.space)="openModal.emit()">
-    
-    <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-2 sm:gap-84">
-
-      <!-- Left: Info -->
-      <div class="flex flex-col flex-1 min-w-0">
-        <div class="font-medium">{{ title() }}</div>
-        <div class="text-sm text-green-700 mt-1">{{ points() }} pontos</div>
-      </div>
-
-      <!-- Right: Completed or Conclude -->
-      <div class="flex justify-end flex-1 sm:flex-none">
-        <div class="flex items-center">
-          @if (completed()) {
-            <span class="text-green-600 text-xl">Concluído</span>
-          } @else {
-            <button class="btn btn-primary btn-sm"
-                    (click)="$event.stopPropagation(); complete.emit()">
-              Concluir
-            </button>
-          }
-        </div>
-      </div>
-
+    (click)="openModal.emit()" (keydown.enter)="openModal.emit()" (keydown.space)="openModal.emit()">
+  <div class="flex flex-col sm:flex-row items-center sm:items-stretch w-full gap-96">
+    <!-- Left side: title and points -->
+    <div class="flex flex-col">
+      <div class="font-medium">{{ title() }}</div>
+      <div class="text-sm text-green-700 mt-1 whitespace-nowrap">{{ points() }} pontos</div>
     </div>
-  </li>
+
+    <!-- Right side: button -->
+    <div class="flex justify-end h-full ml-auto">
+      @if (completed()) {
+        <span class="text-green-600 text-xl">Concluído</span>
+      } @else {
+        <button class="btn btn-primary btn-sm"
+                (click)="$event.stopPropagation(); complete.emit()">
+          Concluir
+        </button>
+      }
+    </div>
+  </div>
+</li>
 }
