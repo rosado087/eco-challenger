@@ -81,6 +81,25 @@ namespace EcoChallengerTest.IntegrationTest
         }
 
         [Test]
+        public async Task Unable_To_Edit_Other_User_Info()
+        {
+            var loginModel = await nc.Login("tester1@gmail.com");
+            var content = new { Id = 4, Username = "newuser" };
+            var response = await nc.SendPost("/api/Profile/EditUserInfo", content, true, loginModel.token);
+
+            var  responseBody = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic> (responseBody);
+
+            Assert.That (result, Is.Not.Null);
+            Assert.That((bool)result!.success, Is.True, $"API returned failure: {responseBody}");
+            Assert.That((string)result.username, Is.EqualTo("newuser"));
+            Assert.That((string)result.email, Is.EqualTo("tester1@gmail.com"));
+
+            loginModel = await nc.Login("tester2@gmail.com");
+            Assert.That(loginModel.user!.username, Is.EqualTo("Tester2"));
+        }
+
+        [Test]
         public async Task AddFriend_ValidRequest_AddsFriend()
         {
             var loginModel = await nc.Login("tester1@gmail.com");
