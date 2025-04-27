@@ -20,10 +20,12 @@
           </progress>
           <div class="flex gap-2">
             <button class="btn btn-primary btn-sm"
+                    data-role="challenge-complete-button"
                     (click)="$event.stopPropagation(); complete.emit()">
               Concluir
             </button>
             <button class="btn btn-outline btn-primary btn-sm"
+                    data-role="challenge-progress-button"
                     (click)="$event.stopPropagation(); progressClick.emit()">
               + Progresso
             </button>
