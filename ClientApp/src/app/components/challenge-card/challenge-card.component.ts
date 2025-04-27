@@ -11,6 +11,7 @@ import { ChallengeType } from '../../models/challenge-model'
 })
 export class ChallengeCardComponent {
     title = input.required<string>()
+    description = input<string | null>();
     type = input.required<ChallengeType>()
     points = input<number | null>()
     completed = input<boolean>(false)
