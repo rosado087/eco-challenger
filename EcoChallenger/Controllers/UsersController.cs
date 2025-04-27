@@ -28,7 +28,7 @@ namespace EcoChallenger.Controllers
         [HttpGet("users")]
         public IActionResult GetUsers([FromQuery]string? searchedName)
         {          
-            if(searchedName == null)
+            if(string.IsNullOrEmpty(searchedName))
             {
                 var users = _ctx.Users.Where(u => u.Id != UserContext.Id)
                 .Select(u => new { id = u.Id, username = u.Username, isBlocked = u.IsBlocked, isAdmin = u.IsAdmin})

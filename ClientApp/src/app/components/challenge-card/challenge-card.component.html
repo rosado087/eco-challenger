@@ -32,12 +32,7 @@
         </div>
       } @else {
         <div class="flex justify-end flex-1 sm:flex-none">
-          <div class="flex items-center">
-            <button class="btn btn-primary btn-sm"
-                    (click)="$event.stopPropagation(); complete.emit()">
-              Concluir
-            </button>
-          </div>
+          <span class="text-green-600 text-xl">Concluído</span>
         </div>
       }      
 

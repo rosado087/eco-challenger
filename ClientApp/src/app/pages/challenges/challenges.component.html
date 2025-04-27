@@ -87,7 +87,8 @@
                         [description]="challenge.challenge.description"
                         [type]="challenge.challenge.type"
                         [points]="challenge.challenge.points"
-                        [showProgress]="!challenge.wasConcluded"
+                        [showProgress]="false"
+                        [completed]="true"
                         (complete)="completeChallenge(challenge.challenge.id)"
                         (progressClick)="addProgress(challenge.challenge.id)" />
                 }
