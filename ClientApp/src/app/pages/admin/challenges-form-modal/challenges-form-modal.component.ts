@@ -44,7 +44,8 @@ export class ChallengeFormModalComponent implements OnInit {
         title: new FormControl('', [Validators.required]),
         description: new FormControl('', [Validators.required]),
         type: new FormControl<ChallengeType>('Daily', [Validators.required]),
-        points: new FormControl(0, [Validators.required, Validators.min(0)])
+        points: new FormControl(0, [Validators.required, Validators.min(0)]),
+        maxProgress: new FormControl(1, [Validators.required, Validators.min(1)])
     })
 
     doStateChange = effect(() => {
@@ -134,6 +135,7 @@ export class ChallengeFormModalComponent implements OnInit {
         formData.append('Description', formValues.description || '')
         formData.append('Type', formValues.type || 'Daily')
         formData.append('Points', formValues.points?.toString() || '0')
+        formData.append('MaxProgress', formValues.maxProgress?.toString() || '1')
 
         if (this.isEditMode()) this.editChallenge(formData)
         else this.createChallenge(formData)
